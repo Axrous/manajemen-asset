@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"final-project-enigma-clean/delivery/controller/middleware"
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/usecase"
 	"github.com/gin-gonic/gin"
@@ -15,7 +16,7 @@ func (u *UserDetailsController) SaveUserHandler(c *gin.Context) {
 	var udetails model.UserDetails
 
 	if err := u.udetailsUC.NewUserDetails(udetails); err != nil {
-		c.AbortWithStatusJSON(400, gin.H{"Error": "Failed to save user details %v"})
+		c.AbortWithStatusJSON(400, gin.H{"Error": err.Error()})
 		return
 	}
 }
@@ -24,6 +25,7 @@ func (u *UserDetailsController) SaveUserHandler(c *gin.Context) {
 func (u *UserDetailsController) Route() {
 	//create a group
 	ug := u.gin.Group("/app")
+	ug.Use(middleware.AuthMiddleware()) // <---  init middleware dsini
 	{
 		ug.POST("/save-user", u.SaveUserHandler)
 	}

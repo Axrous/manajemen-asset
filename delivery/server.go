@@ -3,6 +3,7 @@ package delivery
 import (
 	"final-project-enigma-clean/config"
 	"final-project-enigma-clean/delivery/controller"
+	"final-project-enigma-clean/delivery/controller/middleware"
 	"final-project-enigma-clean/manager"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -16,7 +17,7 @@ type Server struct {
 }
 
 func (s *Server) initMiddlewares() {
-
+	s.gin.Use(middleware.LogReqMiddle(s.log))
 }
 
 func (s *Server) initControllers() {
