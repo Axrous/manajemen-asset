@@ -15,10 +15,11 @@ type UserDetailsController struct {
 func (u *UserDetailsController) SaveUserHandler(c *gin.Context) {
 	var udetails model.UserDetails
 
-	if err := u.udetailsUC.NewUserDetails(udetails); err != nil {
+	if err := c.ShouldBindJSON(&udetails); err != nil {
 		c.AbortWithStatusJSON(400, gin.H{"Error": err.Error()})
 		return
 	}
+	c.JSON(200, gin.H{"Data": udetails})
 }
 
 // define routing in here

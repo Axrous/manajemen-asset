@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 )
 
 type Server struct {
@@ -17,7 +18,13 @@ type Server struct {
 }
 
 func (s *Server) initMiddlewares() {
-	s.gin.Use(middleware.LogReqMiddle(s.log))
+	// Create a Zap logger
+	logger, _ := zap.NewProduction()
+	defer logger.Sync() // Ensure logs are flushed
+
+	// Use the logger
+	s.gin.Use(middleware.ZapLogger(logger))
+
 }
 
 func (s *Server) initControllers() {
