@@ -47,12 +47,14 @@ func (a *assetRepository) FindAll() ([]model.Asset, error) {
 	var assets []model.Asset
 	for rows.Next() {
 		var asset model.Asset
-		err = rows.Scan(&asset.ID, &asset.Name, &asset.Amount, &asset.Status, &asset.EntryDate, &asset.ImgUrl, &asset.Category.ID, &asset.Category.Name, &asset.AssetType.ID, &asset.AssetType.Name)
-		if err !=nil {
-			return nil, err
-		}
+		rows.Scan(&asset.ID, &asset.Name, &asset.Amount, &asset.Status, &asset.EntryDate, &asset.ImgUrl, &asset.Category.ID, &asset.Category.Name, &asset.AssetType.ID, &asset.AssetType.Name)
 		assets = append(assets, asset)
 	}
+	if rows.Err() != nil {
+		return nil, rows.Err()
+	}
+
+
 	return assets, nil
 }
 
@@ -78,7 +80,7 @@ func (a *assetRepository) FindById(id string) (model.Asset, error) {
 func (a *assetRepository) Save(asset model.Asset) error {
 	query := "insert into asset(id, id_category, id_asset_type, name, amount, status, entry_date, img_url) values($1, $2, $3, $4, $5, $6, $7, $8)"
 
-	_, err := a.db.Exec(query, asset.ID, asset.Category.ID, asset.AssetType.ID, asset.Name, asset.Amount, asset.Amount, asset.EntryDate, asset.ImgUrl)
+	_, err := a.db.Exec(query, asset.ID, asset.Category.ID, asset.AssetType.ID, asset.Name, asset.Amount, asset.Status, asset.EntryDate, asset.ImgUrl)
 	if err != nil {
 		return err
 	}
