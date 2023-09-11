@@ -29,6 +29,7 @@ func (s *Server) initMiddlewares() {
 
 func (s *Server) initControllers() {
 	controller.NewUserDetailsController(s.um.UDetailsUC(), s.gin).Route()
+	controller.NewUserController(s.um.UserUC(), s.gin)
 }
 
 func (s *Server) Run() {

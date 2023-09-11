@@ -1,7 +1,7 @@
 package config
 
 import (
-	"final-project-enigma-clean/helper"
+	"final-project-enigma-clean/util/helper"
 	"fmt"
 	"github.com/gookit/slog"
 	"os"

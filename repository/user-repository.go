@@ -8,10 +8,26 @@ import (
 
 type UserRepository interface {
 	RegisterUser(request model.UserRegisterRequest) error
+	LoginUser(logreq model.UserLoginRequest) (string, error)
 }
 
 type userRepository struct {
 	db *sql.DB
+}
+
+func (u *userRepository) LoginUser(logreq model.UserLoginRequest) (string, error) {
+	//TODO implement me
+
+	var hashedPass string
+	query := "select password from users where email = $1"
+	err := u.db.QueryRow(query, logreq.Email).Scan(&hashedPass)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", fmt.Errorf("Invalid credential")
+		}
+	}
+	return hashedPass, err
+
 }
 
 func (u *userRepository) RegisterUser(request model.UserRegisterRequest) error {
