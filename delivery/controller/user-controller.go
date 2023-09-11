@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"final-project-enigma-clean/delivery/controller/middleware"
+	"final-project-enigma-clean/delivery/middleware"
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/usecase"
 	"github.com/gin-gonic/gin"

@@ -3,7 +3,7 @@ package delivery
 import (
 	"final-project-enigma-clean/config"
 	"final-project-enigma-clean/delivery/controller"
-	"final-project-enigma-clean/delivery/controller/middleware"
+	"final-project-enigma-clean/delivery/middleware"
 	"final-project-enigma-clean/manager"
 	"fmt"
 	"github.com/gin-gonic/gin"
