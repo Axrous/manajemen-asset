@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"final-project-enigma-clean/delivery/controller/middleware"
+	"final-project-enigma-clean/delivery/middleware"
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/usecase"
 	"github.com/gin-gonic/gin"
@@ -19,6 +19,13 @@ func (u *UserDetailsController) SaveUserHandler(c *gin.Context) {
 		c.AbortWithStatusJSON(400, gin.H{"Error": err.Error()})
 		return
 	}
+
+	//business logic happen
+	if err := u.udetailsUC.NewUserDetails(udetails); err != nil {
+		c.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
 	c.JSON(200, gin.H{"Data": udetails})
 }
 

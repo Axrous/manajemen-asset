@@ -23,6 +23,7 @@ type UserDetails struct {
 	Name        string    `json:"name" validate:"required"`
 	PhoneNumber string    `json:"phone_number" validate:"required"`
 	Address     string    `json:"address" validate:"required"`
+	Email       string    `json:"email" validate:"required"`
 	BirthDate   time.Time `json:"birth_date" validate:"required"`
 	ImgUrl      string    `json:"img_url" validate:"required"`
 }

@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"final-project-enigma-clean/helper"
+	"final-project-enigma-clean/util/helper"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 	"strings"

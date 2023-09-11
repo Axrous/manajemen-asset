@@ -3,7 +3,7 @@ package delivery
 import (
 	"final-project-enigma-clean/config"
 	"final-project-enigma-clean/delivery/controller"
-	"final-project-enigma-clean/delivery/controller/middleware"
+	"final-project-enigma-clean/delivery/middleware"
 	"final-project-enigma-clean/manager"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -29,6 +29,7 @@ func (s *Server) initMiddlewares() {
 
 func (s *Server) initControllers() {
 	controller.NewUserDetailsController(s.um.UDetailsUC(), s.gin).Route()
+	controller.NewUserController(s.um.UserUC(), s.gin)
 }
 
 func (s *Server) Run() {
