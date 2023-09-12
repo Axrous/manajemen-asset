@@ -13,9 +13,10 @@ import (
 )
 
 type Server struct {
-	um  manager.UsecaseManager
-	gin *gin.Engine
-	log *logrus.Logger
+	um        manager.UsecaseManager
+	gin       *gin.Engine
+	ginEngine *gin.RouterGroup
+	log       *logrus.Logger
 }
 
 func (s *Server) initMiddlewares() {
@@ -29,9 +30,7 @@ func (s *Server) initMiddlewares() {
 }
 
 func (s *Server) initControllers() {
-	rg := s.gin.Group("/api/v1")
-	controller.NewUserController(s.um.UserUsecase(), rg).Route()
-	controller.NewTypeAssetController(s.um.TypeAssetUseCase(), rg).Route()
+	controller.NewUserController(s.um.UserUsecase(), s.ginEngine).Route()
 }
 
 func (s *Server) Run() {

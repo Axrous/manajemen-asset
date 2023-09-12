@@ -13,7 +13,7 @@ type usecaseManager struct {
 
 // TypeAssetUseCase implements UsecaseManager.
 func (u *usecaseManager) TypeAssetUseCase() usecase.TypeAssetUseCase {
-	return usecase.NewTypeAssetUseCase(u.rm.TypeAssetRepo())
+	return usecase.NewTypeAssetUseCase(u.rm.UserRepo())
 }
 
 func (u *usecaseManager) UserUsecase() usecase.UserCredentialUsecase {

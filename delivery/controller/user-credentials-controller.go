@@ -4,10 +4,10 @@ import (
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/usecase"
 	"final-project-enigma-clean/util/helper"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gookit/slog"
-	"net/http"
 )
 
 type UserController struct {
