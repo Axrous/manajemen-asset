@@ -6,10 +6,10 @@ import (
 )
 
 type AssetRepository interface {
-	Save(asset model.Asset) error
+	Save(asset model.AssetRequest) error
 	FindAll() ([]model.Asset, error)
 	FindById(id string) (model.Asset, error)
-	Update(asset model.Asset) error
+	Update(asset model.AssetRequest) error
 	Delete(id string) error
 }
 
@@ -77,10 +77,10 @@ func (a *assetRepository) FindById(id string) (model.Asset, error) {
 }
 
 // Save implements AssetRepository.
-func (a *assetRepository) Save(asset model.Asset) error {
+func (a *assetRepository) Save(asset model.AssetRequest) error {
 	query := "insert into asset(id, id_category, id_asset_type, name, amount, status, entry_date, img_url) values($1, $2, $3, $4, $5, $6, $7, $8)"
 
-	_, err := a.db.Exec(query, asset.ID, asset.Category.ID, asset.AssetType.ID, asset.Name, asset.Amount, asset.Status, asset.EntryDate, asset.ImgUrl)
+	_, err := a.db.Exec(query, asset.ID, asset.CategoryId, asset.AssetTypeId, asset.Name, asset.Amount, asset.Status, asset.EntryDate, asset.ImgUrl)
 	if err != nil {
 		return err
 	}
@@ -89,10 +89,10 @@ func (a *assetRepository) Save(asset model.Asset) error {
 }
 
 // Update implements AssetRepository.
-func (a *assetRepository) Update(asset model.Asset) error {
+func (a *assetRepository) Update(asset model.AssetRequest) error {
 	query := `update asset set id_category = $2, id_asset_type = $3, name = $4, amount = $5, status = $6, img_url = $7 where id = $1`
 
-	_, err := a.db.Exec(query, asset.ID, asset.Category.ID, asset.AssetType.ID, asset.Name, asset.Amount, asset.Status, asset.ImgUrl)
+	_, err := a.db.Exec(query, asset.ID, asset.CategoryId, asset.AssetTypeId, asset.Name, asset.Amount, asset.Status, asset.ImgUrl)
 	if err !=nil {
 		return err
 	}

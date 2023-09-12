@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"final-project-enigma-clean/model"
+	"final-project-enigma-clean/util/helper"
 	"fmt"
 	"testing"
 	"time"
@@ -34,26 +35,21 @@ func TestAssetRepositoryTestSuite(t *testing.T)  {
 
 func (suite *AssetRepositoryTestSuite) TestCreate_Success() {
 	
-	asset := model.Asset{
-		ID:        "asdasd",
-		Category:  model.Category{
-			ID:   "1",
-		},
-		AssetType: model.AssetType{
-			ID:   "2",
-		},
-		Name:      "Mobil",
-		Amount:    50,
-		Status:    "ready",
-		EntryDate: time.Now(),
-		ImgUrl:    "qwerty",
+	asset := model.AssetRequest{
+		ID:         helper.GenerateUUID(),
+		CategoryId: "TEST1",
+		AssetTypeId:  "TEST2",
+		Name:       "Laptop",
+		Amount:     "5",
+		EntryDate:  time.Now(),
+		ImgUrl:     "nothing",
 	}
 
 
 	suite.mockSQL.ExpectExec("insert into asset").WithArgs(
 		asset.ID, 
-		asset.Category.ID, 
-		asset.AssetType.ID, 
+		asset.CategoryId, 
+		asset.AssetTypeId, 
 		asset.Name, 
 		asset.Amount, 
 		asset.Status, 
@@ -67,26 +63,21 @@ func (suite *AssetRepositoryTestSuite) TestCreate_Success() {
 
 func (suite *AssetRepositoryTestSuite) TestCreate_Failed() {
 	
-	asset := model.Asset{
-		ID:        "asdasd",
-		Category:  model.Category{
-			ID:   "1",
-		},
-		AssetType: model.AssetType{
-			ID:   "2",
-		},
-		Name:      "Mobil",
-		Amount:    50,
-		Status:    "ready",
-		EntryDate: time.Now(),
-		ImgUrl:    "qwerty",
+	asset := model.AssetRequest{
+		ID:         helper.GenerateUUID(),
+		CategoryId: "TEST1",
+		AssetTypeId:"TEST2",
+		Name:       "Laptop",
+		Amount:     "5",
+		EntryDate:  time.Now(),
+		ImgUrl:     "nothing",
 	}
 
 
 	suite.mockSQL.ExpectExec("insert into asset").WithArgs(
 		asset.ID, 
-		asset.Category.ID, 
-		asset.AssetType.ID, 
+		asset.CategoryId, 
+		asset.AssetTypeId, 
 		asset.Name, 
 		asset.Amount, 
 		asset.Status, 
@@ -254,26 +245,21 @@ func (suite *AssetRepositoryTestSuite) TestFindById_FailedRowScan() {
 }
 
 func (suite *AssetRepositoryTestSuite) TestUpdate_Success()  {
-	asset := model.Asset{
-		ID:        "1",
-		Category:  model.Category{
-			ID:   "1",
-			Name: "bergerak",
-		},
-		AssetType: model.AssetType{
-			ID:   "2",
-			Name: "ringan",
-		},
-		Name:      "Mobil",
-		Amount:    50,
-		Status:    "ready",
-		ImgUrl:    "qwerty",
+
+	asset := model.AssetRequest	{
+		ID:         helper.GenerateUUID(),
+		CategoryId: "TEST1",
+		AssetTypeId:"TEST2",
+		Name:       "Laptop",
+		Amount:     "5",
+		EntryDate:  time.Now(),
+		ImgUrl:     "nothing",
 	}
 
 	suite.mockSQL.ExpectExec("update asset").WithArgs(
 		asset.ID,
-		asset.Category.ID, 
-		asset.AssetType.ID, 
+		asset.CategoryId, 
+		asset.AssetTypeId, 
 		asset.Name, 
 		asset.Amount, 
 		asset.Status,
@@ -286,26 +272,20 @@ func (suite *AssetRepositoryTestSuite) TestUpdate_Success()  {
 }
 
 func (suite *AssetRepositoryTestSuite) TestUpdate_Failed()  {
-	asset := model.Asset{
-		ID:        "1",
-		Category:  model.Category{
-			ID:   "1",
-			Name: "bergerak",
-		},
-		AssetType: model.AssetType{
-			ID:   "2",
-			Name: "ringan",
-		},
-		Name:      "Mobil",
-		Amount:    50,
-		Status:    "ready",
-		ImgUrl:    "qwerty",
+	asset := model.AssetRequest	{
+		ID:         helper.GenerateUUID(),
+		CategoryId: "TEST1",
+		AssetTypeId:"TEST2",
+		Name:       "Laptop",
+		Amount:     "5",
+		EntryDate:  time.Now(),
+		ImgUrl:     "nothing",
 	}
 
 	suite.mockSQL.ExpectExec("update asset").WithArgs(
 		asset.ID,
-		asset.Category.ID, 
-		asset.AssetType.ID, 
+		asset.CategoryId, 
+		asset.AssetTypeId, 
 		asset.Name, 
 		asset.Amount, 
 		asset.Status,
