@@ -121,10 +121,10 @@ func (s *StaffController) deleteHandlerStaff(c *gin.Context) {
 func (s *StaffController) Route() {
 	s.rg.POST("/staffs", s.createHandlerStaff)
 	s.rg.GET("/staffs", s.listHandlerStaff)
-	s.rg.GET("/staffs/:id", s.getByIdteHandlerStaff)
+	s.rg.GET("/staffs/:nik_staff", s.getByIdteHandlerStaff)
 	s.rg.GET("/staffs/name/:name", s.getByNameteHandlerStaff)
 	s.rg.PUT("/staffs", s.updateHandlerStaff)
-	s.rg.DELETE("/staffs/:id", s.deleteHandlerStaff)
+	s.rg.DELETE("/staffs/:nik_staff", s.deleteHandlerStaff)
 }
 
 func NewStaffController(staffUC usecase.StaffUseCase, rg *gin.RouterGroup) *StaffController {

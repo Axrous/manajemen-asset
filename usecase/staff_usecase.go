@@ -11,7 +11,7 @@ type StaffUseCase interface {
 	CreateNew(payload model.Staff) error
 	FindByName(name string) ([]model.Staff, error)
 	FindById(nik_staff string) (model.Staff, error)
-	FindAll() ([]model.Staff, error)
+	FindByAll() ([]model.Staff, error)
 	Update(payload model.Staff) error
 	Delete(nik_staff string) error
 	Paging(payload dto.PageRequest) ([]model.Staff, dto.Paging, error)
@@ -69,7 +69,7 @@ func (s *staffUseCase) Delete(nik_staff string) error {
 }
 
 // FindAll implements StaffUseCase.
-func (s *staffUseCase) FindAll() ([]model.Staff, error) {
+func (s *staffUseCase) FindByAll() ([]model.Staff, error) {
 	staff, err := s.repo.FindByAll()
 	if err != nil {
 		return nil, fmt.Errorf("failed to find by all staff: %v", err)

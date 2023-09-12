@@ -9,11 +9,11 @@ import (
 
 type StaffRepository interface {
 	Save(payload model.Staff) error
-	FindById(id string) (model.Staff, error)
+	FindById(nik_staff string) (model.Staff, error)
 	FindByName(name string) ([]model.Staff, error)
 	FindByAll() ([]model.Staff, error)
 	Update(payload model.Staff) error
-	Delete(id string) error
+	Delete(nik_staff string) error
 	Paging(payload dto.PageRequest) ([]model.Staff, dto.Paging, error)
 }
 
@@ -22,8 +22,8 @@ type staffRepository struct {
 }
 
 // Delete implements StaffRepository.
-func (s *staffRepository) Delete(id string) error {
-	_, err := s.db.Exec("DELETE FROM staff WHERE id=", id)
+func (s *staffRepository) Delete(nik_staff string) error {
+	_, err := s.db.Exec("DELETE FROM staff WHERE nik_staff=", nik_staff)
 	if err != nil {
 		return err
 	}
@@ -32,6 +32,7 @@ func (s *staffRepository) Delete(id string) error {
 
 // FindByAll implements StaffRepository.
 func (s *staffRepository) FindByAll() ([]model.Staff, error) {
+	//nik_staff, name, phone_number, address, birth_date, img_url, divisi
 	rows, err := s.db.Query("SELECT * FROM staff")
 	if err != nil {
 		return nil, err
@@ -49,8 +50,8 @@ func (s *staffRepository) FindByAll() ([]model.Staff, error) {
 }
 
 // FindById implements StaffRepository.
-func (s *staffRepository) FindById(id string) (model.Staff, error) {
-	row := s.db.QueryRow("SELECT * FROM staff WHERE id=", id)
+func (s *staffRepository) FindById(nik_staff string) (model.Staff, error) {
+	row := s.db.QueryRow("SELECT * FROM staff WHERE nik_staff=$1", nik_staff)
 	var staff model.Staff
 	err := row.Scan(&staff.Nik_Staff, &staff.Name, &staff.Phone_number, &staff.Address, &staff.Birth_date, &staff.Img_url, &staff.Divisi)
 	if err != nil {
@@ -81,7 +82,7 @@ func (s *staffRepository) Paging(payload dto.PageRequest) ([]model.Staff, dto.Pa
 	if payload.Page <= 0 {
 		payload.Page = 1
 	}
-	q := `SELECT i* FROM staff LIMIT $2 OFFSET $1`
+	q := `SELECT * FROM staff LIMIT $2 OFFSET $1`
 	rows, err := s.db.Query(q, (payload.Page-1)*payload.Size, payload.Size)
 	if err != nil {
 		return nil, dto.Paging{}, err
@@ -97,7 +98,7 @@ func (s *staffRepository) Paging(payload dto.PageRequest) ([]model.Staff, dto.Pa
 		staffs = append(staffs, staff)
 	}
 	var count int
-	row := s.db.QueryRow("SELECT COUNT(id) FROM staff")
+	row := s.db.QueryRow("SELECT COUNT(nik_staff) FROM staff")
 	if err := row.Scan(&count); err != nil {
 		return nil, dto.Paging{}, err
 	}
@@ -124,7 +125,7 @@ func (s *staffRepository) Save(payload model.Staff) error {
 
 // Update implements StaffRepository.
 func (s *staffRepository) Update(payload model.Staff) error {
-	_, err := s.db.Exec("UPDATE SET staff name=$2 phone_number=$3 address=$4 birth_date=$5 img_url=$6 divisi=$7 WHERE nik_staff=$1", payload.Nik_Staff, payload.Name, payload.Phone_number, payload.Address, payload.Birth_date, payload.Img_url, payload.Divisi)
+	_, err := s.db.Exec("UPDATE SET staff nik_staff, name, phone_number=$3 address=$4 birth_date=$5 img_url=$6 divisi=$7 WHERE nik_staff=$1", payload.Nik_Staff, payload.Name, payload.Phone_number, payload.Address, payload.Birth_date, payload.Img_url, payload.Divisi)
 	if err != nil {
 		return err
 	}
