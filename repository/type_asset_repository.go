@@ -77,6 +77,7 @@ func (t *typeAssetRepository) FindByName(name string) ([]model.TypeAsset, error)
 		if err != nil {
 			return nil, err
 		}
+		typeAssets = append(typeAssets, typeAsset)
 	}
 	return typeAssets, nil
 

@@ -73,6 +73,7 @@ func (s *staffRepository) FindByName(name string) ([]model.Staff, error) {
 		if err != nil {
 			return nil, err
 		}
+		staffs = append(staffs, staff)
 	}
 	return staffs, nil
 }
