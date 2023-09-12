@@ -18,6 +18,7 @@ type AssetUsecase interface {
 type assetUsecase struct {
 	repo repository.AssetRepository
 	//get category usecase
+	typeAssetUC TypeAssetUseCase
 	//get asset type usecase
 }
 
@@ -37,10 +38,17 @@ func (a *assetUsecase) Create(payload model.AssetRequest) error {
 	}
 
 	//implement category find by id
+	_, err := a.typeAssetUC.FindById(payload.AssetTypeId)
+	if err != nil {
+		return err
+	}
+
 	//implement asset type find by id
+
+	//commented for unit testing
 	// payload.ID = helper.GenerateUUID()
 	payload.EntryDate = time.Now()
-	err := a.repo.Save(payload)
+	err = a.repo.Save(payload)
 	if err != nil {
 		return fmt.Errorf("failed save asset %s", err)
 	}
@@ -99,9 +107,14 @@ func (a *assetUsecase) Update(payload model.AssetRequest) error {
 	}
 
 	//implement category find by id
-	//implement asset type find by id
+	
+	//implement category find by id
+	_, err := a.typeAssetUC.FindById(payload.AssetTypeId)
+	if err != nil {
+		return err
+	}
 
-	_, err := a.FindById(payload.Id)
+	_, err = a.FindById(payload.Id)
 	if err != nil {
 		return err
 	}
@@ -114,8 +127,9 @@ func (a *assetUsecase) Update(payload model.AssetRequest) error {
 	return nil
 }
 
-func NewAssetUsecase(assetRepo repository.AssetRepository) AssetUsecase {
+func NewAssetUsecase(assetRepo repository.AssetRepository, typeAssetUC TypeAssetUseCase) AssetUsecase {
 	return &assetUsecase{
-		repo: assetRepo,
+		repo:        assetRepo,
+		typeAssetUC: typeAssetUC,
 	}
 }
