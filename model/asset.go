@@ -18,7 +18,7 @@ type AssetRequest struct {
 	CategoryId 	string
 	AssetTypeId	string
 	Name 		string
-	Amount 		string
+	Amount 		int
 	Status		string
 	EntryDate 	time.Time
 	ImgUrl 		string

@@ -40,7 +40,7 @@ func (suite *AssetRepositoryTestSuite) TestCreate_Success() {
 		CategoryId: "TEST1",
 		AssetTypeId:  "TEST2",
 		Name:       "Laptop",
-		Amount:     "5",
+		Amount:     5,
 		EntryDate:  time.Now(),
 		ImgUrl:     "nothing",
 	}
@@ -68,7 +68,7 @@ func (suite *AssetRepositoryTestSuite) TestCreate_Failed() {
 		CategoryId: "TEST1",
 		AssetTypeId:"TEST2",
 		Name:       "Laptop",
-		Amount:     "5",
+		Amount:     5,
 		EntryDate:  time.Now(),
 		ImgUrl:     "nothing",
 	}
@@ -251,7 +251,7 @@ func (suite *AssetRepositoryTestSuite) TestUpdate_Success()  {
 		CategoryId: "TEST1",
 		AssetTypeId:"TEST2",
 		Name:       "Laptop",
-		Amount:     "5",
+		Amount:     5,
 		EntryDate:  time.Now(),
 		ImgUrl:     "nothing",
 	}
@@ -277,7 +277,7 @@ func (suite *AssetRepositoryTestSuite) TestUpdate_Failed()  {
 		CategoryId: "TEST1",
 		AssetTypeId:"TEST2",
 		Name:       "Laptop",
-		Amount:     "5",
+		Amount:     5,
 		EntryDate:  time.Now(),
 		ImgUrl:     "nothing",
 	}
