@@ -7,11 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gookit/slog"
-<<<<<<< HEAD
-	"go.uber.org/zap"
 	"net/http"
-=======
->>>>>>> 064dd7d6d89f1b6299f6efec1c16d78e5d153a22
 )
 
 type UserController struct {
@@ -96,14 +92,9 @@ func (u *UserController) LoginOTPHandler(c *gin.Context) {
 // init route
 func (u *UserController) Route() {
 	{
-<<<<<<< HEAD
-		ug.POST("/register", u.RegisterUserHandler)
-		ug.POST("/login", u.LoginUserHandler)
-		ug.POST("/login/email_otp/start", u.LoginOTPHandler)
-=======
 		u.rg.POST("/register", u.RegisterUserHandler)
 		u.rg.POST("/login", u.LoginUserHandler)
->>>>>>> 064dd7d6d89f1b6299f6efec1c16d78e5d153a22
+		u.rg.POST("/login/email_otp/start", u.LoginOTPHandler)
 	}
 }
 
