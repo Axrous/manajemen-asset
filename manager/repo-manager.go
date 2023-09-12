@@ -4,6 +4,7 @@ import "final-project-enigma-clean/repository"
 
 type RepoManager interface {
 	UserRepo() repository.UserCredentialsRepository
+	TypeAssetRepo() repository.TypeAssetRepository
 }
 
 type repoManager struct {

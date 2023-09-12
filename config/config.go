@@ -3,8 +3,9 @@ package config
 import (
 	"final-project-enigma-clean/util/helper"
 	"fmt"
-	"github.com/gookit/slog"
 	"os"
+
+	"github.com/gookit/slog"
 )
 
 type DbConfig struct {
@@ -23,6 +24,11 @@ type LoggerPath struct {
 type Config struct {
 	*DbConfig
 	*LoggerPath
+	ApiConfig
+}
+type ApiConfig struct {
+	ApiHost string
+	ApiPort string
 }
 
 func (c *Config) ReadConfig() error {
@@ -38,6 +44,10 @@ func (c *Config) ReadConfig() error {
 		DbName:   os.Getenv("DB_NAME"),
 		DbDriver: os.Getenv("DB_DRIVER"),
 	}
+	c.ApiConfig = ApiConfig{
+		ApiHost: os.Getenv("API_HOST"),
+		ApiPort: os.Getenv("API_PORT"),
+	}
 
 	//file config
 	c.LoggerPath = &LoggerPath{
@@ -46,7 +56,7 @@ func (c *Config) ReadConfig() error {
 
 	//if .env is missing
 	if c.DbConfig.Host == "" || c.DbConfig.Port == "" || c.DbConfig.DbName == "" ||
-		c.DbConfig.User == "" || c.DbConfig.Password == "" || c.DbConfig.DbDriver == "" {
+		c.DbConfig.User == "" || c.DbConfig.Password == "" || c.DbConfig.DbDriver == "" || c.ApiConfig.ApiHost == "" || c.ApiConfig.ApiPort == "" {
 		return fmt.Errorf("missing required environment variable")
 	}
 

@@ -23,7 +23,7 @@ type typeAssetRepository struct {
 
 // FindById implements TypeAssetRepository.
 func (t *typeAssetRepository) FindById(id string) (model.TypeAsset, error) {
-	row := t.db.QueryRow("SELECT id,name FROM type_asset WHERE id=$1", id)
+	row := t.db.QueryRow("SELECT id,name FROM asset_type WHERE id=$1", id)
 	var typeAsset model.TypeAsset
 	err := row.Scan(&typeAsset.Id, &typeAsset.Name)
 	if err != nil {
@@ -36,7 +36,7 @@ func (t *typeAssetRepository) FindById(id string) (model.TypeAsset, error) {
 
 // Delete implements TypeAssetRepository.
 func (t *typeAssetRepository) Delete(id string) error {
-	_, err := t.db.Exec("DELETE FROM type_asset WHERE id=", id)
+	_, err := t.db.Exec("DELETE FROM asset_type WHERE id= $1", id)
 	if err != nil {
 		return err
 	}
@@ -45,7 +45,7 @@ func (t *typeAssetRepository) Delete(id string) error {
 
 // FindAll implements TypeAssetRepository.
 func (t *typeAssetRepository) FindAll() ([]model.TypeAsset, error) {
-	rows, err := t.db.Query("SELECT * FROM type_asset")
+	rows, err := t.db.Query("SELECT * FROM asset_type")
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (t *typeAssetRepository) FindAll() ([]model.TypeAsset, error) {
 
 // FindByName implements TypeAssetRepository.
 func (t *typeAssetRepository) FindByName(name string) ([]model.TypeAsset, error) {
-	rows, err := t.db.Query(`SELECT id, name FROM type_asset WHERE name ILIKE '$1'`, "%"+name+"%")
+	rows, err := t.db.Query(`SELECT id, name FROM asset_type WHERE name ILIKE '$1'`, "%"+name+"%")
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (t *typeAssetRepository) Paging(payload dto.PageRequest) ([]model.TypeAsset
 	if payload.Page <= 0 {
 		payload.Page = 1
 	}
-	q := `SELECT id, name FROM type_asset LIMIT $2 OFFSET $1`
+	q := `SELECT id, name FROM asset_type LIMIT $2 OFFSET $1`
 	rows, err := t.db.Query(q, (payload.Page-1)*payload.Size, payload.Size)
 	if err != nil {
 		return nil, dto.Paging{}, err
@@ -103,7 +103,7 @@ func (t *typeAssetRepository) Paging(payload dto.PageRequest) ([]model.TypeAsset
 		typeAssets = append(typeAssets, typeAsset)
 	}
 	var count int
-	row := t.db.QueryRow("SELECT COUNT(id) FROM type_asset")
+	row := t.db.QueryRow("SELECT COUNT(id) FROM asset_type")
 	if err := row.Scan(&count); err != nil {
 		return nil, dto.Paging{}, err
 	}
@@ -121,7 +121,7 @@ func (t *typeAssetRepository) Paging(payload dto.PageRequest) ([]model.TypeAsset
 
 // Save implements TypeAssetRepository.
 func (t *typeAssetRepository) Save(typeAsset model.TypeAsset) error {
-	_, err := t.db.Exec("INSERT INTO type_asset VALUES ($1,$2)", typeAsset.Id, typeAsset.Name)
+	_, err := t.db.Exec("INSERT INTO asset_type VALUES ($1,$2)", typeAsset.Id, typeAsset.Name)
 	if err != nil {
 		return err
 	}
@@ -130,7 +130,7 @@ func (t *typeAssetRepository) Save(typeAsset model.TypeAsset) error {
 
 // Update implements TypeAssetRepository.
 func (t *typeAssetRepository) Update(typeAsset model.TypeAsset) error {
-	_, err := t.db.Exec("UPDATE type_asset SET name= WHERE id=", typeAsset.Id, typeAsset.Name)
+	_, err := t.db.Exec("UPDATE asset_type SET name=$2 WHERE id=$1", typeAsset.Id, typeAsset.Name)
 	if err != nil {
 		return err
 	}

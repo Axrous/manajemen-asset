@@ -13,10 +13,17 @@ import (
 )
 
 type Server struct {
+<<<<<<< HEAD
 	um        manager.UsecaseManager
 	gin       *gin.Engine
 	ginEngine *gin.RouterGroup
 	log       *logrus.Logger
+=======
+	um   manager.UsecaseManager
+	gin  *gin.Engine
+	host string
+	log  *logrus.Logger
+>>>>>>> eb5e013b7dfd27573e1296c9395bb0056ef82c64
 }
 
 func (s *Server) initMiddlewares() {
@@ -36,7 +43,10 @@ func (s *Server) initControllers() {
 func (s *Server) Run() {
 	s.initMiddlewares()
 	s.initControllers()
-	s.gin.Run(":3000")
+	err := s.gin.Run(s.host)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func NewServer() *Server {
@@ -54,14 +64,17 @@ func NewServer() *Server {
 	rm := manager.NewRepoManager(im)
 	um := manager.NewUsecaseManager(rm)
 
+	//untuk host
+	host := fmt.Sprintf("%s:%s", cfg.ApiHost, cfg.ApiPort)
 	//gin serv
 	g := gin.Default()
 
 	//init log
 	log := logrus.New()
 	return &Server{
-		um:  um,
-		gin: g,
-		log: log,
+		um:   um,
+		gin:  g,
+		host: host,
+		log:  log,
 	}
 }
