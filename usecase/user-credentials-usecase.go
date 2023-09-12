@@ -5,7 +5,6 @@ import (
 	"final-project-enigma-clean/repository"
 	"final-project-enigma-clean/util/helper"
 	"fmt"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/gookit/slog"
 	"strconv"
@@ -14,11 +13,39 @@ import (
 type UserCredentialUsecase interface {
 	RegisterUser(user model.UserRegisterRequest) error
 	LoginUser(user model.UserLoginRequest) (string, error)
+	LoginUserForgotPass(user model.ChangePasswordRequest) (string, error)
 	FindingUserEmail(email string) (userlogin model.UserLoginRequest, err error)
+	FindingUserEmailPass(email string) (userlogin model.ChangePasswordRequest, err error)
+	ForgotPassword(email, newpass string) error
+	GetUserPassword(email string) (string, error)
+	EmailExist(email string) bool
 }
 
 type userDetailUsecase struct {
 	udetailsRepo repository.UserCredentialsRepository
+}
+
+func (u *userDetailUsecase) FindingUserEmailPass(email string) (userlogin model.ChangePasswordRequest, err error) {
+	//TODO implement me
+	return u.udetailsRepo.FindUserEmailPass(email)
+}
+
+func (u *userDetailUsecase) LoginUserForgotPass(user model.ChangePasswordRequest) (string, error) {
+	//TODO implement me
+
+	// Find user email
+	user, err := u.FindingUserEmailPass(user.Email)
+	if err != nil {
+		return "", err
+	}
+
+	//logic otp
+	otp, _ := helper.GenerateOTP()
+	helper.SendOTPForgotPass(user.Email, strconv.Itoa(otp))
+	OTPMap[user.Email] = otp
+	slog.Infof("Sending otp to %v", user.Email)
+
+	return user.NewPassword, nil
 }
 
 // register user business logic
@@ -83,12 +110,12 @@ func (u *userDetailUsecase) LoginUser(userlogin model.UserLoginRequest) (string,
 	// Find user email
 	user, err := u.FindingUserEmail(userlogin.Email)
 	if err != nil {
-		return "", fmt.Errorf("Failed to find email %v", err.Error())
+		return "", err
 	}
 
 	// Compare password
 	if err = helper.ComparePassword(user.Password, userlogin.Password); err != nil {
-		return "", err
+		return "", fmt.Errorf("Invalid credential")
 	}
 
 	//logic otp
@@ -104,6 +131,31 @@ func (u *userDetailUsecase) LoginUser(userlogin model.UserLoginRequest) (string,
 func (u *userDetailUsecase) FindingUserEmail(email string) (user model.UserLoginRequest, err error) {
 	//TODO implement me
 	return u.udetailsRepo.FindUserEmail(email)
+}
+
+func (u *userDetailUsecase) EmailExist(email string) bool {
+	//TODO implement me
+
+	var count int
+	if !u.udetailsRepo.CheckEmailExist(email) {
+		return false
+	}
+
+	return count > 0
+}
+
+func (u *userDetailUsecase) GetUserPassword(email string) (string, error) {
+	//TODO implement me
+
+	return u.udetailsRepo.GetUserPassword(email)
+}
+
+func (u *userDetailUsecase) ForgotPassword(email, newpass string) error {
+	//TODO implement me
+
+	//update password disini
+	u.udetailsRepo.ForgotPassword(email, newpass)
+	return nil
 }
 
 func NewUserCredentialUsecase(udetailsRepo repository.UserCredentialsRepository) UserCredentialUsecase {
