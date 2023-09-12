@@ -3,6 +3,7 @@ package usecase
 import (
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/repository"
+	"final-project-enigma-clean/util/helper"
 	"fmt"
 	"time"
 )
@@ -13,6 +14,7 @@ type AssetUsecase interface {
 	FindById(id string) (model.Asset, error)
 	Update(payload model.AssetRequest) error
 	Delete(id string) error
+	FindByName(name string) ([]model.Asset, error)
 }
 
 type assetUsecase struct {
@@ -20,6 +22,19 @@ type assetUsecase struct {
 	//get category usecase
 	typeAssetUC TypeAssetUseCase
 	//get asset type usecase
+}
+
+// FindByName implements AssetUsecase.
+func (a *assetUsecase) FindByName(name string) ([]model.Asset, error) {
+	if name == "" {
+		return nil, fmt.Errorf("name cannot empty")
+	}
+
+	assets, err := a.repo.FindByName(name)
+	if err != nil {
+		return nil, fmt.Errorf("failed get assets, %s", err)
+	}
+	return assets, nil
 }
 
 // Create implements AssetUsecase.
@@ -46,7 +61,7 @@ func (a *assetUsecase) Create(payload model.AssetRequest) error {
 	//implement asset type find by id
 
 	//commented for unit testing
-	// payload.ID = helper.GenerateUUID()
+	payload.Id = helper.GenerateUUID()
 	payload.EntryDate = time.Now()
 	err = a.repo.Save(payload)
 	if err != nil {
@@ -107,7 +122,6 @@ func (a *assetUsecase) Update(payload model.AssetRequest) error {
 	}
 
 	//implement category find by id
-	
 	//implement category find by id
 	_, err := a.typeAssetUC.FindById(payload.AssetTypeId)
 	if err != nil {

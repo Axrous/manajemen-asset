@@ -14,12 +14,12 @@ type Asset struct {
 }
 
 type AssetRequest struct {
-	Id 			string
-	CategoryId 	string
-	AssetTypeId	string
-	Name 		string
-	Amount 		int
-	Status		string
+	Id 			string `json:"id"`
+	CategoryId 	string `json:"categoryId"`
+	AssetTypeId	string `json:"assetTypeId"`
+	Name 		string `json:"name"`
+	Amount 		int		`json:"amount"`
+	Status		string `json:"status"`
 	EntryDate 	time.Time
-	ImgUrl 		string
+	ImgUrl 		string `json:"imgUrl"`
 }

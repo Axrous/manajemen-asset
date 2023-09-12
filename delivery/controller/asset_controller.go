@@ -27,17 +27,32 @@ func (a *AssetController) createAssetHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(201, gin.H{"status": "OK", "message": "successfully created Asset"})
+	c.JSON(201, gin.H{"status": "OK", "message": "successfully created Asset", "asset" : assetRequest})
+	// c.JSON(201, assetRequest)
 }
 
-func (a *AssetController) findAllAssetHandler(c *gin.Context) {
+func (a *AssetController) ListAssetHandler(c *gin.Context) {
+	name := c.Query("name")
+	if name != "" {
+		assets, err := a.usecase.FindByName(name)
+		if err != nil {
+			c.AbortWithStatusJSON(500, gin.H{"status": "Error", "message" : err.Error()})
+			return
+		}
 	
+		c.JSON(200, gin.H{
+			"status" : "OK",
+			"assets" : assets,
+		})
+		return
+	}
+
+
 	assets, err := a.usecase.FindAll()
 	if err != nil {
 		c.AbortWithStatusJSON(500, gin.H{"status": "Error", "message" : err.Error()})
 		return
 	}
-
 	c.JSON(200, gin.H{
 		"status" : "OK",
 		"assets" : assets,
@@ -89,10 +104,26 @@ func (a *AssetController) deleteHandler(c *gin.Context) {
 	}
 }
 
+func (a *AssetController) findByNameHandler(c *gin.Context)  {
+	
+	name := c.Param("name")
+
+	assets, err := a.usecase.FindByName(name)
+	if err != nil {
+		c.AbortWithStatusJSON(500, gin.H{"status": "Error", "message" : err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"status" : "OK",
+		"assets" : assets,
+	})
+}
+
 
 func (a *AssetController) Route() {
 	a.rg.POST("/assets", a.createAssetHandler)
-	a.rg.GET("/assets", a.findAllAssetHandler)
+	a.rg.GET("/assets", a.ListAssetHandler)
 	a.rg.GET("/assets/:id", a.findByIdHandler)
 	a.rg.PUT("/assets", a.updateHandler)
 	a.rg.DELETE("/assets/:id", a.deleteHandler)
