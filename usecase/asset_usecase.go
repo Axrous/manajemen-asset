@@ -3,7 +3,6 @@ package usecase
 import (
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/repository"
-	"final-project-enigma-clean/util/helper"
 	"fmt"
 	"time"
 )
@@ -39,7 +38,7 @@ func (a *assetUsecase) Create(payload model.AssetRequest) error {
 
 	//implement category find by id
 	//implement asset type find by id
-	payload.ID = helper.GenerateUUID()
+	// payload.ID = helper.GenerateUUID()
 	payload.EntryDate = time.Now()
 	err := a.repo.Save(payload)
 	if err != nil {
