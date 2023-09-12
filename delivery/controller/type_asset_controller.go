@@ -72,21 +72,21 @@ func (t *TypeAssetController) getByIdteHandlerTypeAsset(c *gin.Context) {
 	c.JSON(200, response)
 }
 
-//	func (t *TypeAssetController) getByNameteHandlerTypeAsset(c *gin.Context) {
-//		name := c.Param("name")
-//		typeAsset, err := t.typeAssetUC.FindByName(name)
-//		if err != nil {
-//			c.AbortWithStatusJSON(500, gin.H{
-//				"message": err.Error(),
-//			})
-//			return
-//		}
-//		response := gin.H{
-//			"message": "successfully get by name type asset",
-//			"data":    typeAsset,
-//		}
-//		c.JSON(200, response)
-//	}
+func (t *TypeAssetController) getByNameteHandlerTypeAsset(c *gin.Context) {
+	name := c.Param("name")
+	typeAsset, err := t.typeAssetUC.FindByName(name)
+	if err != nil {
+		c.AbortWithStatusJSON(500, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+	response := gin.H{
+		"message": "successfully get by name type asset",
+		"data":    typeAsset,
+	}
+	c.JSON(200, response)
+}
 func (t *TypeAssetController) updateHandlerTypeAsset(c *gin.Context) {
 	var typeAsset model.TypeAsset
 	if err := c.ShouldBindJSON(&typeAsset); err != nil {
@@ -123,7 +123,7 @@ func (t *TypeAssetController) Route() {
 	t.rg.POST("/typeAsset", t.createHandlerTypeAsset)
 	t.rg.GET("/typeAsset", t.listHandlerTypeAsset)
 	t.rg.GET("/typeAsset/:id", t.getByIdteHandlerTypeAsset)
-	// t.rg.GET("/typeAsset/:name", t.getByNameteHandlerTypeAsset)
+	t.rg.GET("/typeAsset/name/:name", t.getByNameteHandlerTypeAsset)
 	t.rg.PUT("/typeAsset", t.updateHandlerTypeAsset)
 	t.rg.DELETE("/typeAsset/:id", t.deleteHandlerTypeAsset)
 }

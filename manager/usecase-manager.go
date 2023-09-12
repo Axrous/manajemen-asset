@@ -5,10 +5,16 @@ import "final-project-enigma-clean/usecase"
 type UsecaseManager interface {
 	UserUsecase() usecase.UserCredentialUsecase
 	TypeAssetUseCase() usecase.TypeAssetUseCase
+	StaffUseCase() usecase.StaffUseCase
 }
 
 type usecaseManager struct {
 	rm RepoManager
+}
+
+// StaffUseCase implements UsecaseManager.
+func (u *usecaseManager) StaffUseCase() usecase.StaffUseCase {
+	return usecase.NewStaffUseCase(u.rm.StaffRepo())
 }
 
 // TypeAssetUseCase implements UsecaseManager.
