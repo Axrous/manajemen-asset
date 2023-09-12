@@ -34,9 +34,6 @@ func (t *typeAssetUseCase) FindById(id string) (model.TypeAsset, error) {
 
 // CreateNew implements TypeAssetUseCase.
 func (t *typeAssetUseCase) CreateNew(payload model.TypeAsset) error {
-	if payload.Id == "" {
-		return fmt.Errorf("id is required")
-	}
 	if payload.Name == "" {
 		return fmt.Errorf("name is required")
 	}
@@ -87,9 +84,6 @@ func (t *typeAssetUseCase) Paging(payload dto.PageRequest) ([]model.TypeAsset, d
 
 // Update implements TypeAssetUseCase.
 func (t *typeAssetUseCase) Update(payload model.TypeAsset) error {
-	if payload.Id == "" {
-		return fmt.Errorf("id is required")
-	}
 	if payload.Name == "" {
 		return fmt.Errorf("name is required")
 	}
