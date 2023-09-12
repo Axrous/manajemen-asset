@@ -135,7 +135,7 @@ func (u *UserController) ForgotPassOTPHandler(c *gin.Context) {
 		return
 	}
 
-	//stored otp and then we need to generate jwt
+	//stored otp
 	if request.OTP == storedOTP {
 		delete(usecase.OTPMap, request.Email)
 
