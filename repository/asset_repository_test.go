@@ -36,7 +36,7 @@ func TestAssetRepositoryTestSuite(t *testing.T)  {
 func (suite *AssetRepositoryTestSuite) TestCreate_Success() {
 	
 	asset := model.AssetRequest{
-		ID:         helper.GenerateUUID(),
+		Id:         helper.GenerateUUID(),
 		CategoryId: "TEST1",
 		AssetTypeId:  "TEST2",
 		Name:       "Laptop",
@@ -47,7 +47,7 @@ func (suite *AssetRepositoryTestSuite) TestCreate_Success() {
 
 
 	suite.mockSQL.ExpectExec("insert into asset").WithArgs(
-		asset.ID, 
+		asset.Id, 
 		asset.CategoryId, 
 		asset.AssetTypeId, 
 		asset.Name, 
@@ -64,7 +64,7 @@ func (suite *AssetRepositoryTestSuite) TestCreate_Success() {
 func (suite *AssetRepositoryTestSuite) TestCreate_Failed() {
 	
 	asset := model.AssetRequest{
-		ID:         helper.GenerateUUID(),
+		Id:         helper.GenerateUUID(),
 		CategoryId: "TEST1",
 		AssetTypeId:"TEST2",
 		Name:       "Laptop",
@@ -75,7 +75,7 @@ func (suite *AssetRepositoryTestSuite) TestCreate_Failed() {
 
 
 	suite.mockSQL.ExpectExec("insert into asset").WithArgs(
-		asset.ID, 
+		asset.Id, 
 		asset.CategoryId, 
 		asset.AssetTypeId, 
 		asset.Name, 
@@ -91,13 +91,13 @@ func (suite *AssetRepositoryTestSuite) TestCreate_Failed() {
 
 func (suite *AssetRepositoryTestSuite) TestFindAll_Success() {
 	assets := []model.Asset{{
-		ID:        "1",
+		Id:        "1",
 		Category:  model.Category{
-			ID:   "1",
+			Id:   "1",
 			Name: "bergerak",
 		},
-		AssetType: model.AssetType{
-			ID:   "2",
+		AssetType: model.TypeAsset{
+			Id:   "2",
 			Name: "ringan",
 		},
 		Name:      "Mobil",
@@ -107,13 +107,13 @@ func (suite *AssetRepositoryTestSuite) TestFindAll_Success() {
 		ImgUrl:    "qwerty",
 	},
 	{
-		ID:        "2",
+		Id:        "2",
 		Category:  model.Category{
-			ID:   "1",
-			Name: "tidak bergerak",
+			Id:   "1",
+			Name: "tIdak bergerak",
 		},
-		AssetType: model.AssetType{
-			ID:   "2",
+		AssetType: model.TypeAsset{
+			Id:   "2",
 			Name: "berat",
 		},
 		Name:      "papan tulis",
@@ -126,7 +126,7 @@ func (suite *AssetRepositoryTestSuite) TestFindAll_Success() {
 	rows := sqlmock.NewRows([]string{"id", "name", "amount", "status", "entry_date", "img_url", "id_category", "category_name", "id_asset_type", "asset_type_name"})
 
 	for _, v := range assets {
-		rows.AddRow(v.ID, v.Name, v.Amount, v.Status, v.EntryDate, v.ImgUrl, v.Category.ID, v.Category.Name, v.AssetType.ID, v.AssetType.Name)
+		rows.AddRow(v.Id, v.Name, v.Amount, v.Status, v.EntryDate, v.ImgUrl, v.Category.Id, v.Category.Name, v.AssetType.Id, v.AssetType.Name)
 	}
 
 	suite.mockSQL.ExpectQuery("select a.id, a.name, a.amount, a.status, a.entry_date, a.img_url, c.id, c.name, at.id, at.name from asset").WillReturnRows(rows)
@@ -146,13 +146,13 @@ func (suite *AssetRepositoryTestSuite) TestFindAll_Failed() {
 
 func (suite *AssetRepositoryTestSuite) TestFindAll_FailedRows() {
 	asset := model.Asset{
-		ID:        "1",
+		Id:        "1",
 		Category:  model.Category{
-			ID:   "1",
+			Id:   "1",
 			Name: "bergerak",
 		},
-		AssetType: model.AssetType{
-			ID:   "2",
+		AssetType: model.TypeAsset{
+			Id:   "2",
 			Name: "ringan",
 		},
 		Name:      "Mobil",
@@ -162,7 +162,7 @@ func (suite *AssetRepositoryTestSuite) TestFindAll_FailedRows() {
 		ImgUrl:    "qwerty",
 	}
 	rows := sqlmock.NewRows([]string{"id", "name", "amount", "status", "entry_date", "img_url", "id_category", "category_name", "id_asset_type", "asset_type_name"}).
-	AddRow(asset.ID, asset.Name, asset.Amount, asset.Status, asset.EntryDate, asset.ImgUrl, asset.Category.ID, asset.Category.Name, asset.AssetType.ID, asset.AssetType.Name).
+	AddRow(asset.Id, asset.Name, asset.Amount, asset.Status, asset.EntryDate, asset.ImgUrl, asset.Category.Id, asset.Category.Name, asset.AssetType.Id, asset.AssetType.Name).
 	RowError(0, fmt.Errorf("error scan"))
 
 	suite.mockSQL.ExpectQuery("select a.id, a.name, a.amount, a.status, a.entry_date, a.img_url, c.id, c.name, at.id, at.name from asset").WillReturnRows(rows)
@@ -178,13 +178,13 @@ func (suite *AssetRepositoryTestSuite) TestFindAll_FailedRows() {
 
 func (suite *AssetRepositoryTestSuite) TestFindById_Success() {
 	asset := model.Asset{
-		ID:        "1",
+		Id:        "1",
 		Category:  model.Category{
-			ID:   "1",
+			Id:   "1",
 			Name: "bergerak",
 		},
-		AssetType: model.AssetType{
-			ID:   "2",
+		AssetType: model.TypeAsset{
+			Id:   "2",
 			Name: "ringan",
 		},
 		Name:      "Mobil",
@@ -195,7 +195,7 @@ func (suite *AssetRepositoryTestSuite) TestFindById_Success() {
 	}
 
 	rows := sqlmock.NewRows([]string{"id", "name", "amount", "status", "entry_date", "img_url", "id_category", "category_name", "id_asset_type", "asset_type_name"}).
-	AddRow(asset.ID, asset.Name, asset.Amount, asset.Status, asset.EntryDate, asset.ImgUrl, asset.Category.ID, asset.Category.Name, asset.AssetType.ID, asset.AssetType.Name)
+	AddRow(asset.Id, asset.Name, asset.Amount, asset.Status, asset.EntryDate, asset.ImgUrl, asset.Category.Id, asset.Category.Name, asset.AssetType.Id, asset.AssetType.Name)
 
 	suite.mockSQL.ExpectQuery("select a.id, a.name, a.amount, a.status, a.entry_date, a.img_url, c.id, c.name, at.id, at.name from asset").WillReturnRows(rows)
 
@@ -212,18 +212,18 @@ func (suite *AssetRepositoryTestSuite) TestFindById_Failed() {
 	got, err := suite.repository.FindById("x")
 	assert.Error(suite.T(), err)
 	assert.NotNil(suite.T(), err)
-	assert.Equal(suite.T(), got.ID, "")
+	assert.Equal(suite.T(), got.Id, "")
 }
 
 func (suite *AssetRepositoryTestSuite) TestFindById_FailedRowScan() {
 	asset := model.Asset{
-		ID:        "1",
+		Id:        "1",
 		Category:  model.Category{
-			ID:   "1",
+			Id:   "1",
 			Name: "bergerak",
 		},
-		AssetType: model.AssetType{
-			ID:   "2",
+		AssetType: model.TypeAsset{
+			Id:   "2",
 			Name: "ringan",
 		},
 		Name:      "Mobil",
@@ -234,20 +234,20 @@ func (suite *AssetRepositoryTestSuite) TestFindById_FailedRowScan() {
 	}
 
 	rows := sqlmock.NewRows([]string{"id", "name", "amount", "status", "entry_date", "img_url", "id_category", "category_name", "id_asset_type", "asset_type_name"}).
-	AddRow(asset.ID, asset.Name, asset.Amount, asset.Status, asset.EntryDate, asset.ImgUrl, asset.Category.ID, asset.Category.Name, asset.AssetType.ID, asset.AssetType.Name).RowError(0, errors.New("row scan error"))
+	AddRow(asset.Id, asset.Name, asset.Amount, asset.Status, asset.EntryDate, asset.ImgUrl, asset.Category.Id, asset.Category.Name, asset.AssetType.Id, asset.AssetType.Name).RowError(0, errors.New("row scan error"))
 
 	suite.mockSQL.ExpectQuery("select a.id, a.name, a.amount, a.status, a.entry_date, a.img_url, c.id, c.name, at.id, at.name from asset").WillReturnRows(rows)
 
 	got, err := suite.repository.FindById("x")
 	assert.Error(suite.T(), err)
 	assert.NotNil(suite.T(), err)
-	assert.Equal(suite.T(), got.ID, "")
+	assert.Equal(suite.T(), got.Id, "")
 }
 
 func (suite *AssetRepositoryTestSuite) TestUpdate_Success()  {
 
 	asset := model.AssetRequest	{
-		ID:         helper.GenerateUUID(),
+		Id:         helper.GenerateUUID(),
 		CategoryId: "TEST1",
 		AssetTypeId:"TEST2",
 		Name:       "Laptop",
@@ -257,7 +257,7 @@ func (suite *AssetRepositoryTestSuite) TestUpdate_Success()  {
 	}
 
 	suite.mockSQL.ExpectExec("update asset").WithArgs(
-		asset.ID,
+		asset.Id,
 		asset.CategoryId, 
 		asset.AssetTypeId, 
 		asset.Name, 
@@ -273,7 +273,7 @@ func (suite *AssetRepositoryTestSuite) TestUpdate_Success()  {
 
 func (suite *AssetRepositoryTestSuite) TestUpdate_Failed()  {
 	asset := model.AssetRequest	{
-		ID:         helper.GenerateUUID(),
+		Id:         helper.GenerateUUID(),
 		CategoryId: "TEST1",
 		AssetTypeId:"TEST2",
 		Name:       "Laptop",
@@ -283,7 +283,7 @@ func (suite *AssetRepositoryTestSuite) TestUpdate_Failed()  {
 	}
 
 	suite.mockSQL.ExpectExec("update asset").WithArgs(
-		asset.ID,
+		asset.Id,
 		asset.CategoryId, 
 		asset.AssetTypeId, 
 		asset.Name, 

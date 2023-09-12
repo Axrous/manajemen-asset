@@ -47,7 +47,7 @@ func (a *assetRepository) FindAll() ([]model.Asset, error) {
 	var assets []model.Asset
 	for rows.Next() {
 		var asset model.Asset
-		rows.Scan(&asset.ID, &asset.Name, &asset.Amount, &asset.Status, &asset.EntryDate, &asset.ImgUrl, &asset.Category.ID, &asset.Category.Name, &asset.AssetType.ID, &asset.AssetType.Name)
+		rows.Scan(&asset.Id, &asset.Name, &asset.Amount, &asset.Status, &asset.EntryDate, &asset.ImgUrl, &asset.Category.Id, &asset.Category.Name, &asset.AssetType.Id, &asset.AssetType.Name)
 		assets = append(assets, asset)
 	}
 	if rows.Err() != nil {
@@ -68,7 +68,7 @@ func (a *assetRepository) FindById(id string) (model.Asset, error) {
 	
 	row := a.db.QueryRow(query, id)
 	var asset model.Asset
-	err := row.Scan(&asset.ID, &asset.Name, &asset.Amount, &asset.Status, &asset.EntryDate, &asset.ImgUrl, &asset.Category.ID, &asset.Category.Name, &asset.AssetType.ID, &asset.AssetType.Name)
+	err := row.Scan(&asset.Id, &asset.Name, &asset.Amount, &asset.Status, &asset.EntryDate, &asset.ImgUrl, &asset.Category.Id, &asset.Category.Name, &asset.AssetType.Id, &asset.AssetType.Name)
 	if err != nil {
 		return model.Asset{}, err
 	}
@@ -80,7 +80,7 @@ func (a *assetRepository) FindById(id string) (model.Asset, error) {
 func (a *assetRepository) Save(asset model.AssetRequest) error {
 	query := "insert into asset(id, id_category, id_asset_type, name, amount, status, entry_date, img_url) values($1, $2, $3, $4, $5, $6, $7, $8)"
 
-	_, err := a.db.Exec(query, asset.ID, asset.CategoryId, asset.AssetTypeId, asset.Name, asset.Amount, asset.Status, asset.EntryDate, asset.ImgUrl)
+	_, err := a.db.Exec(query, asset.Id, asset.CategoryId, asset.AssetTypeId, asset.Name, asset.Amount, asset.Status, asset.EntryDate, asset.ImgUrl)
 	if err != nil {
 		return err
 	}
@@ -92,7 +92,7 @@ func (a *assetRepository) Save(asset model.AssetRequest) error {
 func (a *assetRepository) Update(asset model.AssetRequest) error {
 	query := `update asset set id_category = $2, id_asset_type = $3, name = $4, amount = $5, status = $6, img_url = $7 where id = $1`
 
-	_, err := a.db.Exec(query, asset.ID, asset.CategoryId, asset.AssetTypeId, asset.Name, asset.Amount, asset.Status, asset.ImgUrl)
+	_, err := a.db.Exec(query, asset.Id, asset.CategoryId, asset.AssetTypeId, asset.Name, asset.Amount, asset.Status, asset.ImgUrl)
 	if err !=nil {
 		return err
 	}

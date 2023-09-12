@@ -56,7 +56,7 @@ func (suite *AssetUsecaseTestSuite) TestCreate_EmptyField() {
 	})
 	assert.Error(suite.T(), gotError)
 
-	//test category id or asset type id empty
+	//test category Id or asset type Id empty
 	gotError = suite.usecase.Create(model.AssetRequest{
 		CategoryId:  "",
 		AssetTypeId: "",
@@ -110,13 +110,13 @@ func (suite *AssetUsecaseTestSuite) TestCreate_Failed() {
 func (suite *AssetUsecaseTestSuite) TestFindAll_Success() {
 	assetMock := []model.Asset{
 		{
-			ID:       "1",
+			Id:       "1",
 			Category: model.Category{
-				ID:   "1",
+				Id:   "1",
 				Name: "Bergerak",
 			},
-			AssetType: model.AssetType{
-				ID:   "1",
+			AssetType: model.TypeAsset{
+				Id:   "1",
 				Name: "Elektronik",
 			},
 			Name:      "Laptop",
@@ -145,7 +145,7 @@ func (suite *AssetUsecaseTestSuite) TestFindAll_Failed() {
 
 func (suite *AssetUsecaseTestSuite) TestUpdate_Success() {
 	payload := model.AssetRequest{
-		ID: "1",
+		Id: "1",
 		CategoryId:  "1",
 		AssetTypeId: "1",
 		Name:        "Laptop",
@@ -154,13 +154,13 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_Success() {
 		ImgUrl:      "",
 	}
 	asset := model.Asset{
-		ID:        "1",
+		Id:        "1",
 		Category:  model.Category{
-			ID:   "1",
+			Id:   "1",
 			Name: "Bergerak",
 		},
-		AssetType: model.AssetType{
-			ID:   "1",
+		AssetType: model.TypeAsset{
+			Id:   "1",
 			Name: "Elektronik",
 		},
 		Name:      "Laptop",
@@ -169,7 +169,7 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_Success() {
 		EntryDate: time.Time{},
 		ImgUrl:    "",
 	}
-	suite.repoMock.On("FindById", payload.ID).Return(asset, nil)
+	suite.repoMock.On("FindById", payload.Id).Return(asset, nil)
 	suite.repoMock.On("Update", payload).Return(nil)
 	gotError := suite.usecase.Update(payload)
 	assert.NoError(suite.T(), gotError)
@@ -189,7 +189,7 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_EmptyField() {
 	})
 	assert.Error(suite.T(), gotError)
 
-	//test category id or asset type id empty
+	//test category Id or asset type Id empty
 	gotError = suite.usecase.Update(model.AssetRequest{
 		CategoryId:  "",
 		AssetTypeId: "",
@@ -223,9 +223,9 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_EmptyField() {
 	assert.Error(suite.T(), gotError)
 }
 
-func (suite *AssetUsecaseTestSuite) TestUpdate_InvalidId() {
+func (suite *AssetUsecaseTestSuite) TestUpdate_InvalId() {
 	payload := model.AssetRequest{
-		ID: "xx",
+		Id: "xx",
 		CategoryId:  "1",
 		AssetTypeId: "1",
 		Name:        "Laptop",
@@ -234,7 +234,7 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_InvalidId() {
 		ImgUrl:      "",
 	}
 
-	suite.repoMock.On("FindById", "xx").Return(model.Asset{}, errors.New("cannot found asset with id"))
+	suite.repoMock.On("FindById", "xx").Return(model.Asset{}, errors.New("cannot found asset with Id"))
 	gotError := suite.usecase.Update(payload)
 	assert.NotNil(suite.T(), gotError)
 	assert.Error(suite.T(), gotError)
@@ -242,7 +242,7 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_InvalidId() {
 
 func (suite *AssetUsecaseTestSuite) TestUpdate_Failed() {
 	payload := model.AssetRequest{
-		ID: "1",
+		Id: "1",
 		CategoryId:  "1",
 		AssetTypeId: "1",
 		Name:        "Laptop",
@@ -252,13 +252,13 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_Failed() {
 	}
 
 	asset := model.Asset{
-		ID:        "1",
+		Id:        "1",
 		Category:  model.Category{
-			ID:   "1",
+			Id:   "1",
 			Name: "Bergerak",
 		},
-		AssetType: model.AssetType{
-			ID:   "1",
+		AssetType: model.TypeAsset{
+			Id:   "1",
 			Name: "Elektronik",
 		},
 		Name:      "Laptop",
@@ -268,7 +268,7 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_Failed() {
 		ImgUrl:    "",
 	}
 
-	suite.repoMock.On("FindById", payload.ID).Return(asset, nil)
+	suite.repoMock.On("FindById", payload.Id).Return(asset, nil)
 	suite.repoMock.On("Update", payload).Return(errors.New("failed update asset"))
 	gotError := suite.usecase.Update(payload)
 	assert.NotNil(suite.T(), gotError)
@@ -277,13 +277,13 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_Failed() {
 
 func (suite *AssetUsecaseTestSuite) TestDelete_Success() {
 	asset := model.Asset{
-		ID:        "1",
+		Id:        "1",
 		Category:  model.Category{
-			ID:   "1",
+			Id:   "1",
 			Name: "Bergerak",
 		},
-		AssetType: model.AssetType{
-			ID:   "1",
+		AssetType: model.TypeAsset{
+			Id:   "1",
 			Name: "Elektronik",
 		},
 		Name:      "Laptop",
@@ -299,8 +299,8 @@ func (suite *AssetUsecaseTestSuite) TestDelete_Success() {
 	assert.Nil(suite.T(), gotError)
 }
 
-func (suite *AssetUsecaseTestSuite) TestDelete_InvalidId() {
-	suite.repoMock.On("FindById", "xx").Return(model.Asset{}, errors.New("cannot found asset with id"))
+func (suite *AssetUsecaseTestSuite) TestDelete_InvalId() {
+	suite.repoMock.On("FindById", "xx").Return(model.Asset{}, errors.New("cannot found asset with Id"))
 	gotError := suite.usecase.Delete("xx")
 	assert.NotNil(suite.T(), gotError)
 	assert.Error(suite.T(), gotError)
@@ -308,13 +308,13 @@ func (suite *AssetUsecaseTestSuite) TestDelete_InvalidId() {
 
 func (suite *AssetUsecaseTestSuite) TestDelete_Failed() {
 	asset := model.Asset{
-		ID:        "1",
+		Id:        "1",
 		Category:  model.Category{
-			ID:   "1",
+			Id:   "1",
 			Name: "Bergerak",
 		},
-		AssetType: model.AssetType{
-			ID:   "1",
+		AssetType: model.TypeAsset{
+			Id:   "1",
 			Name: "Elektronik",
 		},
 		Name:      "Laptop",

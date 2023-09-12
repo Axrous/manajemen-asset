@@ -5,6 +5,7 @@ import "final-project-enigma-clean/repository"
 type RepoManager interface {
 	UserRepo() repository.UserCredentialsRepository
 	AssetRepo() repository.AssetRepository
+	TypeAssetRepo() repository.TypeAssetRepository
 }
 
 type repoManager struct {
@@ -14,6 +15,11 @@ type repoManager struct {
 // AssetRepo implements RepoManager.
 func (r *repoManager) AssetRepo() repository.AssetRepository {
 	return repository.NewAssetRepository(r.im.Connect())
+}
+
+// TypeAssetRepo implements RepoManager.
+func (r *repoManager) TypeAssetRepo() repository.TypeAssetRepository {
+	return repository.NewTypeAssetRepository(r.im.Connect())
 }
 
 func (r repoManager) UserRepo() repository.UserCredentialsRepository {

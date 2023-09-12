@@ -29,7 +29,10 @@ func (s *Server) initMiddlewares() {
 }
 
 func (s *Server) initControllers() {
-	controller.NewUserController(s.um.UserUsecase(), s.gin).Route()
+	rg := s.gin.Group("/api/v1")
+	controller.NewUserController(s.um.UserUsecase(), rg).Route()
+	controller.NewTypeAssetController(s.um.TypeAssetUseCase(), rg).Route()
+	controller.NewAssetController(s.um.AssetUsecase(), rg).Route()
 }
 
 func (s *Server) Run() {

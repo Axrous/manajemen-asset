@@ -101,7 +101,7 @@ func (a *assetUsecase) Update(payload model.AssetRequest) error {
 	//implement category find by id
 	//implement asset type find by id
 
-	_, err := a.FindById(payload.ID)
+	_, err := a.FindById(payload.Id)
 	if err != nil {
 		return err
 	}

@@ -3,9 +3,9 @@ package model
 import "time"
 
 type Asset struct {
-	ID          string
+	Id          string
 	Category  	Category
-	AssetType 	AssetType
+	AssetType 	TypeAsset
 	Name        string
 	Amount      int
 	Status      string
@@ -14,7 +14,7 @@ type Asset struct {
 }
 
 type AssetRequest struct {
-	ID 			string
+	Id 			string
 	CategoryId 	string
 	AssetTypeId	string
 	Name 		string
