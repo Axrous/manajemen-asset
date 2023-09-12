@@ -35,7 +35,6 @@ func (u *UserController) RegisterUserHandler(c *gin.Context) {
 }
 
 // login handler
-// Di dalam controller layer, perbarui LoginUserHandler
 func (u *UserController) LoginUserHandler(c *gin.Context) {
 	var userLogin model.UserLoginRequest
 
@@ -45,21 +44,19 @@ func (u *UserController) LoginUserHandler(c *gin.Context) {
 		return
 	}
 
-	// Memanggil usecase LoginUser
 	userID, err := u.userUC.LoginUser(userLogin)
 	if err != nil {
 		c.AbortWithStatusJSON(500, gin.H{"Error": err.Error()})
 		return
 	}
 
-	// Generate JWT menggunakan email
+	// Generate JWT
 	token, err := helper.GenerateJWT(userID)
 	if err != nil {
 		c.AbortWithStatusJSON(500, gin.H{"Error": "Failed to generate jwt"})
 		return
 	}
 
-	// Mengirim token JWT sebagai respons
 	slog.Infof("New user with email : %v and jwt : %v", userLogin.Email, token)
 	c.JSON(200, gin.H{"Message": "Successfully Login", "Token": token})
 }

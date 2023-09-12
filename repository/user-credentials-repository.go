@@ -12,12 +12,12 @@ type UserCredentialsRepository interface {
 	FindUserEmail(email string) (user model.UserLoginRequest, err error)
 }
 
-type userDetailsRepository struct {
+type userCredentialRepository struct {
 	db *sql.DB
 }
 
 // user register
-func (u userDetailsRepository) UserRegister(user model.UserRegisterRequest) error {
+func (u userCredentialRepository) UserRegister(user model.UserRegisterRequest) error {
 	//register logic
 
 	user.IsActive = true
@@ -32,7 +32,7 @@ func (u userDetailsRepository) UserRegister(user model.UserRegisterRequest) erro
 }
 
 // user login
-func (u userDetailsRepository) UserLogin(user model.UserLoginRequest) (string, error) {
+func (u userCredentialRepository) UserLogin(user model.UserLoginRequest) (string, error) {
 	//TODO implement me
 
 	var hashedPassword string
@@ -49,25 +49,25 @@ func (u userDetailsRepository) UserLogin(user model.UserLoginRequest) (string, e
 }
 
 // find by email
-func (u userDetailsRepository) FindUserEmail(email string) (model.UserLoginRequest, error) {
+func (u userCredentialRepository) FindUserEmail(email string) (model.UserLoginRequest, error) {
 	// Query SQL untuk mencari pengguna berdasarkan email
 	query := "SELECT id, email, password FROM user_credential WHERE email = $1"
 	var user model.UserLoginRequest
 
 	err := u.db.QueryRow(query, email).Scan(&user.ID, &user.Email, &user.Password)
 	if err != nil {
-		// Jika email tidak ditemukan
+		// if email is not found
 		if err == sql.ErrNoRows {
-			return model.UserLoginRequest{}, fmt.Errorf("Email tidak ditemukan")
+			return model.UserLoginRequest{}, fmt.Errorf("Invalid Credentials")
 		}
-		return model.UserLoginRequest{}, fmt.Errorf("Gagal menjalankan query: %v", err.Error())
+		return model.UserLoginRequest{}, fmt.Errorf("Failed to run query: %v", err.Error())
 	}
 
-	return user, nil // Pengguna dengan email yang sesuai ditemukan
+	return user, nil
 }
 
 func NewUserDetailsRepository(db *sql.DB) UserCredentialsRepository {
-	return &userDetailsRepository{
+	return &userCredentialRepository{
 		db: db,
 	}
 }

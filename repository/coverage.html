@@ -55,9 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">final-project-enigma-clean/repository/user-details-repository.go (100.0%)</option>
-				
-				<option value="file1">final-project-enigma-clean/repository/user-repository.go (0.0%)</option>
+				<option value="file0">final-project-enigma-clean/repository/user-credentials-repository.go (91.3%)</option>
 				
 				</select>
 			</div>
@@ -79,78 +77,68 @@ import (
         "fmt"
 )
 
-type UserDetailsRepository interface {
-        CreateNewUserDetails(udetails model.UserDetails) error
+type UserCredentialsRepository interface {
+        UserRegister(user model.UserRegisterRequest) error
+        UserLogin(user model.UserLoginRequest) (string, error)
+        FindUserEmail(email string) (user model.UserLoginRequest, err error)
 }
 
-type userDetailsRepository struct {
+type userCredentialRepository struct {
         db *sql.DB
 }
 
-func (u userDetailsRepository) CreateNewUserDetails(udetails model.UserDetails) error <span class="cov8" title="1">{
-        //TODO implement me
+// user register
+func (u userCredentialRepository) UserRegister(user model.UserRegisterRequest) error <span class="cov8" title="1">{
+        //register logic
 
-        query := "insert into user_details (id,user_id,name,phone_number,address,email,birth_date,img_url) values ($1, $2, $3, $4, $5, $6, $7, $8)"
-        _, err := u.db.Exec(query, udetails.ID, udetails.ID, udetails.Name, udetails.PhoneNumber, udetails.Address, udetails.Email, udetails.BirthDate, udetails.ImgUrl)
+        user.IsActive = true
+
+        query := "insert into user_credential (id,email,password,name,is_active) values ($1, $2, $3, $4, $5)"
+        _, err := u.db.Exec(query, user.ID, user.Email, user.Password, user.Name, user.IsActive)
         if err != nil </span><span class="cov8" title="1">{
-                return fmt.Errorf("Failed to query %v", err.Error())
+                return fmt.Errorf("Failed to exec query %v", err.Error())
         }</span>
+
         <span class="cov8" title="1">return nil</span>
 }
 
-func NewUserDetailsRepository(db *sql.DB) UserDetailsRepository <span class="cov8" title="1">{
-        return &amp;userDetailsRepository{
-                db: db,
-        }
-}</span>
-</pre>
-		
-		<pre class="file" id="file1" style="display: none">package repository
-
-import (
-        "database/sql"
-        "final-project-enigma-clean/model"
-        "fmt"
-)
-
-type UserRepository interface {
-        RegisterUser(request model.UserRegisterRequest) error
-        LoginUser(logreq model.UserLoginRequest) (string, error)
-}
-
-type userRepository struct {
-        db *sql.DB
-}
-
-func (u *userRepository) LoginUser(logreq model.UserLoginRequest) (string, error) <span class="cov0" title="0">{
+// user login
+func (u userCredentialRepository) UserLogin(user model.UserLoginRequest) (string, error) <span class="cov8" title="1">{
         //TODO implement me
 
-        var hashedPass string
-        query := "select password from users where email = $1"
-        err := u.db.QueryRow(query, logreq.Email).Scan(&amp;hashedPass)
-        if err != nil </span><span class="cov0" title="0">{
-                if err == sql.ErrNoRows </span><span class="cov0" title="0">{
-                        return "", fmt.Errorf("Invalid credential")
+        var hashedPassword string
+        query := "select password from user_credential where email = $1"
+        err := u.db.QueryRow(query, user.Email).Scan(&amp;hashedPassword)
+        if err != nil </span><span class="cov8" title="1">{
+                //if email is not found
+                if err == sql.ErrNoRows </span><span class="cov8" title="1">{
+                        return "", fmt.Errorf("Invalid Credential %v", err.Error())
                 }</span>
+                <span class="cov0" title="0">return "", err</span>
         }
-        <span class="cov0" title="0">return hashedPass, err</span>
-
+        <span class="cov8" title="1">return hashedPassword, nil</span>
 }
 
-func (u *userRepository) RegisterUser(request model.UserRegisterRequest) error <span class="cov0" title="0">{
-        //TODO implement me
+// find by email
+func (u userCredentialRepository) FindUserEmail(email string) (model.UserLoginRequest, error) <span class="cov8" title="1">{
+        // Query SQL untuk mencari pengguna berdasarkan email
+        query := "SELECT id, email, password FROM user_credential WHERE email = $1"
+        var user model.UserLoginRequest
 
-        //register logic
-        query := "insert into users (id,email,password) values ($1, $2, $3)"
-        _, err := u.db.Exec(query, request.ID, request.Email, request.Password)
-        if err != nil </span><span class="cov0" title="0">{
-                return fmt.Errorf("Failed to exec query %v", err.Error())
-        }</span>
-        <span class="cov0" title="0">return nil</span>
+        err := u.db.QueryRow(query, email).Scan(&amp;user.ID, &amp;user.Email, &amp;user.Password)
+        if err != nil </span><span class="cov8" title="1">{
+                // if email is not found
+                if err == sql.ErrNoRows </span><span class="cov8" title="1">{
+                        return model.UserLoginRequest{}, fmt.Errorf("Invalid Credentials")
+                }</span>
+                <span class="cov0" title="0">return model.UserLoginRequest{}, fmt.Errorf("Failed to run query: %v", err.Error())</span>
+        }
+
+        <span class="cov8" title="1">return user, nil</span>
 }
 
-func NewUserRepository(db *sql.DB) UserRepository <span class="cov0" title="0">{
-        return &amp;userRepository{
+func NewUserDetailsRepository(db *sql.DB) UserCredentialsRepository <span class="cov8" title="1">{
+        return &amp;userCredentialRepository{
                 db: db,
         }
 }</span>

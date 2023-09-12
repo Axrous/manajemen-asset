@@ -26,7 +26,6 @@ func (u *userDetailUsecase) RegisterUser(user model.UserRegisterRequest) error {
 	val := validator.New()
 	err := val.Struct(user)
 	if err != nil {
-		// Mengganti pesan error berdasarkan jenis kesalahan
 		var errMsg string
 		for _, err := range err.(validator.ValidationErrors) {
 			if err.Field() == "Email" && err.Tag() == "email" {
@@ -66,11 +65,13 @@ func (u *userDetailUsecase) RegisterUser(user model.UserRegisterRequest) error {
 	if err = u.udetailsRepo.UserRegister(user); err != nil {
 		return err
 	}
+
+	//email
+	helper.SendEmailRegister(user.Email, user.Name)
 	return nil
 }
 
 // login business logic
-// Di dalam usecase layer, perbarui LoginUser
 func (u *userDetailUsecase) LoginUser(userlogin model.UserLoginRequest) (string, error) {
 	// TODO implement me
 
@@ -90,13 +91,12 @@ func (u *userDetailUsecase) LoginUser(userlogin model.UserLoginRequest) (string,
 		return "", fmt.Errorf("Invalid Credentials")
 	}
 
-	// Mengembalikan email pengguna
+	// return id
 	return user.ID, nil
 }
 
 func (u *userDetailUsecase) FindingUserEmail(email string) (user model.UserLoginRequest, err error) {
 	//TODO implement me
-
 	return u.udetailsRepo.FindUserEmail(email)
 }
 
