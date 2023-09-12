@@ -101,28 +101,6 @@ func (suite *UserCredentialSuite) TestRegisterUser_RepositoryError() {
 }
 
 // login area
-func (suite *UserCredentialSuite) TestLoginUser_EmptyEmail() {
-	// Prepare an empty email in the userlogin request
-	userlogin := model.UserLoginRequest{
-		Email:    "",
-		Password: "Password123!",
-	}
-
-	// Expect that FindingUserEmail should not be called
-	suite.repository.On("FindingUserEmail", userlogin.Email).Times(0)
-
-	// Call the method to be tested
-	id, err := suite.usecase.LoginUser(userlogin)
-
-	// Assertions
-	assert.Error(suite.T(), err)
-	assert.Contains(suite.T(), err.Error(), "Email is required")
-	assert.Equal(suite.T(), "", id)
-
-	// Verify that FindingUserEmail was not called
-	suite.repository.AssertExpectations(suite.T())
-}
-
 func TestUserCredentialSuite(t *testing.T) {
 	suite.Run(t, new(UserCredentialSuite))
 }

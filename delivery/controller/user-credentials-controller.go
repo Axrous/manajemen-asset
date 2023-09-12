@@ -51,7 +51,7 @@ func (u *UserController) LoginUserHandler(c *gin.Context) {
 		return
 	}
 
-	slog.Infof("New user with email : %v and user id : %v", userLogin.Email, userID)
+	slog.Infof("New user trying to login with email : %v and user id : %v", userLogin.Email, userID)
 
 	c.JSON(200, gin.H{"Message": "Successfully Login, check your email for verification token"})
 }
