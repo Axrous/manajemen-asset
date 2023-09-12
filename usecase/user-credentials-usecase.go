@@ -6,6 +6,8 @@ import (
 	"final-project-enigma-clean/util/helper"
 	"fmt"
 	"github.com/go-playground/validator/v10"
+	"github.com/gookit/slog"
+	"strconv"
 )
 
 type UserCredentialUsecase interface {
@@ -71,14 +73,11 @@ func (u *userDetailUsecase) RegisterUser(user model.UserRegisterRequest) error {
 	return nil
 }
 
+var OTPMap = make(map[string]int)
+
 // login business logic
 func (u *userDetailUsecase) LoginUser(userlogin model.UserLoginRequest) (string, error) {
 	// TODO implement me
-
-	// If email is empty
-	if userlogin.Email == "" {
-		return "", fmt.Errorf("Email is required")
-	}
 
 	// Find user email
 	user, err := u.FindingUserEmail(userlogin.Email)
@@ -88,8 +87,14 @@ func (u *userDetailUsecase) LoginUser(userlogin model.UserLoginRequest) (string,
 
 	// Compare password
 	if err = helper.ComparePassword(user.Password, userlogin.Password); err != nil {
-		return "", fmt.Errorf("Invalid Credentials")
+		return "", err
 	}
+
+	//logic otp
+	otp, _ := helper.GenerateOTP()
+	helper.SendEmailWithOTP(user.Email, strconv.Itoa(otp))
+	OTPMap[user.Email] = otp
+	slog.Infof("Sending otp to %v", user.Email)
 
 	// return id
 	return user.ID, nil

@@ -22,3 +22,8 @@ type UserRegisterRequest struct {
 	Name     string `json:"name" validate:"required"`
 	IsActive bool   `json:"is_active"`
 }
+
+type UserLoginOTPRequest struct {
+	OTP   int    `json:"otp"`
+	Email string `json:"email" validate:"required,email"`
+}
