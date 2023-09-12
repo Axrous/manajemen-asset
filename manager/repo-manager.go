@@ -17,12 +17,18 @@ func (r *repoManager) StaffRepo() repository.StaffRepository {
 	return repository.NewStaffRepository(r.im.Connect())
 }
 
+// AssetRepo implements RepoManager.
+func (r *repoManager) AssetRepo() repository.AssetRepository {
+	return repository.NewAssetRepository(r.im.Connect())
+
+}
+
 // TypeAssetRepo implements RepoManager.
 func (r *repoManager) TypeAssetRepo() repository.TypeAssetRepository {
 	return repository.NewTypeAssetRepository(r.im.Connect())
 }
 
-func (r repoManager) UserRepo() repository.UserCredentialsRepository {
+func (r *repoManager) UserRepo() repository.UserCredentialsRepository {
 	//TODO implement me
 	return repository.NewUserDetailsRepository(r.im.Connect())
 }

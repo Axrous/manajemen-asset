@@ -22,3 +22,16 @@ type UserRegisterRequest struct {
 	Name     string `json:"name" validate:"required"`
 	IsActive bool   `json:"is_active"`
 }
+
+type UserLoginOTPRequest struct {
+	OTP   int    `json:"otp"`
+	Email string `json:"email" validate:"required,email"`
+}
+
+type ChangePasswordRequest struct {
+	ID          string `json:"id"`
+	Email       string `json:"email"`
+	OTP         int    `json:"otp"`
+	OldPassword string `json:"old_password"`
+	NewPassword string `json:"new_password"`
+}

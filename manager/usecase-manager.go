@@ -22,7 +22,7 @@ func (u *usecaseManager) TypeAssetUseCase() usecase.TypeAssetUseCase {
 	return usecase.NewTypeAssetUseCase(u.rm.TypeAssetRepo())
 }
 
-func (u usecaseManager) UserUsecase() usecase.UserCredentialUsecase {
+func (u *usecaseManager) UserUsecase() usecase.UserCredentialUsecase {
 	//TODO implement me
 	return usecase.NewUserCredentialUsecase(u.rm.UserRepo())
 }
