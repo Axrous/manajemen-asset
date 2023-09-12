@@ -4,15 +4,14 @@ import (
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/usecase"
 	"final-project-enigma-clean/util/helper"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gookit/slog"
-	"go.uber.org/zap"
 )
 
 type UserController struct {
 	userUC usecase.UserCredentialUsecase
-	gin    *gin.Engine
-	logger *zap.Logger
+	rg     *gin.RouterGroup
 }
 
 // register handler
@@ -66,19 +65,15 @@ func (u *UserController) LoginUserHandler(c *gin.Context) {
 
 // init route
 func (u *UserController) Route() {
-	//grouping
-	ug := u.gin.Group("/auth")
-	//define middleware in here if u need it
-	//ex : ug.Use(middleware.AuthMiddleware())
 	{
-		ug.POST("/register", u.RegisterUserHandler)
-		ug.POST("/login", u.LoginUserHandler)
+		u.rg.POST("/register", u.RegisterUserHandler)
+		u.rg.POST("/login", u.LoginUserHandler)
 	}
 }
 
-func NewUserController(useruc usecase.UserCredentialUsecase, g *gin.Engine) *UserController {
+func NewUserController(userUC usecase.UserCredentialUsecase, rg *gin.RouterGroup) *UserController {
 	return &UserController{
-		userUC: useruc,
-		gin:    g,
+		userUC: userUC,
+		rg:     rg,
 	}
 }
