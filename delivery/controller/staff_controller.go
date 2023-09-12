@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"final-project-enigma-clean/delivery/middleware"
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/usecase"
@@ -119,12 +120,12 @@ func (s *StaffController) deleteHandlerStaff(c *gin.Context) {
 	})
 }
 func (s *StaffController) Route() {
-	s.rg.POST("/staffs", s.createHandlerStaff)
-	s.rg.GET("/staffs", s.listHandlerStaff)
-	s.rg.GET("/staffs/:nik_staff", s.getByIdteHandlerStaff)
-	s.rg.GET("/staffs/name/:name", s.getByNameteHandlerStaff)
-	s.rg.PUT("/staffs", s.updateHandlerStaff)
-	s.rg.DELETE("/staffs/:nik_staff", s.deleteHandlerStaff)
+	s.rg.POST("/staffs", middleware.AuthMiddleware(), s.createHandlerStaff)
+	s.rg.GET("/staffs", middleware.AuthMiddleware(), s.listHandlerStaff)
+	s.rg.GET("/staffs/:nik_staff", middleware.AuthMiddleware(), s.getByIdteHandlerStaff)
+	s.rg.GET("/staffs/name/:name", middleware.AuthMiddleware(), s.getByNameteHandlerStaff)
+	s.rg.PUT("/staffs", middleware.AuthMiddleware(), s.updateHandlerStaff)
+	s.rg.DELETE("/staffs/:nik_staff", middleware.AuthMiddleware(), s.deleteHandlerStaff)
 }
 
 func NewStaffController(staffUC usecase.StaffUseCase, rg *gin.RouterGroup) *StaffController {
