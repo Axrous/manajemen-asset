@@ -1,7 +1,6 @@
 package helper
 
 import (
-	"final-project-enigma-clean/model"
 	"github.com/golang-jwt/jwt/v4"
 	"os"
 	"time"
@@ -9,13 +8,22 @@ import (
 
 var secret = []byte(os.Getenv("JWT_SECRET"))
 
+type JWTClaims struct {
+	UserID string `json:"id"`
+	jwt.StandardClaims
+}
+
 // init jwt in here
-func GenerateJWT(userLogin model.UserLoginRequest) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id":   userLogin.ID,
-		"issued_at": time.Now().Unix(),
-		"exp_at":    time.Now().Add(6 * time.Hour),
-	})
+func GenerateJWT(UserID string) (string, error) {
+	claims := JWTClaims{
+		UserID: UserID,
+		StandardClaims: jwt.StandardClaims{
+			IssuedAt:  time.Now().Unix(),
+			ExpiresAt: time.Now().Add(6 * time.Hour).Unix(),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(secret)
 }
 
