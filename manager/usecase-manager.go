@@ -17,6 +17,11 @@ func (u *usecaseManager) StaffUseCase() usecase.StaffUseCase {
 	return usecase.NewStaffUseCase(u.rm.StaffRepo())
 }
 
+// AssetUsecase implements UsecaseManager.
+func (u *usecaseManager) AssetUsecase() usecase.AssetUsecase {
+	return usecase.NewAssetUsecase(u.rm.AssetRepo(), u.TypeAssetUseCase())
+}
+
 // TypeAssetUseCase implements UsecaseManager.
 func (u *usecaseManager) TypeAssetUseCase() usecase.TypeAssetUseCase {
 	return usecase.NewTypeAssetUseCase(u.rm.TypeAssetRepo())

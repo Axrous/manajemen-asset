@@ -3,6 +3,7 @@ package usecase
 import (
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/repository"
+	"final-project-enigma-clean/util/helper"
 	"fmt"
 	"time"
 )
@@ -13,12 +14,27 @@ type AssetUsecase interface {
 	FindById(id string) (model.Asset, error)
 	Update(payload model.AssetRequest) error
 	Delete(id string) error
+	FindByName(name string) ([]model.Asset, error)
 }
 
 type assetUsecase struct {
 	repo repository.AssetRepository
 	//get category usecase
+	typeAssetUC TypeAssetUseCase
 	//get asset type usecase
+}
+
+// FindByName implements AssetUsecase.
+func (a *assetUsecase) FindByName(name string) ([]model.Asset, error) {
+	if name == "" {
+		return nil, fmt.Errorf("name cannot empty")
+	}
+
+	assets, err := a.repo.FindByName(name)
+	if err != nil {
+		return nil, fmt.Errorf("failed get assets, %s", err)
+	}
+	return assets, nil
 }
 
 // Create implements AssetUsecase.
@@ -37,10 +53,17 @@ func (a *assetUsecase) Create(payload model.AssetRequest) error {
 	}
 
 	//implement category find by id
+	_, err := a.typeAssetUC.FindById(payload.AssetTypeId)
+	if err != nil {
+		return err
+	}
+
 	//implement asset type find by id
-	// payload.ID = helper.GenerateUUID()
+
+	//commented for unit testing
+	payload.Id = helper.GenerateUUID()
 	payload.EntryDate = time.Now()
-	err := a.repo.Save(payload)
+	err = a.repo.Save(payload)
 	if err != nil {
 		return fmt.Errorf("failed save asset %s", err)
 	}
@@ -99,9 +122,13 @@ func (a *assetUsecase) Update(payload model.AssetRequest) error {
 	}
 
 	//implement category find by id
-	//implement asset type find by id
+	//implement category find by id
+	_, err := a.typeAssetUC.FindById(payload.AssetTypeId)
+	if err != nil {
+		return err
+	}
 
-	_, err := a.FindById(payload.Id)
+	_, err = a.FindById(payload.Id)
 	if err != nil {
 		return err
 	}
@@ -114,8 +141,9 @@ func (a *assetUsecase) Update(payload model.AssetRequest) error {
 	return nil
 }
 
-func NewAssetUsecase(assetRepo repository.AssetRepository) AssetUsecase {
+func NewAssetUsecase(assetRepo repository.AssetRepository, typeAssetUC TypeAssetUseCase) AssetUsecase {
 	return &assetUsecase{
-		repo: assetRepo,
+		repo:        assetRepo,
+		typeAssetUC: typeAssetUC,
 	}
 }

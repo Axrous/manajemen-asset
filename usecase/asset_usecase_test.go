@@ -3,6 +3,7 @@ package usecase
 import (
 	"errors"
 	"final-project-enigma-clean/__mock__/repomock"
+	"final-project-enigma-clean/__mock__/usecasemock"
 	"final-project-enigma-clean/model"
 	"testing"
 	"time"
@@ -15,11 +16,13 @@ type AssetUsecaseTestSuite struct {
 	suite.Suite
 	repoMock *repomock.AssetRepoMock
 	usecase AssetUsecase
+	typeAssetUC *usecasemock.TypeAssetUsecaseMock
 }
 
 func (suite *AssetUsecaseTestSuite) SetupTest() {
 	suite.repoMock = new(repomock.AssetRepoMock)
-	suite.usecase = NewAssetUsecase(suite.repoMock)
+	suite.typeAssetUC = new(usecasemock.TypeAssetUsecaseMock)
+	suite.usecase = NewAssetUsecase(suite.repoMock, suite.typeAssetUC)
 }
 
 func TestAssetusecaseTestSuite(t *testing.T)  {
@@ -37,6 +40,12 @@ func (suite *AssetUsecaseTestSuite) TestCreate_Success() {
 		ImgUrl:      "",
 	}
 
+	typeAsset := model.TypeAsset{
+		Id:   "1",
+		Name: "Elektronik",
+	}
+
+	suite.typeAssetUC.On("FindById", payload.AssetTypeId).Return(typeAsset, nil)
 	suite.repoMock.On("Save", payload).Return(nil)
 	gotError := suite.usecase.Create(payload)
 	assert.NoError(suite.T(), gotError)
@@ -90,6 +99,34 @@ func (suite *AssetUsecaseTestSuite) TestCreate_EmptyField() {
 	assert.Error(suite.T(), gotError)
 }
 
+func (suite *AssetUsecaseTestSuite) TestCreate_InvalidTypeAsset() {
+	payload := model.AssetRequest{
+		CategoryId:  "1",
+		AssetTypeId: "1",
+		Name:        "Laptop",
+		Amount:      5,
+		Status:      "Ready",
+		EntryDate: time.Now(),
+		ImgUrl:      "",
+	}
+
+	typeAsset := model.TypeAsset{
+		Id:   "1",
+		Name: "Elektronik",
+	}
+
+	suite.typeAssetUC.On("FindById", payload.AssetTypeId).Return(model.TypeAsset{}, errors.New("failed get asset type"))
+	gotError := suite.usecase.Create(payload)
+	assert.Error(suite.T(), gotError)
+	assert.NotNil(suite.T(), gotError)
+
+	suite.typeAssetUC.On("FindById", payload.AssetTypeId).Return(typeAsset, nil)
+	suite.repoMock.On("Save", payload).Return(errors.New("failed to create asset"))
+	gotError = suite.usecase.Create(payload)
+	assert.Error(suite.T(), gotError)
+	assert.NotNil(suite.T(), gotError)
+}
+
 func (suite *AssetUsecaseTestSuite) TestCreate_Failed() {
 	payload := model.AssetRequest{
 		CategoryId:  "1",
@@ -101,6 +138,12 @@ func (suite *AssetUsecaseTestSuite) TestCreate_Failed() {
 		ImgUrl:      "",
 	}
 
+	typeAsset := model.TypeAsset{
+		Id:   "1",
+		Name: "Elektronik",
+	}
+
+	suite.typeAssetUC.On("FindById", payload.AssetTypeId).Return(typeAsset, nil)
 	suite.repoMock.On("Save", payload).Return(errors.New("failed to create asset"))
 	gotError := suite.usecase.Create(payload)
 	assert.Error(suite.T(), gotError)
@@ -169,6 +212,13 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_Success() {
 		EntryDate: time.Time{},
 		ImgUrl:    "",
 	}
+
+	typeAsset := model.TypeAsset{
+		Id:   "1",
+		Name: "Elektronik",
+	}
+
+	suite.typeAssetUC.On("FindById", payload.AssetTypeId).Return(typeAsset, nil)
 	suite.repoMock.On("FindById", payload.Id).Return(asset, nil)
 	suite.repoMock.On("Update", payload).Return(nil)
 	gotError := suite.usecase.Update(payload)
@@ -233,13 +283,34 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_InvalId() {
 		Status:      "Ready",
 		ImgUrl:      "",
 	}
+	typeAsset := model.TypeAsset{
+		Id:   "1",
+		Name: "Elektronik",
+	}
 
+	suite.typeAssetUC.On("FindById", payload.AssetTypeId).Return(typeAsset, nil)
 	suite.repoMock.On("FindById", "xx").Return(model.Asset{}, errors.New("cannot found asset with Id"))
 	gotError := suite.usecase.Update(payload)
 	assert.NotNil(suite.T(), gotError)
 	assert.Error(suite.T(), gotError)
 }
 
+func (suite *AssetUsecaseTestSuite) TestUpdate_InvalidTypeAsset() {
+	payload := model.AssetRequest{
+		Id: "1",
+		CategoryId:  "1",
+		AssetTypeId: "1",
+		Name:        "Laptop",
+		Amount:      5,
+		Status:      "Ready",
+		ImgUrl:      "",
+	}
+
+	suite.typeAssetUC.On("FindById", payload.AssetTypeId).Return(model.TypeAsset{}, errors.New("failed get type asset"))
+	gotError := suite.usecase.Update(payload)
+	assert.NotNil(suite.T(), gotError)
+	assert.Error(suite.T(), gotError)
+}
 func (suite *AssetUsecaseTestSuite) TestUpdate_Failed() {
 	payload := model.AssetRequest{
 		Id: "1",
@@ -267,7 +338,12 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_Failed() {
 		EntryDate: time.Time{},
 		ImgUrl:    "",
 	}
+	typeAsset := model.TypeAsset{
+		Id:   "1",
+		Name: "Elektronik",
+	}
 
+	suite.typeAssetUC.On("FindById", payload.AssetTypeId).Return(typeAsset, nil)
 	suite.repoMock.On("FindById", payload.Id).Return(asset, nil)
 	suite.repoMock.On("Update", payload).Return(errors.New("failed update asset"))
 	gotError := suite.usecase.Update(payload)

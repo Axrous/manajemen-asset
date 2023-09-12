@@ -6,6 +6,7 @@ type RepoManager interface {
 	UserRepo() repository.UserCredentialsRepository
 	TypeAssetRepo() repository.TypeAssetRepository
 	StaffRepo() repository.StaffRepository
+	AssetRepo() repository.AssetRepository
 }
 
 type repoManager struct {
