@@ -102,22 +102,8 @@ func (a *AssetController) deleteHandler(c *gin.Context) {
 		c.AbortWithStatusJSON(500, gin.H{"status": "Error", "message" : err.Error()})
 		return
 	}
-}
 
-func (a *AssetController) findByNameHandler(c *gin.Context)  {
-	
-	name := c.Param("name")
-
-	assets, err := a.usecase.FindByName(name)
-	if err != nil {
-		c.AbortWithStatusJSON(500, gin.H{"status": "Error", "message" : err.Error()})
-		return
-	}
-
-	c.JSON(200, gin.H{
-		"status" : "OK",
-		"assets" : assets,
-	})
+	c.JSON(200, gin.H{"status": "OK", "message": "successfully delete asset"})
 }
 
 
