@@ -12,3 +12,14 @@ type Asset struct {
 	EntryDate   time.Time
 	ImgUrl		string
 }
+
+type AssetRequest struct {
+	ID 			string
+	CategoryId 	string
+	AssetTypeId	string
+	Name 		string
+	Amount 		string
+	Status		string
+	EntryDate 	time.Time
+	ImgUrl 		string
+}

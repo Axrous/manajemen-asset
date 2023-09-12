@@ -1,14 +1,15 @@
-// package controller
+package controller
 
 // import (
 // 	"final-project-enigma-clean/delivery/middleware"
 // 	"final-project-enigma-clean/model"
-// 	"github.com/gin-gonic/gin"
-// 	"github.com/stretchr/testify/suite"
 // 	"net/http"
 // 	"net/http/httptest"
 // 	"strings"
 // 	"testing"
+
+// 	"github.com/gin-gonic/gin"
+// 	"github.com/stretchr/testify/suite"
 // )
 
 // type UserDetailsControllerSuite struct {
