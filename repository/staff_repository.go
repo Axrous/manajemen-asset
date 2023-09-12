@@ -23,7 +23,7 @@ type staffRepository struct {
 
 // Delete implements StaffRepository.
 func (s *staffRepository) Delete(nik_staff string) error {
-	_, err := s.db.Exec("DELETE FROM staff WHERE nik_staff=", nik_staff)
+	_, err := s.db.Exec("DELETE FROM staff WHERE nik_staff=$1", nik_staff)
 	if err != nil {
 		return err
 	}
@@ -62,7 +62,7 @@ func (s *staffRepository) FindById(nik_staff string) (model.Staff, error) {
 
 // FindByName implements StaffRepository.
 func (s *staffRepository) FindByName(name string) ([]model.Staff, error) {
-	rows, err := s.db.Query(`SELECT * FROM staff WHERE name ILIKE '$1'`, "%"+name+"%")
+	rows, err := s.db.Query(`SELECT * FROM staff WHERE name ILIKE $1`, "%"+name+"%")
 	if err != nil {
 		return nil, err
 	}
@@ -125,7 +125,7 @@ func (s *staffRepository) Save(payload model.Staff) error {
 
 // Update implements StaffRepository.
 func (s *staffRepository) Update(payload model.Staff) error {
-	_, err := s.db.Exec("UPDATE SET staff nik_staff, name, phone_number=$3 address=$4 birth_date=$5 img_url=$6 divisi=$7 WHERE nik_staff=$1", payload.Nik_Staff, payload.Name, payload.Phone_number, payload.Address, payload.Birth_date, payload.Img_url, payload.Divisi)
+	_, err := s.db.Exec("UPDATE staff SET nik_staff=$1, name=$2, phone_number=$3, address=$4, birth_date=$5, img_url=$6, divisi=$7 WHERE nik_staff=$1", payload.Nik_Staff, payload.Name, payload.Phone_number, payload.Address, payload.Birth_date, payload.Img_url, payload.Divisi)
 	if err != nil {
 		return err
 	}
