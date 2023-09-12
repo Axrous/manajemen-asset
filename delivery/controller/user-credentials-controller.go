@@ -4,16 +4,19 @@ import (
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/usecase"
 	"final-project-enigma-clean/util/helper"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gookit/slog"
+<<<<<<< HEAD
 	"go.uber.org/zap"
 	"net/http"
+=======
+>>>>>>> 064dd7d6d89f1b6299f6efec1c16d78e5d153a22
 )
 
 type UserController struct {
 	userUC usecase.UserCredentialUsecase
-	gin    *gin.Engine
-	logger *zap.Logger
+	rg     *gin.RouterGroup
 }
 
 // register handler
@@ -92,20 +95,21 @@ func (u *UserController) LoginOTPHandler(c *gin.Context) {
 
 // init route
 func (u *UserController) Route() {
-	//grouping
-	ug := u.gin.Group("/auth")
-	//define middleware in here if u need it
-	//ex : ug.Use(middleware.AuthMiddleware())
 	{
+<<<<<<< HEAD
 		ug.POST("/register", u.RegisterUserHandler)
 		ug.POST("/login", u.LoginUserHandler)
 		ug.POST("/login/email_otp/start", u.LoginOTPHandler)
+=======
+		u.rg.POST("/register", u.RegisterUserHandler)
+		u.rg.POST("/login", u.LoginUserHandler)
+>>>>>>> 064dd7d6d89f1b6299f6efec1c16d78e5d153a22
 	}
 }
 
-func NewUserController(useruc usecase.UserCredentialUsecase, g *gin.Engine) *UserController {
+func NewUserController(userUC usecase.UserCredentialUsecase, rg *gin.RouterGroup) *UserController {
 	return &UserController{
-		userUC: useruc,
-		gin:    g,
+		userUC: userUC,
+		rg:     rg,
 	}
 }
