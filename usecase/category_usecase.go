@@ -34,6 +34,8 @@ func (c *categoryUsecase) CreateNew(payload model.Category) error {
 	if payload.Name == "" {
 		return fmt.Errorf("name is required")
 	}
+
+	//commented for unit testing
 	payload.Id = helper.GenerateUUID()
 	err := c.repo.Save(payload)
 	if err != nil {
@@ -80,7 +82,7 @@ func (c *categoryUsecase) Update(payload model.Category) error {
 	return nil
 }
 
-func NewTypeCategoryUseCase(repo repository.CategoryRepository) CategoryUsecase {
+func NewCategoryUseCase(repo repository.CategoryRepository) CategoryUsecase {
 	return &categoryUsecase{
 		repo: repo,
 	}

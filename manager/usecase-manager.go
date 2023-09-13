@@ -15,7 +15,7 @@ type usecaseManager struct {
 
 // CategoryUsecase implements UsecaseManager.
 func (u *usecaseManager) CategoryUsecase() usecase.CategoryUsecase {
-	return usecase.NewTypeCategoryUseCase(u.rm.CategoryRepo())
+	return usecase.NewCategoryUseCase(u.rm.CategoryRepo())
 }
 
 // AssetUsecase implements UsecaseManager.
