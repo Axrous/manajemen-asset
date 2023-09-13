@@ -1,12 +1,14 @@
 package usecase
 
 import (
+	"errors"
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/repository"
 	"final-project-enigma-clean/util/helper"
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/gookit/slog"
+	"regexp"
 	"strconv"
 )
 
@@ -67,6 +69,13 @@ func (u *userDetailUsecase) RegisterUser(user model.UserRegisterRequest) error {
 			errMsg = "Bad request format"
 			return err
 		}
+	}
+
+	// Check if email is valid (e.g., gmail.com)
+	emailPattern := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$`
+	validEmail := regexp.MustCompile(emailPattern)
+	if !validEmail.MatchString(user.Email) {
+		return errors.New("Invalid email")
 	}
 
 	//password requirement area

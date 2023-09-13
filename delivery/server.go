@@ -6,7 +6,6 @@ import (
 	"final-project-enigma-clean/delivery/middleware"
 	"final-project-enigma-clean/manager"
 	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"go.uber.org/zap"

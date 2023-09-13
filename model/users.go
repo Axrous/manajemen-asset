@@ -16,7 +16,7 @@ type UserLoginRequest struct {
 }
 
 type UserRegisterRequest struct {
-	ID       string `json:"id"`
+	ID       string `json:"id,omitempty"`
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
 	Name     string `json:"name" validate:"required"`

@@ -17,7 +17,6 @@ type UserController struct {
 	rg     *gin.RouterGroup
 }
 
-// register handler
 func (u *UserController) RegisterUserHandler(c *gin.Context) {
 	var userRegist model.UserRegisterRequest
 
@@ -32,11 +31,10 @@ func (u *UserController) RegisterUserHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{"Message": "Successfulyy Register"})
+	c.JSON(200, gin.H{"Message": "Successfully Register"})
 
 }
 
-// login handler
 func (u *UserController) LoginUserHandler(c *gin.Context) {
 	var userLogin model.UserLoginRequest
 
@@ -135,7 +133,7 @@ func (u *UserController) ForgotPassOTPHandler(c *gin.Context) {
 		return
 	}
 
-	//stored otp and then we need to generate jwt
+	//stored otp
 	if request.OTP == storedOTP {
 		delete(usecase.OTPMap, request.Email)
 
