@@ -3,8 +3,8 @@ package model
 // user details model
 type UserCredentials struct {
 	ID       string `json:"id"`
-	Email    string `json:"email" validate:"required"`
-	Password string `json:"password" validate:"required"`
+	Email    string `json:"email,omitempty" validate:"required"`
+	Password string `json:"password,omitempty" validate:"required"`
 	Name     string `json:"name" validate:"required"`
 	IsActive bool   `json:"is_active"`
 }

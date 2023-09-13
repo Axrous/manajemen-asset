@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/repository"
 	"fmt"
@@ -9,10 +10,11 @@ import (
 
 type ManageAssetUsecase interface {
 	CreateTransaction(payload dto.ManageAssetRequest) error
+	ShowAllAsset() ([]model.ManageAsset, error)
 }
 
 type manageAssetUsecase struct {
-	repo repository.ManageAssetRepository
+	repo    repository.ManageAssetRepository
 	staffUC StaffUseCase
 	assetUC AssetUsecase
 }
@@ -31,11 +33,11 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 		if v.Status == "" {
 			return fmt.Errorf("status cannot empty")
 		}
-		
+
 		if v.TotalItem < 0 {
 			return fmt.Errorf("total item must equal than 0")
 		}
-		
+
 		_, err := m.assetUC.FindById(v.IdAsset)
 		if err != nil {
 			return fmt.Errorf(err.Error())
@@ -46,6 +48,7 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 	if err != nil {
 		return fmt.Errorf(err.Error())
 	}
+
 	payload.SubmisstionDate = time.Now()
 	payload.ReturnDate = payload.SubmisstionDate.AddDate(0, 0, payload.Duration)
 	err = m.repo.CreateTransaction(payload)
@@ -53,6 +56,11 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 		return fmt.Errorf(err.Error())
 	}
 	return nil
+}
+
+func (m *manageAssetUsecase) ShowAllAsset() ([]model.ManageAsset, error) {
+	//TODO implement me
+	return m.repo.FindAllTransaction()
 }
 
 func NewManageAssetUsecase(repo repository.ManageAssetRepository, staffUC StaffUseCase, assetUC AssetUsecase) ManageAssetUsecase {
