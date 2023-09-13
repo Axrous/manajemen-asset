@@ -8,10 +8,16 @@ type RepoManager interface {
 	StaffRepo() repository.StaffRepository
 	AssetRepo() repository.AssetRepository
 	CategoryRepo() repository.CategoryRepository
+	ManageAssetRepo() repository.ManageAssetRepository
 }
 
 type repoManager struct {
 	im InfraManager
+}
+
+// ManageAssetRepo implements RepoManager.
+func (r *repoManager) ManageAssetRepo() repository.ManageAssetRepository {
+	return repository.NewManageAssetRepository(r.im.Connect())
 }
 
 // StaffRepo implements RepoManager.
