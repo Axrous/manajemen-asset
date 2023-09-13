@@ -20,7 +20,7 @@ func (u *usecaseManager) CategoryUsecase() usecase.CategoryUsecase {
 
 // AssetUsecase implements UsecaseManager.
 func (u *usecaseManager) AssetUsecase() usecase.AssetUsecase {
-	return usecase.NewAssetUsecase(u.rm.AssetRepo(), u.TypeAssetUseCase())
+	return usecase.NewAssetUsecase(u.rm.AssetRepo(), u.TypeAssetUseCase(), u.CategoryUsecase())
 }
 
 // TypeAssetUseCase implements UsecaseManager.
