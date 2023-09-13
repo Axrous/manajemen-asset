@@ -36,6 +36,7 @@ func (s *Server) initControllers() {
 	controller.NewStaffController(s.um.StaffUseCase(), rg).Route()
 	controller.NewAssetController(s.um.AssetUsecase(), rg).Route()
 	controller.NewCategoryController(s.um.CategoryUsecase(), rg).Route()
+	controller.NewManageAssetController(s.um.ManageAssetUsecase(), rg).Route()
 }
 
 func (s *Server) Run() {
