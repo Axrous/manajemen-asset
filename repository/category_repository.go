@@ -41,7 +41,7 @@ func (c *categoryRepository) Delete(id string) error {
 
 // FindAll implements categoryRepository.
 func (c *categoryRepository) FindAll() ([]model.Category, error) {
-	rows, err := c.db.Query("SELECT * FROM category")
+	rows, err := c.db.Query("SELECT id, name FROM category")
 	if err != nil {
 		return nil, err
 	}
@@ -50,6 +50,9 @@ func (c *categoryRepository) FindAll() ([]model.Category, error) {
 		var category model.Category
 		rows.Scan(&category.Id, &category.Name)
 		categories = append(categories, category)
+	}
+	if rows.Err() != nil {
+		return nil, rows.Err()
 	}
 	return categories, nil
 }
