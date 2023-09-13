@@ -3,7 +3,6 @@ package usecase
 import (
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/repository"
-	"final-project-enigma-clean/util/helper"
 	"fmt"
 	"time"
 )
@@ -20,8 +19,9 @@ type AssetUsecase interface {
 type assetUsecase struct {
 	repo repository.AssetRepository
 	//get category usecase
-	typeAssetUC TypeAssetUseCase
+	categoryUc CategoryUsecase
 	//get asset type usecase
+	typeAssetUC TypeAssetUseCase
 }
 
 // FindByName implements AssetUsecase.
@@ -52,16 +52,20 @@ func (a *assetUsecase) Create(payload model.AssetRequest) error {
 		return fmt.Errorf("status cannot empty")
 	}
 
-	//implement category find by id
+	//implement asset type find by id
 	_, err := a.typeAssetUC.FindById(payload.AssetTypeId)
 	if err != nil {
 		return err
 	}
 
-	//implement asset type find by id
+	//implement category find by id
+	_, err = a.categoryUc.FindById(payload.CategoryId)
+	if err != nil {
+		return err
+	}
 
 	//commented for unit testing
-	payload.Id = helper.GenerateUUID()
+	// payload.Id = helper.GenerateUUID()
 	payload.EntryDate = time.Now()
 	err = a.repo.Save(payload)
 	if err != nil {
@@ -121,9 +125,14 @@ func (a *assetUsecase) Update(payload model.AssetRequest) error {
 		return fmt.Errorf("status cannot empty")
 	}
 
-	//implement category find by id
-	//implement category find by id
+	//implement asset type find by id
 	_, err := a.typeAssetUC.FindById(payload.AssetTypeId)
+	if err != nil {
+		return err
+	}
+	
+	//implement category find by id
+	_, err = a.categoryUc.FindById(payload.CategoryId)
 	if err != nil {
 		return err
 	}
@@ -141,9 +150,10 @@ func (a *assetUsecase) Update(payload model.AssetRequest) error {
 	return nil
 }
 
-func NewAssetUsecase(assetRepo repository.AssetRepository, typeAssetUC TypeAssetUseCase) AssetUsecase {
+func NewAssetUsecase(assetRepo repository.AssetRepository, typeAssetUC TypeAssetUseCase, categoryUC CategoryUsecase) AssetUsecase {
 	return &assetUsecase{
 		repo:        assetRepo,
+		categoryUc:  categoryUC,
 		typeAssetUC: typeAssetUC,
 	}
 }
