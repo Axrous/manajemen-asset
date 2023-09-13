@@ -32,7 +32,7 @@ func (cc *CategoryController) createHandlerCategory(c *gin.Context) {
 	response := gin.H{
 		"message": "successfully created category",
 	}
-	c.JSON(200, response)
+	c.JSON(201, response)
 }
 func (cc *CategoryController) listHandlerCategory(c *gin.Context) {
 
