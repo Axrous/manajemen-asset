@@ -24,8 +24,8 @@ type UserRegisterRequest struct {
 }
 
 type UserLoginOTPRequest struct {
-	OTP   int    `json:"otp"`
 	Email string `json:"email" validate:"required,email"`
+	OTP   int    `json:"otp"`
 }
 
 type ChangePasswordRequest struct {

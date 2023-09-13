@@ -55,7 +55,13 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">final-project-enigma-clean/repository/user-credentials-repository.go (91.3%)</option>
+				<option value="file0">final-project-enigma-clean/repository/asset_repository.go (74.5%)</option>
+				
+				<option value="file1">final-project-enigma-clean/repository/staff_repository.go (0.0%)</option>
+				
+				<option value="file2">final-project-enigma-clean/repository/type_asset_repository.go (0.0%)</option>
+				
+				<option value="file3">final-project-enigma-clean/repository/user-credentials-repository.go (81.6%)</option>
 				
 				</select>
 			</div>
@@ -74,6 +80,431 @@
 import (
         "database/sql"
         "final-project-enigma-clean/model"
+)
+
+type AssetRepository interface {
+        Save(asset model.AssetRequest) error
+        FindAll() ([]model.Asset, error)
+        FindById(id string) (model.Asset, error)
+        FindByName(name string) ([]model.Asset, error)
+        Update(asset model.AssetRequest) error
+        Delete(id string) error
+}
+
+type assetRepository struct {
+        db *sql.DB
+}
+
+// FindByName implements AssetRepository.
+func (a *assetRepository) FindByName(name string) ([]model.Asset, error) <span class="cov0" title="0">{
+        query := `select a.id, a.name, a.amount, a.status, a.entry_date, a.img_url, c.id, c.name, at.id, at.name
+                        from asset as a 
+                        left join category as c on c.id = a.id_category
+                        left join asset_type as at on at.id = a.id_asset_type
+                        where a.name ilike $1`
+        
+        rows, err := a.db.Query(query, "%"+name+"%")
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">var assets []model.Asset
+        for rows.Next() </span><span class="cov0" title="0">{
+                var asset model.Asset
+                rows.Scan(&amp;asset.Id, &amp;asset.Name, &amp;asset.Amount, &amp;asset.Status, &amp;asset.EntryDate, &amp;asset.ImgUrl, &amp;asset.Category.Id, &amp;asset.Category.Name, &amp;asset.AssetType.Id, &amp;asset.AssetType.Name)
+                assets = append(assets, asset)
+        }</span>
+        <span class="cov0" title="0">if rows.Err() != nil </span><span class="cov0" title="0">{
+                return nil, rows.Err()
+        }</span>
+
+        <span class="cov0" title="0">return assets, nil</span>
+
+}
+
+// Delete implements AssetRepository.
+func (a *assetRepository) Delete(id string) error <span class="cov8" title="1">{
+
+        query := "delete from asset where id = $1"
+
+        _, err := a.db.Exec(query, id)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// FindAll implements AssetRepository.
+func (a *assetRepository) FindAll() ([]model.Asset, error) <span class="cov8" title="1">{
+        // panic("unimplemented")
+
+        query := `select a.id, a.name, a.amount, a.status, a.entry_date, a.img_url, c.id, c.name, at.id, at.name
+                        from asset as a 
+                        left join category as c on c.id = a.id_category
+                        left join asset_type as at on at.id = a.id_asset_type`
+
+        rows, err := a.db.Query(query)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">var assets []model.Asset
+        for rows.Next() </span><span class="cov8" title="1">{
+                var asset model.Asset
+                rows.Scan(&amp;asset.Id, &amp;asset.Name, &amp;asset.Amount, &amp;asset.Status, &amp;asset.EntryDate, &amp;asset.ImgUrl, &amp;asset.Category.Id, &amp;asset.Category.Name, &amp;asset.AssetType.Id, &amp;asset.AssetType.Name)
+                assets = append(assets, asset)
+        }</span>
+        <span class="cov8" title="1">if rows.Err() != nil </span><span class="cov8" title="1">{
+                return nil, rows.Err()
+        }</span>
+
+        <span class="cov8" title="1">return assets, nil</span>
+}
+
+// FindById implements AssetRepository.
+func (a *assetRepository) FindById(id string) (model.Asset, error) <span class="cov8" title="1">{
+        query := `select a.id, a.name, a.amount, a.status, a.entry_date, a.img_url, c.id, c.name, at.id, at.name
+                        from asset as a 
+                        left join category as c on c.id = a.id_category
+                        left join asset_type as at on at.id = a.id_asset_type
+                        where a.id = $1`
+
+        row := a.db.QueryRow(query, id)
+        var asset model.Asset
+        err := row.Scan(&amp;asset.Id, &amp;asset.Name, &amp;asset.Amount, &amp;asset.Status, &amp;asset.EntryDate, &amp;asset.ImgUrl, &amp;asset.Category.Id, &amp;asset.Category.Name, &amp;asset.AssetType.Id, &amp;asset.AssetType.Name)
+        if err != nil </span><span class="cov8" title="1">{
+                return model.Asset{}, err
+        }</span>
+
+        <span class="cov8" title="1">return asset, nil</span>
+}
+
+// Save implements AssetRepository.
+func (a *assetRepository) Save(asset model.AssetRequest) error <span class="cov8" title="1">{
+        query := "insert into asset(id, id_category, id_asset_type, name, amount, status, entry_date, img_url) values($1, $2, $3, $4, $5, $6, $7, $8)"
+
+        _, err := a.db.Exec(query, asset.Id, asset.CategoryId, asset.AssetTypeId, asset.Name, asset.Amount, asset.Status, asset.EntryDate, asset.ImgUrl)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// Update implements AssetRepository.
+func (a *assetRepository) Update(asset model.AssetRequest) error <span class="cov8" title="1">{
+        query := `update asset set id_category = $2, id_asset_type = $3, name = $4, amount = $5, status = $6, img_url = $7 where id = $1`
+
+        _, err := a.db.Exec(query, asset.Id, asset.CategoryId, asset.AssetTypeId, asset.Name, asset.Amount, asset.Status, asset.ImgUrl)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+func NewAssetRepository(db *sql.DB) AssetRepository <span class="cov8" title="1">{
+        return &amp;assetRepository{
+                db: db,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package repository
+
+import (
+        "database/sql"
+        "final-project-enigma-clean/model"
+        "final-project-enigma-clean/model/dto"
+        "math"
+)
+
+type StaffRepository interface {
+        Save(payload model.Staff) error
+        FindById(nik_staff string) (model.Staff, error)
+        FindByName(name string) ([]model.Staff, error)
+        FindByAll() ([]model.Staff, error)
+        Update(payload model.Staff) error
+        Delete(nik_staff string) error
+        Paging(payload dto.PageRequest) ([]model.Staff, dto.Paging, error)
+}
+
+type staffRepository struct {
+        db *sql.DB
+}
+
+// Delete implements StaffRepository.
+func (s *staffRepository) Delete(nik_staff string) error <span class="cov0" title="0">{
+        _, err := s.db.Exec("DELETE FROM staff WHERE nik_staff=$1", nik_staff)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+// FindByAll implements StaffRepository.
+func (s *staffRepository) FindByAll() ([]model.Staff, error) <span class="cov0" title="0">{
+        //nik_staff, name, phone_number, address, birth_date, img_url, divisi
+        rows, err := s.db.Query("SELECT * FROM staff")
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">var staffs []model.Staff
+        for rows.Next() </span><span class="cov0" title="0">{
+                var staff model.Staff
+                err = rows.Scan(&amp;staff.Nik_Staff, &amp;staff.Name, &amp;staff.Phone_number, &amp;staff.Address, &amp;staff.Birth_date, &amp;staff.Img_url, &amp;staff.Divisi)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov0" title="0">staffs = append(staffs, staff)</span>
+        }
+        <span class="cov0" title="0">return staffs, nil</span>
+}
+
+// FindById implements StaffRepository.
+func (s *staffRepository) FindById(nik_staff string) (model.Staff, error) <span class="cov0" title="0">{
+        row := s.db.QueryRow("SELECT * FROM staff WHERE nik_staff=$1", nik_staff)
+        var staff model.Staff
+        err := row.Scan(&amp;staff.Nik_Staff, &amp;staff.Name, &amp;staff.Phone_number, &amp;staff.Address, &amp;staff.Birth_date, &amp;staff.Img_url, &amp;staff.Divisi)
+        if err != nil </span><span class="cov0" title="0">{
+                return model.Staff{}, err
+        }</span>
+        <span class="cov0" title="0">return staff, nil</span>
+}
+
+// FindByName implements StaffRepository.
+func (s *staffRepository) FindByName(name string) ([]model.Staff, error) <span class="cov0" title="0">{
+        rows, err := s.db.Query(`SELECT * FROM staff WHERE name ILIKE $1`, "%"+name+"%")
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">var staffs []model.Staff
+        for rows.Next() </span><span class="cov0" title="0">{
+                staff := model.Staff{}
+                err := rows.Scan(&amp;staff.Nik_Staff, &amp;staff.Name, &amp;staff.Phone_number, &amp;staff.Address, &amp;staff.Birth_date, &amp;staff.Img_url, &amp;staff.Divisi)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov0" title="0">staffs = append(staffs, staff)</span>
+        }
+        <span class="cov0" title="0">return staffs, nil</span>
+}
+
+// Paging implements StaffRepository.
+func (s *staffRepository) Paging(payload dto.PageRequest) ([]model.Staff, dto.Paging, error) <span class="cov0" title="0">{
+        if payload.Page &lt;= 0 </span><span class="cov0" title="0">{
+                payload.Page = 1
+        }</span>
+        <span class="cov0" title="0">q := `SELECT * FROM staff LIMIT $2 OFFSET $1`
+        rows, err := s.db.Query(q, (payload.Page-1)*payload.Size, payload.Size)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, dto.Paging{}, err
+        }</span>
+
+        <span class="cov0" title="0">var staffs []model.Staff
+        for rows.Next() </span><span class="cov0" title="0">{
+                var staff model.Staff
+                err := rows.Scan(&amp;staff.Nik_Staff, &amp;staff.Name, &amp;staff.Phone_number, &amp;staff.Address, &amp;staff.Birth_date, &amp;staff.Img_url, &amp;staff.Divisi)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, dto.Paging{}, err
+                }</span>
+                <span class="cov0" title="0">staffs = append(staffs, staff)</span>
+        }
+        <span class="cov0" title="0">var count int
+        row := s.db.QueryRow("SELECT COUNT(nik_staff) FROM staff")
+        if err := row.Scan(&amp;count); err != nil </span><span class="cov0" title="0">{
+                return nil, dto.Paging{}, err
+        }</span>
+
+        <span class="cov0" title="0">paging := dto.Paging{
+                Page:       payload.Page,
+                Size:       payload.Size,
+                TotalRows:  count,
+                TotalPages: int(math.Ceil(float64(count) / float64(payload.Size))), // (totalrow / size)
+        }
+
+        return staffs, paging, nil</span>
+
+}
+
+// Save implements StaffRepository.
+func (s *staffRepository) Save(payload model.Staff) error <span class="cov0" title="0">{
+        _, err := s.db.Exec("INSERT INTO staff VALUES ($1, $2, $3, $4, $5, $6, $7)", payload.Nik_Staff, payload.Name, payload.Phone_number, payload.Address, payload.Birth_date, payload.Img_url, payload.Divisi)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+// Update implements StaffRepository.
+func (s *staffRepository) Update(payload model.Staff) error <span class="cov0" title="0">{
+        _, err := s.db.Exec("UPDATE staff SET nik_staff=$1, name=$2, phone_number=$3, address=$4, birth_date=$5, img_url=$6, divisi=$7 WHERE nik_staff=$1", payload.Nik_Staff, payload.Name, payload.Phone_number, payload.Address, payload.Birth_date, payload.Img_url, payload.Divisi)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func NewStaffRepository(db *sql.DB) StaffRepository <span class="cov0" title="0">{
+        return &amp;staffRepository{
+                db: db,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package repository
+
+import (
+        "database/sql"
+        "final-project-enigma-clean/model"
+        "final-project-enigma-clean/model/dto"
+        "math"
+)
+
+type TypeAssetRepository interface {
+        Save(payload model.TypeAsset) error
+        FindById(id string) (model.TypeAsset, error)
+        FindByName(name string) ([]model.TypeAsset, error)
+        FindAll() ([]model.TypeAsset, error)
+        Update(payload model.TypeAsset) error
+        Delete(id string) error
+        Paging(payload dto.PageRequest) ([]model.TypeAsset, dto.Paging, error)
+}
+
+type typeAssetRepository struct {
+        db *sql.DB
+}
+
+// FindById implements TypeAssetRepository.
+func (t *typeAssetRepository) FindById(id string) (model.TypeAsset, error) <span class="cov0" title="0">{
+        row := t.db.QueryRow("SELECT id,name FROM asset_type WHERE id=$1", id)
+        var typeAsset model.TypeAsset
+        err := row.Scan(&amp;typeAsset.Id, &amp;typeAsset.Name)
+        if err != nil </span><span class="cov0" title="0">{
+                return model.TypeAsset{}, err
+        }</span>
+
+        <span class="cov0" title="0">return typeAsset, nil</span>
+
+}
+
+// Delete implements TypeAssetRepository.
+func (t *typeAssetRepository) Delete(id string) error <span class="cov0" title="0">{
+        _, err := t.db.Exec("DELETE FROM asset_type WHERE id= $1", id)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+// FindAll implements TypeAssetRepository.
+func (t *typeAssetRepository) FindAll() ([]model.TypeAsset, error) <span class="cov0" title="0">{
+        rows, err := t.db.Query("SELECT * FROM asset_type")
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">var typeAssets []model.TypeAsset
+        for rows.Next() </span><span class="cov0" title="0">{
+                var typeAsset model.TypeAsset
+                err = rows.Scan(&amp;typeAsset.Id, &amp;typeAsset.Name)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov0" title="0">typeAssets = append(typeAssets, typeAsset)</span>
+        }
+        <span class="cov0" title="0">return typeAssets, nil</span>
+}
+
+// FindByName implements TypeAssetRepository.
+func (t *typeAssetRepository) FindByName(name string) ([]model.TypeAsset, error) <span class="cov0" title="0">{
+        rows, err := t.db.Query(`SELECT id, name FROM asset_type WHERE name ILIKE $1`, "%"+name+"%")
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">var typeAssets []model.TypeAsset
+        for rows.Next() </span><span class="cov0" title="0">{
+                typeAsset := model.TypeAsset{}
+                err := rows.Scan(
+                        &amp;typeAsset.Id,
+                        &amp;typeAsset.Name,
+                )
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov0" title="0">typeAssets = append(typeAssets, typeAsset)</span>
+        }
+        <span class="cov0" title="0">return typeAssets, nil</span>
+
+}
+
+// Paging implements TypeAssetRepository.
+func (t *typeAssetRepository) Paging(payload dto.PageRequest) ([]model.TypeAsset, dto.Paging, error) <span class="cov0" title="0">{
+        if payload.Page &lt;= 0 </span><span class="cov0" title="0">{
+                payload.Page = 1
+        }</span>
+        <span class="cov0" title="0">q := `SELECT id, name FROM asset_type LIMIT $2 OFFSET $1`
+        rows, err := t.db.Query(q, (payload.Page-1)*payload.Size, payload.Size)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, dto.Paging{}, err
+        }</span>
+
+        <span class="cov0" title="0">var typeAssets []model.TypeAsset
+        for rows.Next() </span><span class="cov0" title="0">{
+                var typeAsset model.TypeAsset
+                err := rows.Scan(&amp;typeAsset.Id, &amp;typeAsset.Name)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, dto.Paging{}, err
+                }</span>
+                <span class="cov0" title="0">typeAssets = append(typeAssets, typeAsset)</span>
+        }
+        <span class="cov0" title="0">var count int
+        row := t.db.QueryRow("SELECT COUNT(id) FROM asset_type")
+        if err := row.Scan(&amp;count); err != nil </span><span class="cov0" title="0">{
+                return nil, dto.Paging{}, err
+        }</span>
+
+        <span class="cov0" title="0">paging := dto.Paging{
+                Page:       payload.Page,
+                Size:       payload.Size,
+                TotalRows:  count,
+                TotalPages: int(math.Ceil(float64(count) / float64(payload.Size))), // (totalrow / size)
+        }
+
+        return typeAssets, paging, nil</span>
+
+}
+
+// Save implements TypeAssetRepository.
+func (t *typeAssetRepository) Save(payload model.TypeAsset) error <span class="cov0" title="0">{
+        _, err := t.db.Exec("INSERT INTO asset_type VALUES ($1,$2)", payload.Id, payload.Name)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+// Update implements TypeAssetRepository.
+func (t *typeAssetRepository) Update(payload model.TypeAsset) error <span class="cov0" title="0">{
+        _, err := t.db.Exec("UPDATE asset_type SET name=$2 WHERE id=$1", payload.Id, payload.Name)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func NewTypeAssetRepository(db *sql.DB) TypeAssetRepository <span class="cov0" title="0">{
+        return &amp;typeAssetRepository{
+                db: db,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package repository
+
+import (
+        "database/sql"
+        "final-project-enigma-clean/model"
         "fmt"
 )
 
@@ -81,10 +512,31 @@ type UserCredentialsRepository interface {
         UserRegister(user model.UserRegisterRequest) error
         UserLogin(user model.UserLoginRequest) (string, error)
         FindUserEmail(email string) (user model.UserLoginRequest, err error)
+        FindUserEmailPass(email string) (userPass model.ChangePasswordRequest, err error)
+        ForgotPassword(email, newpass string) error
+        GetUserPassword(email string) (string, error)
+        CheckEmailExist(email string) bool
 }
 
 type userCredentialRepository struct {
         db *sql.DB
+}
+
+func (u userCredentialRepository) FindUserEmailPass(email string) (userPass model.ChangePasswordRequest, err error) <span class="cov8" title="1">{
+        // Query SQL untuk mencari pengguna berdasarkan email
+        query := "SELECT id, email, password FROM user_credential WHERE email = $1"
+        var user model.ChangePasswordRequest
+
+        err = u.db.QueryRow(query, email).Scan(&amp;user.ID, &amp;user.Email, &amp;user.OldPassword)
+        if err != nil </span><span class="cov0" title="0">{
+                // if email is not found
+                if err == sql.ErrNoRows </span><span class="cov0" title="0">{
+                        return model.ChangePasswordRequest{}, fmt.Errorf("Invalid Credentials")
+                }</span>
+                <span class="cov0" title="0">return model.ChangePasswordRequest{}, fmt.Errorf("Failed to run query: %v", err.Error())</span>
+        }
+
+        <span class="cov8" title="1">return user, nil</span>
 }
 
 // user register
@@ -135,6 +587,44 @@ func (u userCredentialRepository) FindUserEmail(email string) (model.UserLoginRe
         }
 
         <span class="cov8" title="1">return user, nil</span>
+}
+
+func (u userCredentialRepository) ForgotPassword(email, newpass string) error <span class="cov8" title="1">{
+        //TODO implement me
+        query := "update user_credential set password = $2 where email = $1 "
+        _, err := u.db.Exec(query, email, newpass)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("Failed to exec %v", err.Error())
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (u userCredentialRepository) GetUserPassword(email string) (string, error) <span class="cov8" title="1">{
+        //TODO implement me
+        query := "select password from user_credential where email = $1"
+
+        var hashPassword string
+        //do query row
+        err := u.db.QueryRow(query, email).Scan(&amp;hashPassword)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">return hashPassword, nil</span>
+}
+
+func (u userCredentialRepository) CheckEmailExist(email string) bool <span class="cov8" title="1">{
+        //TODO implement me
+
+        //do query untuk mencari apakah username sudah tersedia atau belum
+        query := "select count(*) from user_credential where email=$1" // count(*) : menghitung jumlah baris
+
+        var count int
+        err := u.db.QueryRow(query, email).Scan(&amp;count)
+        if err != nil </span><span class="cov0" title="0">{
+                fmt.Println(err.Error())
+                return true //anggap username sudah ada jika error dalam query nya
+        }</span>
+        <span class="cov8" title="1">return count &gt; 0</span> //count &gt; 0 mean is username already exist on database
 }
 
 func NewUserDetailsRepository(db *sql.DB) UserCredentialsRepository <span class="cov8" title="1">{

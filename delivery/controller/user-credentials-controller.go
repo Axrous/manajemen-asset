@@ -22,7 +22,7 @@ func (u *UserController) RegisterUserHandler(c *gin.Context) {
 
 	//bind json
 	if err := c.ShouldBindJSON(&userRegist); err != nil {
-		c.AbortWithStatusJSON(400, gin.H{"Error": err.Error()})
+		c.AbortWithStatusJSON(400, gin.H{"Error": "Bad JSON Format"})
 		return
 	}
 
@@ -46,7 +46,7 @@ func (u *UserController) LoginUserHandler(c *gin.Context) {
 
 	userID, err := u.userUC.LoginUser(userLogin)
 	if err != nil {
-		c.AbortWithStatusJSON(500, gin.H{"Error": err.Error()})
+		c.AbortWithStatusJSON(400, gin.H{"Error": err.Error()})
 		return
 	}
 
@@ -65,7 +65,7 @@ func (u *UserController) LoginOTPHandler(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"Error": "Bad json format"})
 		return
 	}
 
@@ -94,7 +94,7 @@ func (u *UserController) ForgotPassHandler(c *gin.Context) {
 	var userLogin model.ChangePasswordRequest
 
 	if err := c.ShouldBindJSON(&userLogin); err != nil {
-		c.AbortWithStatusJSON(400, gin.H{"Error": err.Error()})
+		c.AbortWithStatusJSON(400, gin.H{"Error": "Bad json format"})
 		return
 	}
 
@@ -119,7 +119,7 @@ func (u *UserController) ForgotPassOTPHandler(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(400, gin.H{"errorjson": err.Error()})
+		c.AbortWithStatusJSON(400, gin.H{"Error": "Bad JSON Format"})
 		return
 	}
 
@@ -146,19 +146,19 @@ func (u *UserController) ForgotPassOTPHandler(c *gin.Context) {
 
 		//compare
 		if err = bcrypt.CompareHashAndPassword([]byte(hashedPass), []byte(request.OldPassword)); err != nil {
-			c.AbortWithStatusJSON(500, gin.H{"Error": "Failed to compare", "Error compare": err.Error()})
+			c.AbortWithStatusJSON(500, gin.H{"Error": "Invalid credentials"})
 			return
 		}
 
 		//if compare successfully,then weneed to hash new password
 		newHashPassword, err := helper.HashPasswordForgotPass(request.NewPassword)
 		if err != nil {
-			c.AbortWithStatusJSON(500, gin.H{"ERror hash password": err.Error()})
+			c.AbortWithStatusJSON(500, gin.H{"Error": "something is wrong"})
 			return
 		}
 
 		if err = u.userUC.ForgotPassword(request.Email, newHashPassword); err != nil {
-			c.AbortWithStatusJSON(500, gin.H{"Error forgot pw": err.Error()})
+			c.AbortWithStatusJSON(500, gin.H{"Error": "Invalid Password"})
 			return
 		}
 
@@ -171,7 +171,7 @@ func (u *UserController) Route() {
 	{
 		u.rg.POST("/register", u.RegisterUserHandler)
 		u.rg.POST("/login", u.LoginUserHandler)
-		u.rg.POST("/login/email_otp/start", u.LoginOTPHandler)
+		u.rg.POST("/login/email-otp/start", u.LoginOTPHandler)
 		u.rg.POST("/password-new", u.ForgotPassHandler)
 		u.rg.POST("/forgot-password/start", u.ForgotPassOTPHandler)
 	}
