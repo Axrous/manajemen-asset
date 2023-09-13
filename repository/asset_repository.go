@@ -9,12 +9,40 @@ type AssetRepository interface {
 	Save(asset model.AssetRequest) error
 	FindAll() ([]model.Asset, error)
 	FindById(id string) (model.Asset, error)
+	FindByName(name string) ([]model.Asset, error)
 	Update(asset model.AssetRequest) error
 	Delete(id string) error
 }
 
 type assetRepository struct {
 	db *sql.DB
+}
+
+// FindByName implements AssetRepository.
+func (a *assetRepository) FindByName(name string) ([]model.Asset, error) {
+	query := `select a.id, a.name, a.amount, a.status, a.entry_date, a.img_url, c.id, c.name, at.id, at.name
+			from asset as a 
+			left join category as c on c.id = a.id_category
+			left join asset_type as at on at.id = a.id_asset_type
+			where a.name ilike $1`
+	
+	rows, err := a.db.Query(query, "%"+name+"%")
+	if err != nil {
+		return nil, err
+	}
+
+	var assets []model.Asset
+	for rows.Next() {
+		var asset model.Asset
+		rows.Scan(&asset.Id, &asset.Name, &asset.Amount, &asset.Status, &asset.EntryDate, &asset.ImgUrl, &asset.Category.Id, &asset.Category.Name, &asset.AssetType.Id, &asset.AssetType.Name)
+		assets = append(assets, asset)
+	}
+	if rows.Err() != nil {
+		return nil, rows.Err()
+	}
+
+	return assets, nil
+
 }
 
 // Delete implements AssetRepository.
@@ -38,7 +66,7 @@ func (a *assetRepository) FindAll() ([]model.Asset, error) {
 			from asset as a 
 			left join category as c on c.id = a.id_category
 			left join asset_type as at on at.id = a.id_asset_type`
-	
+
 	rows, err := a.db.Query(query)
 	if err != nil {
 		return nil, err
@@ -54,7 +82,6 @@ func (a *assetRepository) FindAll() ([]model.Asset, error) {
 		return nil, rows.Err()
 	}
 
-
 	return assets, nil
 }
 
@@ -65,7 +92,7 @@ func (a *assetRepository) FindById(id string) (model.Asset, error) {
 			left join category as c on c.id = a.id_category
 			left join asset_type as at on at.id = a.id_asset_type
 			where a.id = $1`
-	
+
 	row := a.db.QueryRow(query, id)
 	var asset model.Asset
 	err := row.Scan(&asset.Id, &asset.Name, &asset.Amount, &asset.Status, &asset.EntryDate, &asset.ImgUrl, &asset.Category.Id, &asset.Category.Name, &asset.AssetType.Id, &asset.AssetType.Name)
@@ -93,7 +120,7 @@ func (a *assetRepository) Update(asset model.AssetRequest) error {
 	query := `update asset set id_category = $2, id_asset_type = $3, name = $4, amount = $5, status = $6, img_url = $7 where id = $1`
 
 	_, err := a.db.Exec(query, asset.Id, asset.CategoryId, asset.AssetTypeId, asset.Name, asset.Amount, asset.Status, asset.ImgUrl)
-	if err !=nil {
+	if err != nil {
 		return err
 	}
 

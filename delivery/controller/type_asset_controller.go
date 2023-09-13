@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"final-project-enigma-clean/delivery/middleware"
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/usecase"
@@ -72,21 +73,21 @@ func (t *TypeAssetController) getByIdteHandlerTypeAsset(c *gin.Context) {
 	c.JSON(200, response)
 }
 
-//	func (t *TypeAssetController) getByNameteHandlerTypeAsset(c *gin.Context) {
-//		name := c.Param("name")
-//		typeAsset, err := t.typeAssetUC.FindByName(name)
-//		if err != nil {
-//			c.AbortWithStatusJSON(500, gin.H{
-//				"message": err.Error(),
-//			})
-//			return
-//		}
-//		response := gin.H{
-//			"message": "successfully get by name type asset",
-//			"data":    typeAsset,
-//		}
-//		c.JSON(200, response)
-//	}
+func (t *TypeAssetController) getByNameteHandlerTypeAsset(c *gin.Context) {
+	name := c.Param("name")
+	typeAsset, err := t.typeAssetUC.FindByName(name)
+	if err != nil {
+		c.AbortWithStatusJSON(500, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+	response := gin.H{
+		"message": "successfully get by name type asset",
+		"data":    typeAsset,
+	}
+	c.JSON(200, response)
+}
 func (t *TypeAssetController) updateHandlerTypeAsset(c *gin.Context) {
 	var typeAsset model.TypeAsset
 	if err := c.ShouldBindJSON(&typeAsset); err != nil {
@@ -120,12 +121,12 @@ func (t *TypeAssetController) deleteHandlerTypeAsset(c *gin.Context) {
 	})
 }
 func (t *TypeAssetController) Route() {
-	t.rg.POST("/typeAsset", t.createHandlerTypeAsset)
-	t.rg.GET("/typeAsset", t.listHandlerTypeAsset)
-	t.rg.GET("/typeAsset/:id", t.getByIdteHandlerTypeAsset)
-	// t.rg.GET("/typeAsset/:name", t.getByNameteHandlerTypeAsset)
-	t.rg.PUT("/typeAsset", t.updateHandlerTypeAsset)
-	t.rg.DELETE("/typeAsset/:id", t.deleteHandlerTypeAsset)
+	t.rg.POST("/typeAsset", middleware.AuthMiddleware(), t.createHandlerTypeAsset)
+	t.rg.GET("/typeAsset", middleware.AuthMiddleware(), t.listHandlerTypeAsset)
+	t.rg.GET("/typeAsset/:id", middleware.AuthMiddleware(), t.getByIdteHandlerTypeAsset)
+	t.rg.GET("/typeAsset/name/:name", middleware.AuthMiddleware(), t.getByNameteHandlerTypeAsset)
+	t.rg.PUT("/typeAsset", middleware.AuthMiddleware(), t.updateHandlerTypeAsset)
+	t.rg.DELETE("/typeAsset/:id", middleware.AuthMiddleware(), t.deleteHandlerTypeAsset)
 }
 
 func NewTypeAssetController(typeAssetUC usecase.TypeAssetUseCase, rg *gin.RouterGroup) *TypeAssetController {

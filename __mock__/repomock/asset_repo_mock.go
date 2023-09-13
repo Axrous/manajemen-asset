@@ -10,6 +10,16 @@ type AssetRepoMock struct {
 	mock.Mock
 }
 
+// FindByName implements repository.AssetRepository.
+func (a *AssetRepoMock) FindByName(name string) ([]model.Asset, error) {
+	args := a.Called(name)
+	if args.Get(1) != nil {
+		return nil, args.Error(1)
+	}
+
+	return args.Get(0).([]model.Asset), nil
+}
+
 // Delete implements AssetRepoMock.
 func (a *AssetRepoMock) Delete(id string) error {
 	return a.Called(id).Error(0)
