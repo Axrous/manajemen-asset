@@ -39,8 +39,8 @@ func (s *staffUseCase) CreateNew(payload model.Staff) error {
 	if payload.Name == "" {
 		return fmt.Errorf("name is required")
 	}
-	if payload.Phone_number == "" {
-		return fmt.Errorf("phone number is required")
+	if len(payload.Phone_number) < 10 || len(payload.Phone_number) > 15 {
+		return fmt.Errorf("phone number must be between 10 and 15 characters")
 	}
 	if payload.Address == "" {
 		return fmt.Errorf("address is required")
@@ -105,6 +105,9 @@ func (s *staffUseCase) Update(payload model.Staff) error {
 	}
 	if payload.Address == "" {
 		return fmt.Errorf("address is required")
+	}
+	if payload.Birth_date.IsZero() || payload.Birth_date.Hour() != 0 || payload.Birth_date.Minute() != 0 || payload.Birth_date.Second() != 0 || payload.Birth_date.Nanosecond() != 0 {
+		return fmt.Errorf("birthdate must be a date without time")
 	}
 	if payload.Divisi == "" {
 		return fmt.Errorf("divisi is required")
