@@ -32,7 +32,12 @@ func (s *Server) initControllers() {
 	rg := s.gin.Group("/api/v1")
 	controller.NewUserController(s.um.UserUsecase(), rg).Route()
 	controller.NewTypeAssetController(s.um.TypeAssetUseCase(), rg).Route()
+<<<<<<< HEAD
 	controller.NewStaffController(s.um.StaffUseCase(), rg).Route()
+=======
+	controller.NewAssetController(s.um.AssetUsecase(), rg).Route()
+	controller.NewCategoryController(s.um.CategoryUsecase(), rg).Route()
+>>>>>>> ceca9a7
 }
 
 func (s *Server) Run() {

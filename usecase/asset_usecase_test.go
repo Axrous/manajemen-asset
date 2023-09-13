@@ -17,12 +17,14 @@ type AssetUsecaseTestSuite struct {
 	repoMock *repomock.AssetRepoMock
 	usecase AssetUsecase
 	typeAssetUC *usecasemock.TypeAssetUsecaseMock
+	categoryUC *usecasemock.CategoryUsecaseMock
 }
 
 func (suite *AssetUsecaseTestSuite) SetupTest() {
 	suite.repoMock = new(repomock.AssetRepoMock)
 	suite.typeAssetUC = new(usecasemock.TypeAssetUsecaseMock)
-	suite.usecase = NewAssetUsecase(suite.repoMock, suite.typeAssetUC)
+	suite.categoryUC = new(usecasemock.CategoryUsecaseMock)
+	suite.usecase = NewAssetUsecase(suite.repoMock, suite.typeAssetUC, suite.categoryUC)
 }
 
 func TestAssetusecaseTestSuite(t *testing.T)  {
@@ -45,7 +47,13 @@ func (suite *AssetUsecaseTestSuite) TestCreate_Success() {
 		Name: "Elektronik",
 	}
 
+	category := model.Category{
+		Id:   "1",
+		Name: "Bergerak",
+	}
+
 	suite.typeAssetUC.On("FindById", payload.AssetTypeId).Return(typeAsset, nil)
+	suite.categoryUC.On("FindById", payload.CategoryId).Return(category, nil)
 	suite.repoMock.On("Save", payload).Return(nil)
 	gotError := suite.usecase.Create(payload)
 	assert.NoError(suite.T(), gotError)
@@ -110,19 +118,34 @@ func (suite *AssetUsecaseTestSuite) TestCreate_InvalidTypeAsset() {
 		ImgUrl:      "",
 	}
 
-	typeAsset := model.TypeAsset{
-		Id:   "1",
-		Name: "Elektronik",
-	}
 
 	suite.typeAssetUC.On("FindById", payload.AssetTypeId).Return(model.TypeAsset{}, errors.New("failed get asset type"))
 	gotError := suite.usecase.Create(payload)
 	assert.Error(suite.T(), gotError)
 	assert.NotNil(suite.T(), gotError)
+}
+
+func (suite *AssetUsecaseTestSuite) TestCreate_InvalidCategory() {
+	payload := model.AssetRequest{
+		CategoryId:  "1",
+		AssetTypeId: "1",
+		Name:        "Laptop",
+		Amount:      5,
+		Status:      "Ready",
+		EntryDate: time.Now(),
+		ImgUrl:      "",
+	}
+
+	typeAsset := model.TypeAsset{
+		Id:   "1",
+		Name: "Elektronik",
+	}
+
 
 	suite.typeAssetUC.On("FindById", payload.AssetTypeId).Return(typeAsset, nil)
+	suite.categoryUC.On("FindById", payload.CategoryId).Return(model.Category{}, errors.New("failed get category"))
 	suite.repoMock.On("Save", payload).Return(errors.New("failed to create asset"))
-	gotError = suite.usecase.Create(payload)
+	gotError := suite.usecase.Create(payload)
 	assert.Error(suite.T(), gotError)
 	assert.NotNil(suite.T(), gotError)
 }
@@ -142,8 +165,13 @@ func (suite *AssetUsecaseTestSuite) TestCreate_Failed() {
 		Id:   "1",
 		Name: "Elektronik",
 	}
+	category := model.Category{
+		Id:   "1",
+		Name: "Bergerak",
+	}
 
 	suite.typeAssetUC.On("FindById", payload.AssetTypeId).Return(typeAsset, nil)
+	suite.categoryUC.On("FindById", payload.CategoryId).Return(category, nil)
 	suite.repoMock.On("Save", payload).Return(errors.New("failed to create asset"))
 	gotError := suite.usecase.Create(payload)
 	assert.Error(suite.T(), gotError)
@@ -217,8 +245,13 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_Success() {
 		Id:   "1",
 		Name: "Elektronik",
 	}
+	category := model.Category{
+		Id:   "1",
+		Name: "Bergerak",
+	}
 
 	suite.typeAssetUC.On("FindById", payload.AssetTypeId).Return(typeAsset, nil)
+	suite.categoryUC.On("FindById", payload.CategoryId).Return(category, nil)
 	suite.repoMock.On("FindById", payload.Id).Return(asset, nil)
 	suite.repoMock.On("Update", payload).Return(nil)
 	gotError := suite.usecase.Update(payload)
@@ -287,8 +320,13 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_InvalId() {
 		Id:   "1",
 		Name: "Elektronik",
 	}
+	category := model.Category{
+		Id:   "1",
+		Name: "Bergerak",
+	}
 
 	suite.typeAssetUC.On("FindById", payload.AssetTypeId).Return(typeAsset, nil)
+	suite.categoryUC.On("FindById", payload.CategoryId).Return(category, nil)
 	suite.repoMock.On("FindById", "xx").Return(model.Asset{}, errors.New("cannot found asset with Id"))
 	gotError := suite.usecase.Update(payload)
 	assert.NotNil(suite.T(), gotError)
@@ -307,6 +345,28 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_InvalidTypeAsset() {
 	}
 
 	suite.typeAssetUC.On("FindById", payload.AssetTypeId).Return(model.TypeAsset{}, errors.New("failed get type asset"))
+	gotError := suite.usecase.Update(payload)
+	assert.NotNil(suite.T(), gotError)
+	assert.Error(suite.T(), gotError)
+}
+
+func (suite *AssetUsecaseTestSuite) TestUpdate_InvalidCategory() {
+	payload := model.AssetRequest{
+		Id: "1",
+		CategoryId:  "1",
+		AssetTypeId: "1",
+		Name:        "Laptop",
+		Amount:      5,
+		Status:      "Ready",
+		ImgUrl:      "",
+	}
+	typeAsset := model.TypeAsset{
+		Id:   "1",
+		Name: "Elektronik",
+	}
+
+	suite.typeAssetUC.On("FindById", payload.AssetTypeId).Return(typeAsset, nil)
+	suite.categoryUC.On("FindById", payload.CategoryId).Return(typeAsset, errors.New("failed get category"))
 	gotError := suite.usecase.Update(payload)
 	assert.NotNil(suite.T(), gotError)
 	assert.Error(suite.T(), gotError)
@@ -342,8 +402,13 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_Failed() {
 		Id:   "1",
 		Name: "Elektronik",
 	}
+	category := model.Category{
+		Id:   "1",
+		Name: "Bergerak",
+	}
 
 	suite.typeAssetUC.On("FindById", payload.AssetTypeId).Return(typeAsset, nil)
+	suite.categoryUC.On("FindById", payload.CategoryId).Return(category, nil)
 	suite.repoMock.On("FindById", payload.Id).Return(asset, nil)
 	suite.repoMock.On("Update", payload).Return(errors.New("failed update asset"))
 	gotError := suite.usecase.Update(payload)

@@ -1,5 +1,6 @@
 mode: set
 final-project-enigma-clean/repository/asset_repository.go:22.74,30.16 3 0
+<<<<<<< HEAD
 final-project-enigma-clean/repository/asset_repository.go:34.2,35.18 2 0
 final-project-enigma-clean/repository/asset_repository.go:40.2,40.23 1 0
 final-project-enigma-clean/repository/asset_repository.go:44.2,44.20 1 0
@@ -64,6 +65,54 @@ final-project-enigma-clean/repository/staff_repository.go:128.61,130.16 2 0
 final-project-enigma-clean/repository/staff_repository.go:133.2,133.12 1 0
 final-project-enigma-clean/repository/staff_repository.go:130.16,132.3 1 0
 final-project-enigma-clean/repository/staff_repository.go:136.53,140.2 1 0
+=======
+final-project-enigma-clean/repository/asset_repository.go:30.16,32.3 1 0
+final-project-enigma-clean/repository/asset_repository.go:34.2,35.18 2 0
+final-project-enigma-clean/repository/asset_repository.go:35.18,39.3 3 0
+final-project-enigma-clean/repository/asset_repository.go:40.2,40.23 1 0
+final-project-enigma-clean/repository/asset_repository.go:40.23,42.3 1 0
+final-project-enigma-clean/repository/asset_repository.go:44.2,44.20 1 0
+final-project-enigma-clean/repository/asset_repository.go:49.51,54.16 3 1
+final-project-enigma-clean/repository/asset_repository.go:54.16,56.3 1 1
+final-project-enigma-clean/repository/asset_repository.go:58.2,58.12 1 1
+final-project-enigma-clean/repository/asset_repository.go:62.60,71.16 3 1
+final-project-enigma-clean/repository/asset_repository.go:71.16,73.3 1 1
+final-project-enigma-clean/repository/asset_repository.go:75.2,76.18 2 1
+final-project-enigma-clean/repository/asset_repository.go:76.18,80.3 3 1
+final-project-enigma-clean/repository/asset_repository.go:81.2,81.23 1 1
+final-project-enigma-clean/repository/asset_repository.go:81.23,83.3 1 1
+final-project-enigma-clean/repository/asset_repository.go:85.2,85.20 1 1
+final-project-enigma-clean/repository/asset_repository.go:89.68,99.16 5 1
+final-project-enigma-clean/repository/asset_repository.go:99.16,101.3 1 1
+final-project-enigma-clean/repository/asset_repository.go:103.2,103.19 1 1
+final-project-enigma-clean/repository/asset_repository.go:107.64,111.16 3 1
+final-project-enigma-clean/repository/asset_repository.go:111.16,113.3 1 1
+final-project-enigma-clean/repository/asset_repository.go:115.2,115.12 1 1
+final-project-enigma-clean/repository/asset_repository.go:119.66,123.16 3 1
+final-project-enigma-clean/repository/asset_repository.go:123.16,125.3 1 1
+final-project-enigma-clean/repository/asset_repository.go:127.2,127.12 1 1
+final-project-enigma-clean/repository/asset_repository.go:130.53,134.2 1 1
+final-project-enigma-clean/repository/category_repository.go:21.74,25.16 4 1
+final-project-enigma-clean/repository/category_repository.go:25.16,27.3 1 1
+final-project-enigma-clean/repository/category_repository.go:29.2,29.22 1 1
+final-project-enigma-clean/repository/category_repository.go:34.54,36.16 2 1
+final-project-enigma-clean/repository/category_repository.go:36.16,38.3 1 1
+final-project-enigma-clean/repository/category_repository.go:39.2,39.12 1 1
+final-project-enigma-clean/repository/category_repository.go:43.66,45.16 2 1
+final-project-enigma-clean/repository/category_repository.go:45.16,47.3 1 1
+final-project-enigma-clean/repository/category_repository.go:48.2,49.18 2 1
+final-project-enigma-clean/repository/category_repository.go:49.18,53.3 3 1
+final-project-enigma-clean/repository/category_repository.go:54.2,54.23 1 1
+final-project-enigma-clean/repository/category_repository.go:54.23,56.3 1 1
+final-project-enigma-clean/repository/category_repository.go:57.2,57.24 1 1
+final-project-enigma-clean/repository/category_repository.go:61.66,63.16 2 1
+final-project-enigma-clean/repository/category_repository.go:63.16,65.3 1 1
+final-project-enigma-clean/repository/category_repository.go:66.2,66.12 1 1
+final-project-enigma-clean/repository/category_repository.go:70.68,72.16 2 1
+final-project-enigma-clean/repository/category_repository.go:72.16,74.3 1 1
+final-project-enigma-clean/repository/category_repository.go:75.2,75.12 1 1
+final-project-enigma-clean/repository/category_repository.go:78.59,82.2 1 1
+>>>>>>> ceca9a7
 final-project-enigma-clean/repository/type_asset_repository.go:25.76,29.16 4 0
 final-project-enigma-clean/repository/type_asset_repository.go:33.2,33.23 1 0
 final-project-enigma-clean/repository/type_asset_repository.go:29.16,31.3 1 0
