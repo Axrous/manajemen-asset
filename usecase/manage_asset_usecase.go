@@ -24,24 +24,26 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 	if payload.NikStaff == "" {
 		return fmt.Errorf("nik staff cannot empty")
 	}
-
-	for _, v := range payload.ManageAssetDetailReq {
-		if v.IdAsset == "" {
+	
+	var newManageDetail []dto.ManageAssetDetailRequest
+	for _, detail := range payload.ManageAssetDetailReq {
+		if detail.IdAsset == "" {
 			return fmt.Errorf("id asset cannot empty")
 		}
 
-		if v.Status == "" {
+		if detail.Status == "" {
 			return fmt.Errorf("status cannot empty")
 		}
 
-		if v.TotalItem < 0 {
+		if detail.TotalItem < 0 {
 			return fmt.Errorf("total item must equal than 0")
 		}
 
-		_, err := m.assetUC.FindById(v.IdAsset)
+		_, err := m.assetUC.FindById(detail.IdAsset)
 		if err != nil {
 			return fmt.Errorf(err.Error())
 		}
+		newManageDetail = append(newManageDetail, detail)
 	}
 
 	_, err := m.staffUC.FindById(payload.NikStaff)
@@ -49,10 +51,10 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 		return fmt.Errorf(err.Error())
 	}
 
+	payload.ManageAssetDetailReq = newManageDetail
 	payload.SubmisstionDate = time.Now()
 	payload.ReturnDate = payload.SubmisstionDate.AddDate(0, 0, payload.Duration)
-
-	err = m.repo.CreateTransaksi(payload)
+	err = m.repo.CreateTransaction(payload)
 	if err != nil {
 		return fmt.Errorf(err.Error())
 	}
@@ -61,12 +63,13 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 
 func (m *manageAssetUsecase) ShowAllAsset() ([]model.ManageAsset, error) {
 	//TODO implement me
-	return m.repo.FindAll()
+	return m.repo.FindAllTransaction()
 }
 
 func NewManageAssetUsecase(repo repository.ManageAssetRepository, staffUC StaffUseCase, assetUC AssetUsecase) ManageAssetUsecase {
 	return &manageAssetUsecase{
 		repo:    repo,
 		staffUC: staffUC,
+		assetUC: assetUC,
 	}
 }

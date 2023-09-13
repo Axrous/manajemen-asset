@@ -7,17 +7,33 @@ import (
 )
 
 type ManageAssetRepository interface {
-	CreateTransaksi(payload dto.ManageAssetRequest) error
-	FindAll() ([]model.ManageAsset, error)
+	CreateTransaction(payload dto.ManageAssetRequest) error
+	FindAllTransaction() ([]model.ManageAsset, error)
+	FindAllByTransId(id string) ([]model.ManageDetailAsset, error)
 }
 
 type manageAssetRepository struct {
 	db *sql.DB
 }
 
+// FindAllByTransId implements ManageAssetRepository.
+func (m *manageAssetRepository) FindAllByTransId(id string) ([]model.ManageDetailAsset, error) {
+	// query := "select d.id, d.id_manage_asset, a.id, a.name, total_item, status from manage_detail_asset as d left join asset as a on a.id = d.id_asset where d.id = $1"
+
+	// rows, err := m.db.Query(query, id)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// for rows.Next() {
+
+	// }
+	panic("")
+}
+
 // FindAll implements ManageAssetRepository.
-func (m *manageAssetRepository) FindAll() ([]model.ManageAsset, error) {
-	
+func (m *manageAssetRepository) FindAllTransaction() ([]model.ManageAsset, error) {
+
 	// query := `select m.id, u.id, u.name, s.nik_staff, s.name, d.id, a.id, a.name, d.total_item, d.status from manage_asset
 	// join user_credential as u on u.id = m.id_user
 	// join staff as s on s.nik_staff = m.nik_staff
@@ -33,16 +49,16 @@ func (m *manageAssetRepository) FindAll() ([]model.ManageAsset, error) {
 	}
 
 	var transactions []model.ManageAsset
-	for rows.Next(){
+	for rows.Next() {
 		var t model.ManageAsset
-		rows.Scan(&t.Id, 
-				&t.User.ID,
-				&t.User.Name,
-				&t.Staff.Nik_Staff, 
-				&t.Staff.Name,
-				&t.SubmissionDate,
-				&t.ReturnDate,
-			)
+		rows.Scan(&t.Id,
+			&t.User.ID,
+			&t.User.Name,
+			&t.Staff.Nik_Staff,
+			&t.Staff.Name,
+			&t.SubmissionDate,
+			&t.ReturnDate,
+		)
 		transactions = append(transactions, t)
 	}
 	if rows.Err() != nil {
@@ -53,7 +69,7 @@ func (m *manageAssetRepository) FindAll() ([]model.ManageAsset, error) {
 }
 
 // CreateTransaksi implements ManageAssetRepository.
-func (m *manageAssetRepository) CreateTransaksi(payload dto.ManageAssetRequest) error {
+func (m *manageAssetRepository) CreateTransaction(payload dto.ManageAssetRequest) error {
 
 	query := "insert into manage_asset(id, id_user, nik_staff, submission_date, return_date) values($1, $2, $3, $4, $5)"
 
