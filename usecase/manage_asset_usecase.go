@@ -24,7 +24,7 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 	if payload.NikStaff == "" {
 		return fmt.Errorf("nik staff cannot empty")
 	}
-	
+
 	var newManageDetail []dto.ManageAssetDetailRequest
 	for _, detail := range payload.ManageAssetDetailReq {
 		if detail.IdAsset == "" {

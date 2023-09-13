@@ -38,7 +38,7 @@ func (m ManageAssetController) CreateNewAssetHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{"Message": "Success", "Data": manageAssetReq})
+	c.JSON(200, gin.H{"Message": "Success"})
 	return
 
 }
