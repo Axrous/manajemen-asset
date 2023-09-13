@@ -4,6 +4,7 @@ import (
 	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/repository"
 	"fmt"
+	"time"
 )
 
 type ManageAssetUsecase interface {
@@ -45,8 +46,9 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 	if err != nil {
 		return fmt.Errorf(err.Error())
 	}
-
-	err = m.repo.CreateTransaksi(payload)
+	payload.SubmisstionDate = time.Now()
+	payload.ReturnDate = payload.SubmisstionDate.AddDate(0, 0, payload.Duration)
+	err = m.repo.CreateTransaction(payload)
 	if err != nil {
 		return fmt.Errorf(err.Error())
 	}

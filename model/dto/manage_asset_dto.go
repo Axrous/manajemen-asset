@@ -8,6 +8,7 @@ type ManageAssetRequest struct {
 	NikStaff             string
 	SubmisstionDate      time.Time
 	ReturnDate           time.Time
+	Duration				int
 	ManageAssetDetailReq []ManageAssetDetailRequest
 }
 
