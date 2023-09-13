@@ -42,9 +42,22 @@ func (m ManageAssetController) CreateNewAssetHandler(c *gin.Context) {
 	return
 
 }
+
+func (m ManageAssetController) FindByIdTransaction(c *gin.Context) {
+	id := c.Param("id")
+
+	detailAssets, err := m.manageAssetUC.FindByTransactionID(id)
+	if err != nil {
+		c.AbortWithStatusJSON(500, gin.H{"Error": "Failed to find transaction", "Fail": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"Data": detailAssets})
+}
 func (m ManageAssetController) Route() {
 	m.g.GET("/manage-assets/show-all", m.ShowAllAssetHandler)
 	m.g.POST("/manage-assets/create-new", m.CreateNewAssetHandler)
+	m.g.GET("/manage-assets/find/:id", m.FindByIdTransaction)
 }
 
 func NewManageAssetController(maUC usecase.ManageAssetUsecase, g *gin.RouterGroup) *ManageAssetController {

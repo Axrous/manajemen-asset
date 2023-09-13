@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"database/sql"
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/repository"
@@ -11,6 +12,7 @@ import (
 type ManageAssetUsecase interface {
 	CreateTransaction(payload dto.ManageAssetRequest) error
 	ShowAllAsset() ([]model.ManageAsset, error)
+	FindByTransactionID(id string) ([]model.ManageDetailAsset, error)
 }
 
 type manageAssetUsecase struct {
@@ -65,6 +67,22 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 func (m *manageAssetUsecase) ShowAllAsset() ([]model.ManageAsset, error) {
 	//TODO implement me
 	return m.repo.FindAllTransaction()
+}
+
+func (m *manageAssetUsecase) FindByTransactionID(id string) ([]model.ManageDetailAsset, error) {
+	//TODO implement me
+	if id == "" {
+		return nil, fmt.Errorf("ID is required")
+	}
+
+	detailAssets, err := m.repo.FindAllByTransId(id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("Transaction not found")
+		}
+		return nil, fmt.Errorf("Failed to fetch transaction details: %v", err)
+	}
+	return detailAssets, nil
 }
 
 func NewManageAssetUsecase(repo repository.ManageAssetRepository, staffUC StaffUseCase, assetUC AssetUsecase) ManageAssetUsecase {
