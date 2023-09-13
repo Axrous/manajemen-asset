@@ -73,7 +73,7 @@ func (t *typeAssetUseCase) FindByName(name string) ([]model.TypeAsset, error) {
 	if err != nil {
 		return nil, fmt.Errorf("name type asset not found: %v", err)
 	}
-	return typeAsset, err
+	return typeAsset, nil
 
 }
 

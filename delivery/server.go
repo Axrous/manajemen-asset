@@ -32,6 +32,7 @@ func (s *Server) initControllers() {
 	rg := s.gin.Group("/api/v1")
 	controller.NewUserController(s.um.UserUsecase(), rg).Route()
 	controller.NewTypeAssetController(s.um.TypeAssetUseCase(), rg).Route()
+	controller.NewStaffController(s.um.StaffUseCase(), rg).Route()
 }
 
 func (s *Server) Run() {

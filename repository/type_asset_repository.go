@@ -8,11 +8,11 @@ import (
 )
 
 type TypeAssetRepository interface {
-	Save(typeAsset model.TypeAsset) error
+	Save(payload model.TypeAsset) error
 	FindById(id string) (model.TypeAsset, error)
 	FindByName(name string) ([]model.TypeAsset, error)
 	FindAll() ([]model.TypeAsset, error)
-	Update(typeAsset model.TypeAsset) error
+	Update(payload model.TypeAsset) error
 	Delete(id string) error
 	Paging(payload dto.PageRequest) ([]model.TypeAsset, dto.Paging, error)
 }
@@ -63,7 +63,7 @@ func (t *typeAssetRepository) FindAll() ([]model.TypeAsset, error) {
 
 // FindByName implements TypeAssetRepository.
 func (t *typeAssetRepository) FindByName(name string) ([]model.TypeAsset, error) {
-	rows, err := t.db.Query(`SELECT id, name FROM asset_type WHERE name ILIKE '$1'`, "%"+name+"%")
+	rows, err := t.db.Query(`SELECT id, name FROM asset_type WHERE name ILIKE $1`, "%"+name+"%")
 	if err != nil {
 		return nil, err
 	}
@@ -77,6 +77,7 @@ func (t *typeAssetRepository) FindByName(name string) ([]model.TypeAsset, error)
 		if err != nil {
 			return nil, err
 		}
+		typeAssets = append(typeAssets, typeAsset)
 	}
 	return typeAssets, nil
 
@@ -120,8 +121,8 @@ func (t *typeAssetRepository) Paging(payload dto.PageRequest) ([]model.TypeAsset
 }
 
 // Save implements TypeAssetRepository.
-func (t *typeAssetRepository) Save(typeAsset model.TypeAsset) error {
-	_, err := t.db.Exec("INSERT INTO asset_type VALUES ($1,$2)", typeAsset.Id, typeAsset.Name)
+func (t *typeAssetRepository) Save(payload model.TypeAsset) error {
+	_, err := t.db.Exec("INSERT INTO asset_type VALUES ($1,$2)", payload.Id, payload.Name)
 	if err != nil {
 		return err
 	}
@@ -129,8 +130,8 @@ func (t *typeAssetRepository) Save(typeAsset model.TypeAsset) error {
 }
 
 // Update implements TypeAssetRepository.
-func (t *typeAssetRepository) Update(typeAsset model.TypeAsset) error {
-	_, err := t.db.Exec("UPDATE asset_type SET name=$2 WHERE id=$1", typeAsset.Id, typeAsset.Name)
+func (t *typeAssetRepository) Update(payload model.TypeAsset) error {
+	_, err := t.db.Exec("UPDATE asset_type SET name=$2 WHERE id=$1", payload.Id, payload.Name)
 	if err != nil {
 		return err
 	}
