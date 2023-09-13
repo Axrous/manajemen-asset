@@ -5,7 +5,6 @@ import (
 	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/repository"
 	"fmt"
-	"time"
 )
 
 type ManageAssetUsecase interface {
@@ -49,9 +48,6 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 		return fmt.Errorf(err.Error())
 	}
 
-	payload.SubmisstionDate = time.Now()
-	payload.ReturnDate = payload.SubmisstionDate.AddDate(0, 0, payload.Duration)
-
 	err = m.repo.CreateTransaksi(payload)
 	if err != nil {
 		return fmt.Errorf(err.Error())
@@ -68,5 +64,6 @@ func NewManageAssetUsecase(repo repository.ManageAssetRepository, staffUC StaffU
 	return &manageAssetUsecase{
 		repo:    repo,
 		staffUC: staffUC,
+		assetUC: assetUC,
 	}
 }
