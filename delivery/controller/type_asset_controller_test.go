@@ -93,138 +93,167 @@ func (suite *TypeAssetControllerTestSuite) TestCreateNewHandler_Failed() {
 	assert.Equal(suite.T(), 500, record.Code)
 }
 
-// func (suite *CategoryControllerTestSuite) TestFindAllHandler_Success() {
-// 	mockData := []model.Category{{
-// 		Id:   "1",
-// 		Name: "Bergerak",
-// 	},
-// 	}
+func (suite *TypeAssetControllerTestSuite) TestGetByNameHandler_Success() {
+	mockData := []model.TypeAsset{{
+		Id:   "1",
+		Name: "Bergerak",
+	},
+	}
 
-// 	suite.usecase.On("FindAll").Return(mockData, nil)
-// 	suite.controller.Route()
+	suite.usecase.On("FindByName", "Bergerak").Return(mockData, nil)
+	suite.controller.Route()
 
-// 	record := httptest.NewRecorder()
-// 	request, err := http.NewRequest(http.MethodGet, "/api/v1/categories", nil)
-// 	assert.NoError(suite.T(), err)
+	record := httptest.NewRecorder()
+	request, err := http.NewRequest(http.MethodGet, "/api/v1/typeAsset/name/Bergerak", nil)
+	assert.NoError(suite.T(), err)
 
-// 	suite.router.ServeHTTP(record, request)
-// 	assert.Equal(suite.T(), http.StatusOK, record.Code)
-// }
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
 
-// func (suite *CategoryControllerTestSuite) TestFindAllHandler_Failed() {
+	suite.router.ServeHTTP(record, request)
+	assert.Equal(suite.T(), 200, record.Code)
+}
 
-// 	suite.usecase.On("FindAll").Return(nil, errors.New("failed"))
-// 	suite.controller.Route()
+func (suite *TypeAssetControllerTestSuite) TestGetByNameHandler_Failed() {
 
-// 	record := httptest.NewRecorder()
-// 	request, err := http.NewRequest(http.MethodGet, "/api/v1/categories", nil)
-// 	assert.NoError(suite.T(), err)
+	suite.usecase.On("FindByName", "Bergerak").Return(nil, errors.New("failed"))
+	suite.controller.Route()
 
-// 	suite.router.ServeHTTP(record, request)
-// 	assert.Equal(suite.T(), http.StatusInternalServerError, record.Code)
-// }
+	record := httptest.NewRecorder()
+	request, err := http.NewRequest(http.MethodGet, "/api/v1/typeAsset/name/Bergerak", nil)
+	assert.NoError(suite.T(), err)
 
-// func (suite *CategoryControllerTestSuite) TestFindByIdHandler_Success() {
-// 	mockData := model.Category{
-// 		Id:   "1",
-// 		Name: "Bergerak",
-// 	}
-// 	suite.usecase.On("FindById", "1").Return(mockData, nil)
-// 	suite.controller.Route()
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
 
-// 	record := httptest.NewRecorder()
-// 	request, err := http.NewRequest(http.MethodGet, "/api/v1/categories/1", nil)
-// 	assert.NoError(suite.T(), err)
+	suite.router.ServeHTTP(record, request)
+	assert.Equal(suite.T(), 500, record.Code)
+}
 
-// 	suite.router.ServeHTTP(record, request)
-// 	assert.Equal(suite.T(), http.StatusOK, record.Code)
-// }
+func (suite *TypeAssetControllerTestSuite) TestFindByIdHandler_Success() {
+	mockData := model.TypeAsset{
+		Id:   "1",
+		Name: "Bergerak",
+	}
+	suite.usecase.On("FindById", "1").Return(mockData, nil)
+	suite.controller.Route()
 
-// func (suite *CategoryControllerTestSuite) TestFindByIdHandler_Failed() {
+	record := httptest.NewRecorder()
+	request, err := http.NewRequest(http.MethodGet, "/api/v1/typeAsset/1", nil)
+	assert.NoError(suite.T(), err)
 
-// 	suite.usecase.On("FindById", "1").Return(model.Category{}, errors.New("Failed"))
-// 	suite.controller.Route()
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
 
-// 	record := httptest.NewRecorder()
-// 	request, err := http.NewRequest(http.MethodGet, "/api/v1/categories/1", nil)
-// 	assert.NoError(suite.T(), err)
+	suite.router.ServeHTTP(record, request)
+	assert.Equal(suite.T(), 200, record.Code)
+}
 
-// 	suite.router.ServeHTTP(record, request)
-// 	assert.Equal(suite.T(), http.StatusInternalServerError, record.Code)
-// }
+func (suite *TypeAssetControllerTestSuite) TestFindByIdHandler_Failed() {
 
-// func (suite *CategoryControllerTestSuite) TestUpdateHandler_Success() {
-// 	mockData := model.Category{
-// 		Name: "Bergerak",
-// 	}
+	suite.usecase.On("FindById", "1").Return(model.TypeAsset{}, errors.New("Failed"))
+	suite.controller.Route()
 
-// 	suite.usecase.On("Update", mockData).Return(nil)
-// 	suite.controller.Route()
+	record := httptest.NewRecorder()
+	request, err := http.NewRequest(http.MethodGet, "/api/v1/typeAsset/1", nil)
+	assert.NoError(suite.T(), err)
 
-// 	marshal, err := json.Marshal(mockData)
-// 	assert.NoError(suite.T(), err)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
 
-// 	record := httptest.NewRecorder()
-// 	request, err := http.NewRequest(http.MethodPut, "/api/v1/categories", bytes.NewBuffer(marshal))
-// 	assert.NoError(suite.T(), err)
+	suite.router.ServeHTTP(record, request)
+	assert.Equal(suite.T(), 500, record.Code)
+}
 
-// 	suite.router.ServeHTTP(record, request)
-// 	assert.Equal(suite.T(), http.StatusOK, record.Code)
-// }
+func (suite *TypeAssetControllerTestSuite) TestUpdateHandler_Success() {
+	mockData := model.TypeAsset{
+		Id:   "1",
+		Name: "Bergerak",
+	}
 
-// func (suite *CategoryControllerTestSuite) TestUpdateHandler_BindingJson() {
+	suite.usecase.On("Update", mockData).Return(nil)
+	suite.controller.Route()
 
-// 	suite.controller.Route()
+	marshal, err := json.Marshal(mockData)
+	assert.NoError(suite.T(), err)
 
-// 	record := httptest.NewRecorder()
-// 	request, err := http.NewRequest(http.MethodPut, "/api/v1/categories", nil)
-// 	assert.NoError(suite.T(), err)
+	record := httptest.NewRecorder()
+	request, err := http.NewRequest(http.MethodPut, "/api/v1/typeAsset", bytes.NewBuffer(marshal))
+	assert.NoError(suite.T(), err)
 
-// 	suite.router.ServeHTTP(record, request)
-// 	assert.Equal(suite.T(), http.StatusBadRequest, record.Code)
-// }
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
 
-// func (suite *CategoryControllerTestSuite) TestUpdateHandler_Failed() {
-// 	mockData := model.Category{
-// 		Name: "Bergerak",
-// 	}
+	suite.router.ServeHTTP(record, request)
+	assert.Equal(suite.T(), 200, record.Code)
+}
 
-// 	suite.usecase.On("Update", mockData).Return(errors.New("failed create category"))
-// 	suite.controller.Route()
+func (suite *TypeAssetControllerTestSuite) TestUpdateHandler_BindingJson() {
 
-// 	marshal, err := json.Marshal(mockData)
-// 	assert.NoError(suite.T(), err)
+	suite.controller.Route()
 
-// 	record := httptest.NewRecorder()
-// 	request, err := http.NewRequest(http.MethodPut, "/api/v1/categories", bytes.NewBuffer(marshal))
-// 	assert.NoError(suite.T(), err)
+	record := httptest.NewRecorder()
+	request, err := http.NewRequest(http.MethodPut, "/api/v1/typeAsset", nil)
+	assert.NoError(suite.T(), err)
 
-// 	suite.router.ServeHTTP(record, request)
-// 	assert.Equal(suite.T(), http.StatusInternalServerError, record.Code)
-// }
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
 
-// func (suite *CategoryControllerTestSuite) TestDeleteHandler_Success() {
+	suite.router.ServeHTTP(record, request)
+	assert.Equal(suite.T(), 400, record.Code)
+}
 
-// 	suite.usecase.On("Delete", "1").Return(nil)
-// 	suite.controller.Route()
+func (suite *TypeAssetControllerTestSuite) TestUpdateHandler_Failed() {
+	mockData := model.TypeAsset{
+		Id:   "1",
+		Name: "Bergerak",
+	}
 
-// 	record := httptest.NewRecorder()
-// 	request, err := http.NewRequest(http.MethodDelete, "/api/v1/categories/1", nil)
-// 	assert.NoError(suite.T(), err)
+	suite.usecase.On("Update", mockData).Return(errors.New("failed create typeAsset"))
+	suite.controller.Route()
 
-// 	suite.router.ServeHTTP(record, request)
-// 	assert.Equal(suite.T(), http.StatusOK, record.Code)
-// }
+	marshal, err := json.Marshal(mockData)
+	assert.NoError(suite.T(), err)
 
-// func (suite *CategoryControllerTestSuite) TestDeleteHandler_Failed() {
+	record := httptest.NewRecorder()
+	request, err := http.NewRequest(http.MethodPut, "/api/v1/typeAsset", bytes.NewBuffer(marshal))
+	assert.NoError(suite.T(), err)
 
-// 	suite.usecase.On("Delete", "1").Return(errors.New("Failed"))
-// 	suite.controller.Route()
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
 
-// 	record := httptest.NewRecorder()
-// 	request, err := http.NewRequest(http.MethodDelete, "/api/v1/categories/1", nil)
-// 	assert.NoError(suite.T(), err)
+	suite.router.ServeHTTP(record, request)
+	assert.Equal(suite.T(), 500, record.Code)
+}
 
-// 	suite.router.ServeHTTP(record, request)
-// 	assert.Equal(suite.T(), http.StatusInternalServerError, record.Code)
-// }
+func (suite *TypeAssetControllerTestSuite) TestDeleteHandler_Success() {
+
+	suite.usecase.On("Delete", "1").Return(nil)
+	suite.controller.Route()
+
+	record := httptest.NewRecorder()
+	request, err := http.NewRequest(http.MethodDelete, "/api/v1/typeAsset/1", nil)
+	assert.NoError(suite.T(), err)
+
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
+
+	suite.router.ServeHTTP(record, request)
+	assert.Equal(suite.T(), 200, record.Code)
+}
+
+func (suite *TypeAssetControllerTestSuite) TestDeleteHandler_Failed() {
+
+	suite.usecase.On("Delete", "1").Return(errors.New("Failed"))
+	suite.controller.Route()
+
+	record := httptest.NewRecorder()
+	request, err := http.NewRequest(http.MethodDelete, "/api/v1/typeAsset/1", nil)
+	assert.NoError(suite.T(), err)
+
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
+
+	suite.router.ServeHTTP(record, request)
+	assert.Equal(suite.T(), 500, record.Code)
+}
