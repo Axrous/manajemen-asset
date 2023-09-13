@@ -3,7 +3,7 @@ package delivery
 import (
 	"final-project-enigma-clean/config"
 	"final-project-enigma-clean/delivery/controller"
-	"final-project-enigma-clean/delivery/controller/middleware"
+	"final-project-enigma-clean/delivery/middleware"
 	"final-project-enigma-clean/manager"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -12,9 +12,10 @@ import (
 )
 
 type Server struct {
-	um  manager.UsecaseManager
-	gin *gin.Engine
-	log *logrus.Logger
+	um   manager.UsecaseManager
+	gin  *gin.Engine
+	host string
+	log  *logrus.Logger
 }
 
 func (s *Server) initMiddlewares() {
@@ -28,13 +29,18 @@ func (s *Server) initMiddlewares() {
 }
 
 func (s *Server) initControllers() {
-	controller.NewUserDetailsController(s.um.UDetailsUC(), s.gin).Route()
+	rg := s.gin.Group("/api/v1")
+	controller.NewUserController(s.um.UserUsecase(), rg).Route()
+	controller.NewTypeAssetController(s.um.TypeAssetUseCase(), rg).Route()
 }
 
 func (s *Server) Run() {
 	s.initMiddlewares()
 	s.initControllers()
-	s.gin.Run(":3000")
+	err := s.gin.Run(s.host)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func NewServer() *Server {
@@ -52,14 +58,17 @@ func NewServer() *Server {
 	rm := manager.NewRepoManager(im)
 	um := manager.NewUsecaseManager(rm)
 
+	//untuk host
+	host := fmt.Sprintf("%s:%s", cfg.ApiHost, cfg.ApiPort)
 	//gin serv
 	g := gin.Default()
 
 	//init log
 	log := logrus.New()
 	return &Server{
-		um:  um,
-		gin: g,
-		log: log,
+		um:   um,
+		gin:  g,
+		host: host,
+		log:  log,
 	}
 }

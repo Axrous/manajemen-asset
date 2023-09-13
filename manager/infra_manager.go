@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"final-project-enigma-clean/config"
 	"fmt"
+
 	_ "github.com/lib/pq"
 )
 
@@ -31,7 +32,7 @@ func (i *infraManager) initdb() error {
 	)
 	db, err := sql.Open(i.cfg.DbConfig.DbDriver, dsn)
 	if err != nil {
-		return fmt.Errorf("Failed to open sql %v ", err.Error())
+		return fmt.Errorf("failed to open sql %v ", err.Error())
 	}
 
 	i.db = db
@@ -46,7 +47,7 @@ func NewInfraManager(cfg *config.Config) (InfraManager, error) {
 
 	//define initdbmethod
 	if err := connect.initdb(); err != nil {
-		return nil, fmt.Errorf("Failed init db %v", err.Error())
+		return nil, fmt.Errorf("failed init db %v", err.Error())
 	}
 	return connect, nil
 }

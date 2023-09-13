@@ -1,28 +1,37 @@
 package model
 
-import "time"
-
-// model for user register request
-type UserRegisterRequest struct {
+// user details model
+type UserCredentials struct {
 	ID       string `json:"id"`
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" binding:"required"`
+	Email    string `json:"email" validate:"required"`
+	Password string `json:"password" validate:"required"`
+	Name     string `json:"name" validate:"required"`
+	IsActive bool   `json:"is_active"`
 }
 
-// model for user login request
 type UserLoginRequest struct {
 	ID       string `json:"id"`
 	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" binding:"required"`
+	Password string `json:"password" validate:"required"`
 }
 
-// user details model
-type UserDetails struct {
-	ID          string    `json:"id" validate:"required"`
-	UserID      string    `json:"user_id"`
-	Name        string    `json:"name" validate:"required"`
-	PhoneNumber string    `json:"phone_number" validate:"required"`
-	Address     string    `json:"address" validate:"required"`
-	BirthDate   time.Time `json:"birth_date" validate:"required"`
-	ImgUrl      string    `json:"img_url" validate:"required"`
+type UserRegisterRequest struct {
+	ID       string `json:"id,omitempty"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
+	Name     string `json:"name" validate:"required"`
+	IsActive bool   `json:"is_active"`
+}
+
+type UserLoginOTPRequest struct {
+	OTP   int    `json:"otp"`
+	Email string `json:"email" validate:"required,email"`
+}
+
+type ChangePasswordRequest struct {
+	ID          string `json:"id"`
+	Email       string `json:"email"`
+	OTP         int    `json:"otp"`
+	OldPassword string `json:"old_password"`
+	NewPassword string `json:"new_password"`
 }
