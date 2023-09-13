@@ -6,10 +6,16 @@ type UsecaseManager interface {
 	UserUsecase() usecase.UserCredentialUsecase
 	AssetUsecase() usecase.AssetUsecase
 	TypeAssetUseCase() usecase.TypeAssetUseCase
+	CategoryUsecase() usecase.CategoryUsecase
 }
 
 type usecaseManager struct {
 	rm RepoManager
+}
+
+// CategoryUsecase implements UsecaseManager.
+func (u *usecaseManager) CategoryUsecase() usecase.CategoryUsecase {
+	return usecase.NewTypeCategoryUseCase(u.rm.CategoryRepo())
 }
 
 // AssetUsecase implements UsecaseManager.

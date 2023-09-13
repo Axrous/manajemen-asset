@@ -6,10 +6,16 @@ type RepoManager interface {
 	UserRepo() repository.UserCredentialsRepository
 	AssetRepo() repository.AssetRepository
 	TypeAssetRepo() repository.TypeAssetRepository
+	CategoryRepo() repository.CategoryRepository
 }
 
 type repoManager struct {
 	im InfraManager
+}
+
+// CategoryRepo implements RepoManager.
+func (r *repoManager) CategoryRepo() repository.CategoryRepository {
+	return repository.NewCategoryRepository(r.im.Connect())
 }
 
 // AssetRepo implements RepoManager.
