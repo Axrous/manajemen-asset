@@ -150,7 +150,7 @@ func (m *manageAssetRepository) CreateTransaction(payload dto.ManageAssetRequest
 
 	queryDetail := "insert into detail_manage_asset(id, id_asset, id_manage_asset, total_item, status) values ($1, $2, $3, $4, $5)"
 	for _, v := range payload.ManageAssetDetailReq {
-		_, err = tx.Exec(queryDetail, v.Id, v.IdAsset, v.IdManageAsset, v.TotalItem, v.Status)
+		_, err = tx.Exec(queryDetail, v.Id, v.IdAsset, payload.Id, v.TotalItem, v.Status)
 		if err != nil {
 			tx.Rollback()
 			return err

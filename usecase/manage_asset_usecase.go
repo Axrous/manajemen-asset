@@ -58,7 +58,8 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 	if payload.NikStaff == "" {
 		return fmt.Errorf("nik staff cannot empty")
 	}
-
+	uid := helper.GenerateUUID()
+	payload.Id = uid
 	var newManageDetail []dto.ManageAssetDetailRequest
 	//looping for validation request detail
 	for _, detail := range payload.ManageAssetDetailReq {
@@ -82,7 +83,7 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 		if asset.Amount < detail.TotalItem {
 			return fmt.Errorf("Barang tidak cukup")
 		}
-		detail.IdManageAsset = payload.Id
+		detail.Id = helper.GenerateUUID()
 		newManageDetail = append(newManageDetail, detail)
 	}
 	//validate nikstaff
@@ -91,7 +92,7 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 		return fmt.Errorf(err.Error())
 	}
 	//reassign value
-	payload.Id = helper.GenerateUUID()
+
 	payload.ManageAssetDetailReq = newManageDetail
 	payload.SubmisstionDate = time.Now()
 	payload.ReturnDate = payload.SubmisstionDate.AddDate(0, 0, payload.Duration)
