@@ -81,7 +81,29 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 
 func (m *manageAssetUsecase) ShowAllAsset() ([]model.ManageAsset, error) {
 	//TODO implement me
-	return m.repo.FindAllTransaction()
+	transactions, transactionDetails, err := m.repo.FindAllTransaction()
+	if err != nil {
+		return nil, err
+	}
+
+	detailMap := make(map[string][]model.ManageDetailAsset)
+
+	// Kelompokkan detail transaksi berdasarkan Id ManageAsset
+	for _, detail := range transactionDetails {
+		detailMap[detail.ManageAssetId] = append(detailMap[detail.ManageAssetId], detail)
+	}
+	
+	// Inisialisasi slice datas
+	datas := make([]model.ManageAsset, 0)
+	
+	// Iterasi melalui transaksi untuk membangun datas
+	for _, transaction := range transactions {
+		if details, ok := detailMap[transaction.Id]; ok {
+			transaction.Detail = details
+			datas = append(datas, transaction)
+		}
+	}
+	return datas, nil
 }
 
 func (m *manageAssetUsecase) FindByTransactionID(id string) ([]model.ManageDetailAsset, error) {
