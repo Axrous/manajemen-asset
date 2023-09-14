@@ -28,7 +28,7 @@ type assetUsecase struct {
 
 // UpdateAmount implements AssetUsecase.
 func (a *assetUsecase) UpdateAmount(id string, amount int) error {
-	
+
 	asset, err := a.FindById(id)
 	if err != nil {
 		return err

@@ -55,7 +55,7 @@ func (s *StaffUsecaseMock) Delete(id string) error {
 }
 
 // FindAll implements StaffUseCase.
-func (s *StaffUsecaseMock) FindAll() ([]model.Staff, error) {
+func (s *StaffUsecaseMock) FindByAll() ([]model.Staff, error) {
 	args := s.Called()
 	if args.Get(1) != nil {
 		return nil, args.Error(1)

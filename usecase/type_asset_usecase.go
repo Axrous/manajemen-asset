@@ -4,7 +4,6 @@ import (
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/repository"
-	"final-project-enigma-clean/util/helper"
 	"fmt"
 )
 
@@ -37,7 +36,7 @@ func (t *typeAssetUseCase) CreateNew(payload model.TypeAsset) error {
 	if payload.Name == "" {
 		return fmt.Errorf("name is required")
 	}
-	payload.Id = helper.GenerateUUID()
+	// payload.Id = helper.GenerateUUID()
 	err := t.repo.Save(payload)
 	if err != nil {
 		return fmt.Errorf("failed to create new type asset: %v", err)

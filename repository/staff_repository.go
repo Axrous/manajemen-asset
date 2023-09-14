@@ -33,25 +33,25 @@ func (s *staffRepository) Delete(nik_staff string) error {
 // FindByAll implements StaffRepository.
 func (s *staffRepository) FindByAll() ([]model.Staff, error) {
 	//nik_staff, name, phone_number, address, birth_date, img_url, divisi
-	rows, err := s.db.Query("SELECT * FROM staff")
+	rows, err := s.db.Query("SELECT nik_staff, name, phone_number, address, birth_date, img_url, divisi FROM staff")
 	if err != nil {
 		return nil, err
 	}
 	var staffs []model.Staff
 	for rows.Next() {
 		var staff model.Staff
-		err = rows.Scan(&staff.Nik_Staff, &staff.Name, &staff.Phone_number, &staff.Address, &staff.Birth_date, &staff.Img_url, &staff.Divisi)
-		if err != nil {
-			return nil, err
-		}
+		rows.Scan(&staff.Nik_Staff, &staff.Name, &staff.Phone_number, &staff.Address, &staff.Birth_date, &staff.Img_url, &staff.Divisi)
 		staffs = append(staffs, staff)
+	}
+	if rows.Err() != nil {
+		return nil, rows.Err()
 	}
 	return staffs, nil
 }
 
 // FindById implements StaffRepository.
 func (s *staffRepository) FindById(nik_staff string) (model.Staff, error) {
-	row := s.db.QueryRow("SELECT * FROM staff WHERE nik_staff=$1", nik_staff)
+	row := s.db.QueryRow("SELECT nik_staff, name, phone_number, address, birth_date, img_url, divisi FROM staff WHERE nik_staff=$1", nik_staff)
 	var staff model.Staff
 	err := row.Scan(&staff.Nik_Staff, &staff.Name, &staff.Phone_number, &staff.Address, &staff.Birth_date, &staff.Img_url, &staff.Divisi)
 	if err != nil {
@@ -62,18 +62,18 @@ func (s *staffRepository) FindById(nik_staff string) (model.Staff, error) {
 
 // FindByName implements StaffRepository.
 func (s *staffRepository) FindByName(name string) ([]model.Staff, error) {
-	rows, err := s.db.Query(`SELECT * FROM staff WHERE name ILIKE $1`, "%"+name+"%")
+	rows, err := s.db.Query(`SELECT nik_staff, name, phone_number, address, birth_date, img_url, divisi FROM staff WHERE name ILIKE $1`, "%"+name+"%")
 	if err != nil {
 		return nil, err
 	}
 	var staffs []model.Staff
 	for rows.Next() {
-		staff := model.Staff{}
-		err := rows.Scan(&staff.Nik_Staff, &staff.Name, &staff.Phone_number, &staff.Address, &staff.Birth_date, &staff.Img_url, &staff.Divisi)
-		if err != nil {
-			return nil, err
-		}
+		var staff model.Staff
+		rows.Scan(&staff.Nik_Staff, &staff.Name, &staff.Phone_number, &staff.Address, &staff.Birth_date, &staff.Img_url, &staff.Divisi)
 		staffs = append(staffs, staff)
+	}
+	if rows.Err() != nil {
+		return nil, rows.Err()
 	}
 	return staffs, nil
 }
@@ -83,7 +83,7 @@ func (s *staffRepository) Paging(payload dto.PageRequest) ([]model.Staff, dto.Pa
 	if payload.Page <= 0 {
 		payload.Page = 1
 	}
-	q := `SELECT * FROM staff LIMIT $2 OFFSET $1`
+	q := `SELECT nik_staff, name, phone_number, address, birth_date, img_url, divisi FROM staff LIMIT $2 OFFSET $1`
 	rows, err := s.db.Query(q, (payload.Page-1)*payload.Size, payload.Size)
 	if err != nil {
 		return nil, dto.Paging{}, err
@@ -117,7 +117,7 @@ func (s *staffRepository) Paging(payload dto.PageRequest) ([]model.Staff, dto.Pa
 
 // Save implements StaffRepository.
 func (s *staffRepository) Save(payload model.Staff) error {
-	_, err := s.db.Exec("INSERT INTO staff VALUES ($1, $2, $3, $4, $5, $6, $7)", payload.Nik_Staff, payload.Name, payload.Phone_number, payload.Address, payload.Birth_date, payload.Img_url, payload.Divisi)
+	_, err := s.db.Exec("INSERT INTO staff (nik_staff, name, phone_number, address, birth_date, img_url, divisi) VALUES ($1, $2, $3, $4, $5, $6, $7)", payload.Nik_Staff, payload.Name, payload.Phone_number, payload.Address, payload.Birth_date, payload.Img_url, payload.Divisi)
 	if err != nil {
 		return err
 	}
