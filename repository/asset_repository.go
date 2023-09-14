@@ -3,6 +3,8 @@ package repository
 import (
 	"database/sql"
 	"final-project-enigma-clean/model"
+	"final-project-enigma-clean/model/dto"
+	"math"
 )
 
 type AssetRepository interface {
@@ -11,11 +13,63 @@ type AssetRepository interface {
 	FindById(id string) (model.Asset, error)
 	FindByName(name string) ([]model.Asset, error)
 	Update(asset model.AssetRequest) error
+	UpdateAmount(id string, amount int) error
 	Delete(id string) error
+	Paging(payload dto.PageRequest) ([]model.Asset, dto.Paging, error)
 }
 
 type assetRepository struct {
 	db *sql.DB
+}
+
+// Paging implements AssetRepository.
+func (a *assetRepository) Paging(payload dto.PageRequest) ([]model.Asset, dto.Paging, error) {
+	q := `select a.id, a.name, a.amount, a.status, a.entry_date, a.img_url, c.id, c.name, at.id, at.name
+	from asset as a 
+	left join category as c on c.id = a.id_category
+	left join asset_type as at on at.id = a.id_asset_type
+	limit $2 offset $1`
+
+	rows, err := a.db.Query(q, (payload.Page-1)*payload.Size, payload.Size)
+	if err != nil {
+		return nil, dto.Paging{}, err
+	}
+
+	var staffs []model.Staff
+	for rows.Next() {
+		var staff model.Staff
+		err := rows.Scan(&staff.Nik_Staff, &staff.Name, &staff.Phone_number, &staff.Address, &staff.Birth_date, &staff.Img_url, &staff.Divisi)
+		if err != nil {
+			return nil, dto.Paging{}, err
+		}
+		staffs = append(staffs, staff)
+	}
+	var count int
+	row := a.db.QueryRow("SELECT COUNT(nik_staff) FROM staff")
+	if err := row.Scan(&count); err != nil {
+		return nil, dto.Paging{}, err
+	}
+
+	paging := dto.Paging{
+		Page:       payload.Page,
+		Size:       payload.Size,
+		TotalRows:  count,
+		TotalPages: int(math.Ceil(float64(count) / float64(payload.Size))), // (totalrow / size)
+	}
+
+	return nil, paging, nil
+}
+
+// UpdateAmount implements AssetRepository.
+func (a *assetRepository) UpdateAmount(id string, amount int) error {
+	query := "update asset set amount = $2 where id = $1"
+
+	_, err := a.db.Exec(query, id, amount)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // FindByName implements AssetRepository.
@@ -25,7 +79,7 @@ func (a *assetRepository) FindByName(name string) ([]model.Asset, error) {
 			left join category as c on c.id = a.id_category
 			left join asset_type as at on at.id = a.id_asset_type
 			where a.name ilike $1`
-	
+
 	rows, err := a.db.Query(query, "%"+name+"%")
 	if err != nil {
 		return nil, err

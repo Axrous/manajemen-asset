@@ -2,12 +2,23 @@ package repomock
 
 import (
 	"final-project-enigma-clean/model"
+	"final-project-enigma-clean/model/dto"
 
 	"github.com/stretchr/testify/mock"
 )
 
 type AssetRepoMock struct {
 	mock.Mock
+}
+
+// Paging implements repository.AssetRepository.
+func (*AssetRepoMock) Paging(payload dto.PageRequest) ([]model.Asset, dto.Paging, error) {
+	panic("unimplemented")
+}
+
+// UpdateAmount implements repository.AssetRepository.
+func (*AssetRepoMock) UpdateAmount(id string, amount int) error {
+	panic("unimplemented")
 }
 
 // FindByName implements repository.AssetRepository.

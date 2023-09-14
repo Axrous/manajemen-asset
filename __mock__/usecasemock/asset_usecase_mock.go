@@ -10,6 +10,11 @@ type AssetUsecaseMock struct {
 	mock.Mock
 }
 
+// UpdateAmount implements usecase.AssetUsecase.
+func (*AssetUsecaseMock) UpdateAmount(id string, amount int) error {
+	panic("unimplemented")
+}
+
 // FindByName implements usecase.AssetUsecase.
 func (a *AssetUsecaseMock) FindByName(name string) ([]model.Asset, error) {
 	args := a.Called(name)

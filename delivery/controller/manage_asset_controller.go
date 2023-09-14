@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/usecase"
 
@@ -42,9 +43,42 @@ func (m ManageAssetController) CreateNewAssetHandler(c *gin.Context) {
 	return
 
 }
+
+func (m ManageAssetController) FindByIdTransaction(c *gin.Context) {
+	id := c.Param("id")
+
+	detailAssets, err := m.manageAssetUC.FindByTransactionID(id)
+	if err != nil {
+		c.AbortWithStatusJSON(500, gin.H{"Error": "Failed to find transaction", "Fail": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"Data": detailAssets})
+}
+
+func (m *ManageAssetController) FindByName(c *gin.Context)  {
+	
+	var staff model.Staff
+	err := c.ShouldBindJSON(&staff)
+	if err != nil {
+		c.AbortWithStatusJSON(400, gin.H{"Error": "Bad JSON Format", "error": err.Error()})
+		return
+	}
+
+	result, err := m.manageAssetUC.FindTransactionByName(staff.Name)
+	if err != nil {
+		c.AbortWithStatusJSON(500, gin.H{"Error": "Failed to find transaction", "Fail": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"Data": result})
+}
+
 func (m ManageAssetController) Route() {
 	m.g.GET("/manage-assets/show-all", m.ShowAllAssetHandler)
 	m.g.POST("/manage-assets/create-new", m.CreateNewAssetHandler)
+	m.g.GET("/manage-assets/find/:id", m.FindByIdTransaction)
+	m.g.POST("/manage-assets/find-asset", m.FindByName)
 }
 
 func NewManageAssetController(maUC usecase.ManageAssetUsecase, g *gin.RouterGroup) *ManageAssetController {

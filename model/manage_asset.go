@@ -6,7 +6,7 @@ import (
 
 type ManageAsset struct {
 	Id             string
-	User         UserCredentials
+	User         UserCredentials `json:"omitempty"`
 	Staff			Staff
 	SubmissionDate time.Time
 	ReturnDate     time.Time
@@ -15,8 +15,8 @@ type ManageAsset struct {
 
 type ManageDetailAsset struct {
 	Id 				string
-	ManageAsset 	ManageAsset
-	Asset 			Asset
+	ManageAssetId 	string
+	Asset 			Asset `json:"omitempty"`
 	TotalItem 		int
 	Status 			string
 }
