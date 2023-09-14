@@ -13,6 +13,7 @@ type AssetUsecase interface {
 	FindAll() ([]model.Asset, error)
 	FindById(id string) (model.Asset, error)
 	Update(payload model.AssetRequest) error
+	UpdateAmount(id string, amount int) error
 	Delete(id string) error
 	FindByName(name string) ([]model.Asset, error)
 }
@@ -23,6 +24,23 @@ type assetUsecase struct {
 	categoryUc CategoryUsecase
 	//get asset type usecase
 	typeAssetUC TypeAssetUseCase
+}
+
+// UpdateAmount implements AssetUsecase.
+func (a *assetUsecase) UpdateAmount(id string, amount int) error {
+	
+	asset, err := a.FindById(id)
+	if err != nil {
+		return err
+	}
+
+	asset.Amount -= amount
+	err = a.repo.UpdateAmount(id, asset.Amount)
+	if err != nil {
+		return fmt.Errorf("failed update amount, %s", err)
+	}
+
+	return nil
 }
 
 // FindByName implements AssetUsecase.
@@ -131,7 +149,7 @@ func (a *assetUsecase) Update(payload model.AssetRequest) error {
 	if err != nil {
 		return err
 	}
-	
+
 	//implement category find by id
 	_, err = a.categoryUc.FindById(payload.CategoryId)
 	if err != nil {

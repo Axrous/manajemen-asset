@@ -18,16 +18,16 @@ type manageAssetRepository struct {
 
 // FindAllByTransId implements ManageAssetRepository.
 func (m *manageAssetRepository) FindAllByTransId(id string) ([]model.ManageDetailAsset, error) {
-	// query := "select d.id, d.id_manage_asset, a.id, a.name, total_item, status from manage_detail_asset as d left join asset as a on a.id = d.id_asset where d.id = $1"
+	query := "select d.id, d.id_manage_asset, a.id, a.name, total_item, status from manage_detail_asset as d left join asset as a on a.id = d.id_asset where d.id = $1"
 
-	// rows, err := m.db.Query(query, id)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	rows, err := m.db.Query(query, id)
+	if err != nil {
+		return nil, err
+	}
 
-	// for rows.Next() {
+	for rows.Next() {
 
-	// }
+	}
 	panic("")
 }
 
@@ -75,10 +75,12 @@ func (m *manageAssetRepository) CreateTransaction(payload dto.ManageAssetRequest
 
 	tx, err := m.db.Begin()
 	if err != nil {
+		tx.Rollback()
 		return err
 	}
 	_, err = tx.Exec(query, payload.Id, payload.IdUser, payload.NikStaff, payload.SubmisstionDate, payload.ReturnDate)
 	if err != nil {
+		tx.Rollback()
 		return err
 	}
 
@@ -86,6 +88,7 @@ func (m *manageAssetRepository) CreateTransaction(payload dto.ManageAssetRequest
 	for _, v := range payload.ManageAssetDetailReq {
 		_, err = tx.Exec(queryDetail, v.Id, v.IdAsset, v.IdManageAsset, v.TotalItem, v.Status)
 		if err != nil {
+			tx.Rollback()
 			return err
 		}
 	}

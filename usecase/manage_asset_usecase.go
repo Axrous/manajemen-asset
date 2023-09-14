@@ -24,8 +24,9 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 	if payload.NikStaff == "" {
 		return fmt.Errorf("nik staff cannot empty")
 	}
-	
+
 	var newManageDetail []dto.ManageAssetDetailRequest
+	//looping for validation request detail
 	for _, detail := range payload.ManageAssetDetailReq {
 		if detail.IdAsset == "" {
 			return fmt.Errorf("id asset cannot empty")
@@ -39,18 +40,23 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 			return fmt.Errorf("total item must equal than 0")
 		}
 
-		_, err := m.assetUC.FindById(detail.IdAsset)
+		asset, err := m.assetUC.FindById(detail.IdAsset)
 		if err != nil {
 			return fmt.Errorf(err.Error())
 		}
+		//valdiation asset amount available or not
+		if asset.Amount < detail.TotalItem {
+			return fmt.Errorf("Barang tidak cukup")
+		}
+		detail.IdManageAsset = payload.Id
 		newManageDetail = append(newManageDetail, detail)
 	}
-
+	//validate nikstaff
 	_, err := m.staffUC.FindById(payload.NikStaff)
 	if err != nil {
 		return fmt.Errorf(err.Error())
 	}
-
+	//reassign value
 	payload.ManageAssetDetailReq = newManageDetail
 	payload.SubmisstionDate = time.Now()
 	payload.ReturnDate = payload.SubmisstionDate.AddDate(0, 0, payload.Duration)
@@ -58,6 +64,14 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 	if err != nil {
 		return fmt.Errorf(err.Error())
 	}
+	//update amount of asset when success
+	for _, detail := range payload.ManageAssetDetailReq {
+		err = m.assetUC.UpdateAmount(detail.IdAsset, detail.TotalItem)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 

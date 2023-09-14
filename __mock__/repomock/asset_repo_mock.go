@@ -10,6 +10,11 @@ type AssetRepoMock struct {
 	mock.Mock
 }
 
+// UpdateAmount implements repository.AssetRepository.
+func (*AssetRepoMock) UpdateAmount(id string, amount int) error {
+	panic("unimplemented")
+}
+
 // FindByName implements repository.AssetRepository.
 func (a *AssetRepoMock) FindByName(name string) ([]model.Asset, error) {
 	args := a.Called(name)
