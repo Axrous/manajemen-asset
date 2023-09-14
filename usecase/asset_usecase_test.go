@@ -36,7 +36,7 @@ func (suite *AssetUsecaseTestSuite) TestCreate_Success() {
 		CategoryId:  "1",
 		AssetTypeId: "1",
 		Name:        "Laptop",
-		Amount:      5,
+		Available:      5,
 		Status:      "Ready",
 		EntryDate: time.Now(),
 		ImgUrl:      "",
@@ -67,7 +67,7 @@ func (suite *AssetUsecaseTestSuite) TestCreate_EmptyField() {
 		CategoryId:  "1",
 		AssetTypeId: "1",
 		Name:        "",
-		Amount:      5,
+		Available:      5,
 		Status:      "Ready",
 		ImgUrl:      "",
 	})
@@ -78,18 +78,18 @@ func (suite *AssetUsecaseTestSuite) TestCreate_EmptyField() {
 		CategoryId:  "",
 		AssetTypeId: "",
 		Name:        "Laptop",
-		Amount:      5,
+		Available:      5,
 		Status:      "Ready",
 		ImgUrl:      "",
 	})
 	assert.Error(suite.T(), gotError)
 
-	//test amount minus
+	//test Available minus
 	gotError = suite.usecase.Create(model.AssetRequest{
 		CategoryId:  "TEST1",
 		AssetTypeId: "TEST1",
 		Name:        "Laptop",
-		Amount:      -1,
+		Available:      -1,
 		Status:      "Ready",
 		ImgUrl:      "",
 	})
@@ -100,7 +100,7 @@ func (suite *AssetUsecaseTestSuite) TestCreate_EmptyField() {
 		CategoryId:  "TEST1",
 		AssetTypeId: "TEST1",
 		Name:        "Laptop",
-		Amount:      5,
+		Available:      5,
 		Status:      "",
 		ImgUrl:      "",
 	})
@@ -112,7 +112,7 @@ func (suite *AssetUsecaseTestSuite) TestCreate_InvalidTypeAsset() {
 		CategoryId:  "1",
 		AssetTypeId: "1",
 		Name:        "Laptop",
-		Amount:      5,
+		Available:      5,
 		Status:      "Ready",
 		EntryDate: time.Now(),
 		ImgUrl:      "",
@@ -130,7 +130,7 @@ func (suite *AssetUsecaseTestSuite) TestCreate_InvalidCategory() {
 		CategoryId:  "1",
 		AssetTypeId: "1",
 		Name:        "Laptop",
-		Amount:      5,
+		Available:      5,
 		Status:      "Ready",
 		EntryDate: time.Now(),
 		ImgUrl:      "",
@@ -155,7 +155,7 @@ func (suite *AssetUsecaseTestSuite) TestCreate_Failed() {
 		CategoryId:  "1",
 		AssetTypeId: "1",
 		Name:        "Laptop",
-		Amount:      5,
+		Available:      5,
 		Status:      "Ready",
 		EntryDate: time.Now(),
 		ImgUrl:      "",
@@ -191,7 +191,7 @@ func (suite *AssetUsecaseTestSuite) TestFindAll_Success() {
 				Name: "Elektronik",
 			},
 			Name:      "Laptop",
-			Amount: 5,
+			Available: 5,
 			Status: "Ready",
 			EntryDate: time.Now(),
 			ImgUrl: "",
@@ -220,7 +220,7 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_Success() {
 		CategoryId:  "1",
 		AssetTypeId: "1",
 		Name:        "Laptop",
-		Amount:      5,
+		Available:      5,
 		Status:      "Ready",
 		ImgUrl:      "",
 	}
@@ -235,7 +235,7 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_Success() {
 			Name: "Elektronik",
 		},
 		Name:      "Laptop",
-		Amount:    5,
+		Available:    5,
 		Status:    "Ready",
 		EntryDate: time.Time{},
 		ImgUrl:    "",
@@ -266,7 +266,7 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_EmptyField() {
 		CategoryId:  "1",
 		AssetTypeId: "1",
 		Name:        "",
-		Amount:      5,
+		Available:      5,
 		Status:      "Ready",
 		ImgUrl:      "",
 	})
@@ -277,18 +277,18 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_EmptyField() {
 		CategoryId:  "",
 		AssetTypeId: "",
 		Name:        "Laptop",
-		Amount:      5,
+		Available:      5,
 		Status:      "Ready",
 		ImgUrl:      "",
 	})
 	assert.Error(suite.T(), gotError)
 
-	//test amount minus
+	//test Available minus
 	gotError = suite.usecase.Update(model.AssetRequest{
 		CategoryId:  "TEST1",
 		AssetTypeId: "TEST1",
 		Name:        "Laptop",
-		Amount:      -1,
+		Available:      -1,
 		Status:      "Ready",
 		ImgUrl:      "",
 	})
@@ -299,7 +299,7 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_EmptyField() {
 		CategoryId:  "TEST1",
 		AssetTypeId: "TEST1",
 		Name:        "Laptop",
-		Amount:      5,
+		Available:      5,
 		Status:      "",
 		ImgUrl:      "",
 	})
@@ -312,7 +312,7 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_InvalId() {
 		CategoryId:  "1",
 		AssetTypeId: "1",
 		Name:        "Laptop",
-		Amount:      5,
+		Available:      5,
 		Status:      "Ready",
 		ImgUrl:      "",
 	}
@@ -339,7 +339,7 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_InvalidTypeAsset() {
 		CategoryId:  "1",
 		AssetTypeId: "1",
 		Name:        "Laptop",
-		Amount:      5,
+		Available:      5,
 		Status:      "Ready",
 		ImgUrl:      "",
 	}
@@ -356,7 +356,7 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_InvalidCategory() {
 		CategoryId:  "1",
 		AssetTypeId: "1",
 		Name:        "Laptop",
-		Amount:      5,
+		Available:      5,
 		Status:      "Ready",
 		ImgUrl:      "",
 	}
@@ -377,7 +377,7 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_Failed() {
 		CategoryId:  "1",
 		AssetTypeId: "1",
 		Name:        "Laptop",
-		Amount:      5,
+		Available:      5,
 		Status:      "Ready",
 		ImgUrl:      "",
 	}
@@ -393,7 +393,7 @@ func (suite *AssetUsecaseTestSuite) TestUpdate_Failed() {
 			Name: "Elektronik",
 		},
 		Name:      "Laptop",
-		Amount:    5,
+		Available:    5,
 		Status:    "Ready",
 		EntryDate: time.Time{},
 		ImgUrl:    "",
@@ -428,7 +428,7 @@ func (suite *AssetUsecaseTestSuite) TestDelete_Success() {
 			Name: "Elektronik",
 		},
 		Name:      "Laptop",
-		Amount:    5,
+		Available:    5,
 		Status:    "Ready",
 		EntryDate: time.Time{},
 		ImgUrl:    "",
@@ -450,16 +450,11 @@ func (suite *AssetUsecaseTestSuite) TestDelete_InvalId() {
 func (suite *AssetUsecaseTestSuite) TestDelete_Failed() {
 	asset := model.Asset{
 		Id:        "1",
-		Category:  model.Category{
-			Id:   "1",
-			Name: "Bergerak",
-		},
-		AssetType: model.TypeAsset{
-			Id:   "1",
-			Name: "Elektronik",
-		},
+		Category:  model.Category{Id: "1", Name: "Bergerak"},
+		AssetType: model.TypeAsset{Id: "1", Name: "Elektronik"},
 		Name:      "Laptop",
-		Amount:    5,
+		Available: 5,
+		Total:     0,
 		Status:    "Ready",
 		EntryDate: time.Time{},
 		ImgUrl:    "",

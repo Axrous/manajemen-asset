@@ -80,7 +80,7 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 			return fmt.Errorf(err.Error())
 		}
 		//valdiation asset amount available or not
-		if asset.Amount < detail.TotalItem {
+		if asset.Available < detail.TotalItem {
 			return fmt.Errorf("Barang tidak cukup")
 		}
 		detail.Id = helper.GenerateUUID()
@@ -102,7 +102,7 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 	}
 	//update amount of asset when success
 	for _, detail := range payload.ManageAssetDetailReq {
-		err = m.assetUC.UpdateAmount(detail.IdAsset, detail.TotalItem)
+		err = m.assetUC.UpdateAvailable(detail.IdAsset, detail.TotalItem)
 		if err != nil {
 			return err
 		}
