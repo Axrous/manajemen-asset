@@ -186,12 +186,7 @@ func (u *UserController) ForgotPassHandler(c *gin.Context) {
 }
 
 func (u *UserController) ForgotPassOTPHandler(c *gin.Context) {
-	var request struct {
-		Email              string `json:"email"`
-		OTP                int    `json:"otp"`
-		NewPassword        string `json:"new_password"`
-		ConfirmNewPassword string `json:"confirm_password"`
-	}
+	var request model.ForgotPassRequest
 
 	//bind json
 	if err := c.ShouldBindJSON(&request); err != nil {

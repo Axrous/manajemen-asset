@@ -197,17 +197,18 @@ func (u *userDetailUsecase) ForgotPassRequest(email, newPassword, confirmPasswor
 		return fmt.Errorf("Password and confirm password do not match")
 	}
 
-	if err := u.udetailsRepo.ForgotPass(email, newPassword, confirmPassword); err != nil {
-		return fmt.Errorf("Error %v", err.Error())
-	}
-
-	//hash new password nya
-	hashedPassword, err := helper.HashPassword(newPassword)
+	//hash new password ny
+	HashNewPassword, err := helper.HashPassword(newPassword)
 	if err != nil {
 		return fmt.Errorf("Failed to generate password %v", err.Error())
 	}
+	//convert
+	newPassword = HashNewPassword
 
-	newPassword = hashedPassword
+	if err = u.udetailsRepo.ForgotPass(email, HashNewPassword, confirmPassword); err != nil {
+		return fmt.Errorf("Error %v", err.Error())
+	}
+
 	return nil
 }
 
