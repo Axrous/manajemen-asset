@@ -172,9 +172,9 @@ func (a *assetUsecase) Update(payload model.AssetRequest) error {
 	if err != nil {
 		return err
 	}
-	if asset.Total != payload.Total {
-		payload.Available = (payload.Total - asset.Total) + asset.Available
-	}
+
+	//calculation for update available
+	payload.Available = (payload.Total - asset.Total) + asset.Available
 
 	err = a.repo.Update(payload)
 	if err != nil {

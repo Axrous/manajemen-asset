@@ -38,12 +38,13 @@ func (a *assetRepository) Paging(payload dto.PageRequest) ([]model.Asset, dto.Pa
 	var assets []model.Asset
 	for rows.Next() {
 		var asset model.Asset
-		err := rows.Scan(&asset.Id, &asset.Name, &asset.Available, &asset.Status, &asset.EntryDate, &asset.ImgUrl, &asset.Total, &asset.Category.Id, &asset.Category.Name, &asset.AssetType.Id, &asset.AssetType.Name)
-		if err != nil {
-			return nil, dto.Paging{}, err
-		}
+		rows.Scan(&asset.Id, &asset.Name, &asset.Available, &asset.Status, &asset.EntryDate, &asset.ImgUrl, &asset.Total, &asset.Category.Id, &asset.Category.Name, &asset.AssetType.Id, &asset.AssetType.Name)
 		assets = append(assets, asset)
 	}
+	if rows.Err() != nil {
+		return nil, dto.Paging{}, rows.Err()
+	}
+
 	var count int
 	row := a.db.QueryRow("select count(id) from asset")
 	if err := row.Scan(&count); err != nil {

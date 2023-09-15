@@ -2,6 +2,7 @@ package usecasemock
 
 import (
 	"final-project-enigma-clean/model"
+	"final-project-enigma-clean/model/dto"
 
 	"github.com/stretchr/testify/mock"
 )
@@ -10,9 +11,19 @@ type AssetUsecaseMock struct {
 	mock.Mock
 }
 
-// UpdateAmount implements usecase.AssetUsecase.
-func (*AssetUsecaseMock) UpdateAmount(id string, amount int) error {
-	panic("unimplemented")
+// Paging implements usecase.AssetUsecase.
+func (a *AssetUsecaseMock) Paging(payload dto.PageRequest) ([]model.Asset, dto.Paging, error) {
+	args := a.Called(payload)
+	if args.Get(2) != nil {
+		return nil, dto.Paging{}, args.Error(2)
+	}
+
+	return args.Get(0).([]model.Asset), args.Get(1).(dto.Paging), nil
+}
+
+// UpdateAvailable implements usecase.AssetUsecase.
+func (a *AssetUsecaseMock) UpdateAvailable(id string, amount int) error {
+	return a.Called(id, amount).Error(0)
 }
 
 // FindByName implements usecase.AssetUsecase.

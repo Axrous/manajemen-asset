@@ -2,6 +2,7 @@ package repomock
 
 import (
 	"final-project-enigma-clean/model"
+	"final-project-enigma-clean/model/dto"
 
 	"github.com/stretchr/testify/mock"
 )
@@ -10,9 +11,19 @@ type AssetRepoMock struct {
 	mock.Mock
 }
 
-// UpdateAmount implements repository.AssetRepository.
-func (*AssetRepoMock) UpdateAmount(id string, amount int) error {
-	panic("unimplemented")
+// UpdateAvailable implements repository.AssetRepository.
+func (a *AssetRepoMock) UpdateAvailable(id string, amount int) error {
+	return a.Called(id, amount).Error(0)
+}
+
+// Paging implements repository.AssetRepository.
+func (a *AssetRepoMock) Paging(payload dto.PageRequest) ([]model.Asset, dto.Paging, error) {
+	args := a.Called(payload)
+	if args.Get(2) != nil {
+		return nil, dto.Paging{}, args.Error(2)
+	}
+
+	return args.Get(0).([]model.Asset), args.Get(1).(dto.Paging), nil
 }
 
 // FindByName implements repository.AssetRepository.

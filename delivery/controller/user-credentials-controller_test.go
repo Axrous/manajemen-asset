@@ -1,257 +1,258 @@
 package controller
 
-// import (
-// 	"bytes"
-// 	"encoding/json"
-// 	"errors"
-// 	"final-project-enigma-clean/__mock__/usecasemock"
-// 	"final-project-enigma-clean/model"
-// 	"final-project-enigma-clean/usecase"
-// 	"fmt"
-// 	"github.com/gin-gonic/gin"
-// 	"github.com/stretchr/testify/assert"
-// 	"github.com/stretchr/testify/suite"
-// 	"net/http"
-// 	"net/http/httptest"
-// 	"testing"
-// )
+import (
+	"bytes"
+	"encoding/json"
+	"errors"
+	"final-project-enigma-clean/__mock__/usecasemock"
+	"final-project-enigma-clean/model"
+	"final-project-enigma-clean/usecase"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
 
-// type RegisterControllerTestSuite struct {
-// 	suite.Suite
-// 	usecase *usecasemock.UserCredentialsMock
-// 	router  *gin.Engine
-// }
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
+)
 
-// func (suite *RegisterControllerTestSuite) SetupTest() {
-// 	suite.usecase = new(usecasemock.UserCredentialsMock)
-// 	suite.router = gin.Default()
-// }
+type RegisterControllerTestSuite struct {
+	suite.Suite
+	usecase *usecasemock.UserCredentialsMock
+	router  *gin.Engine
+}
 
-// func TestRegisterUserTestSuite(t *testing.T) {
-// 	suite.Run(t, new(RegisterControllerTestSuite))
-// }
+func (suite *RegisterControllerTestSuite) SetupTest() {
+	suite.usecase = new(usecasemock.UserCredentialsMock)
+	suite.router = gin.Default()
+}
 
-// func (suite *RegisterControllerTestSuite) TestCreateUserHandler_Success() {
-// 	mockData := model.UserRegisterRequest{
-// 		Email:    "elliz@gmail.com",
-// 		Password: "N@ufa282",
-// 		Name:     "pal",
-// 		IsActive: true,
-// 	}
+func TestRegisterUserTestSuite(t *testing.T) {
+	suite.Run(t, new(RegisterControllerTestSuite))
+}
 
-// 	suite.usecase.On("RegisterUser", mockData).Return(nil)
-// 	mockRg := suite.router.Group("/api/v1")
-// 	NewUserController(suite.usecase, mockRg).Route()
+func (suite *RegisterControllerTestSuite) TestCreateUserHandler_Success() {
+	mockData := model.UserRegisterRequest{
+		Email:    "elliz@gmail.com",
+		Password: "N@ufa282",
+		Name:     "pal",
+		IsActive: true,
+	}
 
-// 	record := httptest.NewRecorder()
+	suite.usecase.On("RegisterUser", mockData).Return(nil)
+	mockRg := suite.router.Group("/api/v1")
+	NewUserController(suite.usecase, mockRg).Route()
 
-// 	marshal, err := json.Marshal(mockData)
-// 	assert.NoError(suite.T(), err)
+	record := httptest.NewRecorder()
 
-// 	request, err := http.NewRequest(http.MethodPost, "/api/v1/register", bytes.NewBuffer(marshal))
-// 	assert.NoError(suite.T(), err)
+	marshal, err := json.Marshal(mockData)
+	assert.NoError(suite.T(), err)
 
-// 	suite.router.ServeHTTP(record, request)
-// 	response := record.Body.Bytes()
+	request, err := http.NewRequest(http.MethodPost, "/api/v1/register", bytes.NewBuffer(marshal))
+	assert.NoError(suite.T(), err)
 
-// 	var userResp model.UserRegisterRequest
-// 	json.Unmarshal(response, &userResp)
-// 	assert.Equal(suite.T(), http.StatusOK, record.Code)
-// }
+	suite.router.ServeHTTP(record, request)
+	response := record.Body.Bytes()
 
-// func (suite *RegisterControllerTestSuite) TestCreateUser_InvalidEmail() {
-// 	mockData := model.UserRegisterRequest{
-// 		Email:    "elliz", // Invalid email format
-// 		Password: "N@ufa282",
-// 		Name:     "pal",
-// 		IsActive: true,
-// 	}
+	var userResp model.UserRegisterRequest
+	json.Unmarshal(response, &userResp)
+	assert.Equal(suite.T(), http.StatusOK, record.Code)
+}
 
-// 	suite.usecase.On("RegisterUser", mockData).Return(errors.New("invalid email"))
-// 	mockRg := suite.router.Group("/api/v1")
-// 	NewUserController(suite.usecase, mockRg).Route()
+func (suite *RegisterControllerTestSuite) TestCreateUser_InvalidEmail() {
+	mockData := model.UserRegisterRequest{
+		Email:    "elliz", // Invalid email format
+		Password: "N@ufa282",
+		Name:     "pal",
+		IsActive: true,
+	}
 
-// 	record := httptest.NewRecorder()
+	suite.usecase.On("RegisterUser", mockData).Return(errors.New("invalid email"))
+	mockRg := suite.router.Group("/api/v1")
+	NewUserController(suite.usecase, mockRg).Route()
 
-// 	marshal, err := json.Marshal(mockData)
-// 	assert.NoError(suite.T(), err)
+	record := httptest.NewRecorder()
 
-// 	request, err := http.NewRequest(http.MethodPost, "/api/v1/register", bytes.NewBuffer(marshal))
-// 	assert.NoError(suite.T(), err)
+	marshal, err := json.Marshal(mockData)
+	assert.NoError(suite.T(), err)
 
-// 	suite.router.ServeHTTP(record, request)
-// 	response := record.Body.Bytes()
+	request, err := http.NewRequest(http.MethodPost, "/api/v1/register", bytes.NewBuffer(marshal))
+	assert.NoError(suite.T(), err)
 
-// 	var userResp model.UserRegisterRequest
-// 	json.Unmarshal(response, &userResp)
-// 	assert.Equal(suite.T(), http.StatusBadRequest, record.Code)
-// }
+	suite.router.ServeHTTP(record, request)
+	response := record.Body.Bytes()
 
-// // login testing
-// func (suite *RegisterControllerTestSuite) TestLoginUser_Success() {
-// 	mockData := model.UserLoginRequest{
-// 		Email:    "ellizavad@gmail.com",
-// 		Password: "N@21457asdw",
-// 	}
+	var userResp model.UserRegisterRequest
+	json.Unmarshal(response, &userResp)
+	assert.Equal(suite.T(), http.StatusBadRequest, record.Code)
+}
 
-// 	suite.usecase.On("LoginUser", mockData).Return(nil)
-// 	mockRg := suite.router.Group("/api/v1")
-// 	NewUserController(suite.usecase, mockRg).Route()
+// login testing
+func (suite *RegisterControllerTestSuite) TestLoginUser_Success() {
+	mockData := model.UserLoginRequest{
+		Email:    "ellizavad@gmail.com",
+		Password: "N@21457asdw",
+	}
 
-// 	record := httptest.NewRecorder()
+	suite.usecase.On("LoginUser", mockData).Return(nil)
+	mockRg := suite.router.Group("/api/v1")
+	NewUserController(suite.usecase, mockRg).Route()
 
-// 	marshal, err := json.Marshal(mockData)
-// 	assert.NoError(suite.T(), err)
+	record := httptest.NewRecorder()
 
-// 	request, err := http.NewRequest(http.MethodPost, "/api/v1/login", bytes.NewBuffer(marshal))
-// 	assert.NoError(suite.T(), err)
+	marshal, err := json.Marshal(mockData)
+	assert.NoError(suite.T(), err)
 
-// 	suite.router.ServeHTTP(record, request)
-// 	response := record.Body.Bytes()
+	request, err := http.NewRequest(http.MethodPost, "/api/v1/login", bytes.NewBuffer(marshal))
+	assert.NoError(suite.T(), err)
 
-// 	var userResp model.UserLoginRequest
-// 	json.Unmarshal(response, &userResp)
-// 	assert.Equal(suite.T(), http.StatusOK, record.Code)
-// }
+	suite.router.ServeHTTP(record, request)
+	response := record.Body.Bytes()
 
-// // login otp
-// func (suite *RegisterControllerTestSuite) TestLoginUserOTP_Success() {
-// 	// Create a new struct for mockData
-// 	mockData := struct {
-// 		Email string `json:"email"`
-// 		OTP   int    `json:"otp"`
-// 	}{
-// 		Email: "ellizavad@gmail.com",
-// 		OTP:   287303,
-// 	}
+	var userResp model.UserLoginRequest
+	json.Unmarshal(response, &userResp)
+	assert.Equal(suite.T(), http.StatusOK, record.Code)
+}
 
-// 	// Set up OTP map with a valid OTP value
-// 	usecase.OTPMap["ellizavad@gmail.com"] = 287303
+// login otp
+func (suite *RegisterControllerTestSuite) TestLoginUserOTP_Success() {
+	// Create a new struct for mockData
+	mockData := struct {
+		Email string `json:"email"`
+		OTP   int    `json:"otp"`
+	}{
+		Email: "ellizavad@gmail.com",
+		OTP:   287303,
+	}
 
-// 	suite.usecase.On("LoginUser", mockData).Return(nil)
-// 	mockRg := suite.router.Group("/api/v1")
-// 	NewUserController(suite.usecase, mockRg).Route()
+	// Set up OTP map with a valid OTP value
+	usecase.OTPMap["ellizavad@gmail.com"] = 287303
 
-// 	record := httptest.NewRecorder()
+	suite.usecase.On("LoginUser", mockData).Return(nil)
+	mockRg := suite.router.Group("/api/v1")
+	NewUserController(suite.usecase, mockRg).Route()
 
-// 	marshal, err := json.Marshal(mockData)
-// 	assert.NoError(suite.T(), err)
+	record := httptest.NewRecorder()
 
-// 	request, err := http.NewRequest(http.MethodPost, "/api/v1/login/email-otp/start", bytes.NewBuffer(marshal))
-// 	assert.NoError(suite.T(), err)
+	marshal, err := json.Marshal(mockData)
+	assert.NoError(suite.T(), err)
 
-// 	suite.router.ServeHTTP(record, request)
-// 	response := record.Body.Bytes()
+	request, err := http.NewRequest(http.MethodPost, "/api/v1/login/email-otp/start", bytes.NewBuffer(marshal))
+	assert.NoError(suite.T(), err)
 
-// 	fmt.Println("Response Status Code:", record.Code)
+	suite.router.ServeHTTP(record, request)
+	response := record.Body.Bytes()
 
-// 	// Debug: Print the response body
-// 	fmt.Println("Response Body:", string(response))
+	fmt.Println("Response Status Code:", record.Code)
 
-// 	var userResp model.UserLoginOTPRequest
-// 	json.Unmarshal(response, &userResp)
-// 	assert.Equal(suite.T(), 200, record.Code)
-// }
+	// Debug: Print the response body
+	fmt.Println("Response Body:", string(response))
 
-// func (suite *RegisterControllerTestSuite) TestLoginUserOTP_Fail() {
-// 	mockData := model.UserLoginOTPRequest{
-// 		Email: "ellizavad@gmail.com",
-// 		OTP:   875502,
-// 	}
+	var userResp model.UserLoginOTPRequest
+	json.Unmarshal(response, &userResp)
+	assert.Equal(suite.T(), 200, record.Code)
+}
 
-// 	suite.usecase.On("LoginUser", mockData).Return(errors.New("otp is invalid / expired"))
-// 	mockRg := suite.router.Group("/api/v1")
-// 	NewUserController(suite.usecase, mockRg).Route()
+func (suite *RegisterControllerTestSuite) TestLoginUserOTP_Fail() {
+	mockData := model.UserLoginOTPRequest{
+		Email: "ellizavad@gmail.com",
+		OTP:   875502,
+	}
 
-// 	record := httptest.NewRecorder()
+	suite.usecase.On("LoginUser", mockData).Return(errors.New("otp is invalid / expired"))
+	mockRg := suite.router.Group("/api/v1")
+	NewUserController(suite.usecase, mockRg).Route()
 
-// 	marshal, err := json.Marshal(mockData)
-// 	assert.NoError(suite.T(), err)
+	record := httptest.NewRecorder()
 
-// 	request, err := http.NewRequest(http.MethodPost, "/api/v1/login/email-otp/start", bytes.NewBuffer(marshal))
-// 	assert.NoError(suite.T(), err)
+	marshal, err := json.Marshal(mockData)
+	assert.NoError(suite.T(), err)
 
-// 	suite.router.ServeHTTP(record, request)
-// 	response := record.Body.Bytes()
+	request, err := http.NewRequest(http.MethodPost, "/api/v1/login/email-otp/start", bytes.NewBuffer(marshal))
+	assert.NoError(suite.T(), err)
 
-// 	var userResp model.UserLoginOTPRequest
-// 	json.Unmarshal(response, &userResp)
-// 	assert.Equal(suite.T(), 401, record.Code)
-// }
+	suite.router.ServeHTTP(record, request)
+	response := record.Body.Bytes()
 
-// // forgot pass
-// func (suite *RegisterControllerTestSuite) TestForgotPass_Success() {
-// 	mockData := model.UserLoginRequest{
-// 		Email: "ellizavad@gmail.com",
-// 	}
+	var userResp model.UserLoginOTPRequest
+	json.Unmarshal(response, &userResp)
+	assert.Equal(suite.T(), 401, record.Code)
+}
 
-// 	suite.usecase.On("LoginUser", mockData).Return(nil)
-// 	mockRg := suite.router.Group("/api/v1")
-// 	NewUserController(suite.usecase, mockRg).Route()
+// forgot pass
+func (suite *RegisterControllerTestSuite) TestForgotPass_Success() {
+	mockData := model.UserLoginRequest{
+		Email: "ellizavad@gmail.com",
+	}
 
-// 	record := httptest.NewRecorder()
+	suite.usecase.On("LoginUser", mockData).Return(nil)
+	mockRg := suite.router.Group("/api/v1")
+	NewUserController(suite.usecase, mockRg).Route()
 
-// 	marshal, err := json.Marshal(mockData)
-// 	assert.NoError(suite.T(), err)
+	record := httptest.NewRecorder()
 
-// 	request, err := http.NewRequest(http.MethodPost, "/api/v1/password-new", bytes.NewBuffer(marshal))
-// 	assert.NoError(suite.T(), err)
+	marshal, err := json.Marshal(mockData)
+	assert.NoError(suite.T(), err)
 
-// 	suite.router.ServeHTTP(record, request)
-// 	response := record.Body.Bytes()
+	request, err := http.NewRequest(http.MethodPost, "/api/v1/password-new", bytes.NewBuffer(marshal))
+	assert.NoError(suite.T(), err)
 
-// 	var userResp model.UserLoginRequest
-// 	json.Unmarshal(response, &userResp)
-// 	assert.Equal(suite.T(), http.StatusOK, record.Code)
-// }
+	suite.router.ServeHTTP(record, request)
+	response := record.Body.Bytes()
 
-// func (suite *RegisterControllerTestSuite) TestForgotPass_InvalidJSONFormat() {
-// 	// Create an invalid JSON request body (missing closing brace)
-// 	requestBody := []byte(`{"email":"ellizavad.com"`)
+	var userResp model.UserLoginRequest
+	json.Unmarshal(response, &userResp)
+	assert.Equal(suite.T(), http.StatusOK, record.Code)
+}
 
-// 	suite.usecase.On("LoginUser", requestBody).Return(errors.New("Bad json format"))
-// 	mockRg := suite.router.Group("/api/v1")
-// 	NewUserController(suite.usecase, mockRg).Route()
+func (suite *RegisterControllerTestSuite) TestForgotPass_InvalidJSONFormat() {
+	// Create an invalid JSON request body (missing closing brace)
+	requestBody := []byte(`{"email":"ellizavad.com"`)
 
-// 	// Create a response recorder to capture the response
-// 	recorder := httptest.NewRecorder()
+	suite.usecase.On("LoginUser", requestBody).Return(errors.New("Bad json format"))
+	mockRg := suite.router.Group("/api/v1")
+	NewUserController(suite.usecase, mockRg).Route()
 
-// 	marshal, err := json.Marshal(requestBody)
-// 	assert.NoError(suite.T(), err)
+	// Create a response recorder to capture the response
+	recorder := httptest.NewRecorder()
 
-// 	// Create an HTTP request with the invalid JSON body
-// 	request, err := http.NewRequest(http.MethodPost, "/api/v1/password-new", bytes.NewBuffer(marshal))
-// 	assert.NoError(suite.T(), err)
+	marshal, err := json.Marshal(requestBody)
+	assert.NoError(suite.T(), err)
 
-// 	suite.router.ServeHTTP(recorder, request)
-// 	response := recorder.Body.Bytes()
+	// Create an HTTP request with the invalid JSON body
+	request, err := http.NewRequest(http.MethodPost, "/api/v1/password-new", bytes.NewBuffer(marshal))
+	assert.NoError(suite.T(), err)
 
-// 	var userResp model.UserLoginRequest
-// 	json.Unmarshal(response, &userResp)
-// 	assert.Equal(suite.T(), http.StatusBadRequest, recorder.Code)
-// }
+	suite.router.ServeHTTP(recorder, request)
+	response := recorder.Body.Bytes()
 
-// // forgot pass otp
-// func (suite *RegisterControllerTestSuite) TestForgotPassOTP_InvalidJSONFormat() {
-// 	// Create an invalid JSON request body (missing closing brace)
-// 	requestBody := []byte(`{"id":"123", "email":"ellizavad@gmail.com", "otp":123, "old_password":"oldpass", "new_password":"newpass"`)
+	var userResp model.UserLoginRequest
+	json.Unmarshal(response, &userResp)
+	assert.Equal(suite.T(), http.StatusBadRequest, recorder.Code)
+}
 
-// 	// Create an HTTP request with the invalid JSON body
-// 	request, err := http.NewRequest(http.MethodPost, "/api/v1/forgot-password/start", bytes.NewBuffer(requestBody))
-// 	assert.NoError(suite.T(), err)
+// forgot pass otp
+func (suite *RegisterControllerTestSuite) TestForgotPassOTP_InvalidJSONFormat() {
+	// Create an invalid JSON request body (missing closing brace)
+	requestBody := []byte(`{"id":"123", "email":"ellizavad@gmail.com", "otp":123, "old_password":"oldpass", "new_password":"newpass"`)
 
-// 	// Create a response recorder to capture the response
-// 	recorder := httptest.NewRecorder()
+	// Create an HTTP request with the invalid JSON body
+	request, err := http.NewRequest(http.MethodPost, "/api/v1/forgot-password/start", bytes.NewBuffer(requestBody))
+	assert.NoError(suite.T(), err)
 
-// 	// Set up the router and controller
-// 	router := gin.Default()
-// 	userController := NewUserController(suite.usecase, router.Group("/api/v1"))
-// 	userController.Route()
+	// Create a response recorder to capture the response
+	recorder := httptest.NewRecorder()
 
-// 	// Serve the HTTP request
-// 	router.ServeHTTP(recorder, request)
+	// Set up the router and controller
+	router := gin.Default()
+	userController := NewUserController(suite.usecase, router.Group("/api/v1"))
+	userController.Route()
 
-// 	// Check the response status code
-// 	assert.Equal(suite.T(), http.StatusBadRequest, recorder.Code)
+	// Serve the HTTP request
+	router.ServeHTTP(recorder, request)
 
-// }
+	// Check the response status code
+	assert.Equal(suite.T(), http.StatusBadRequest, recorder.Code)
+
+}
