@@ -146,6 +146,68 @@ func (suite *UserCredentialsRepositorySuite) TestFindUserEmail_EmailNotFound() {
 	assert.Empty(suite.T(), user)
 	assert.NoError(suite.T(), suite.mock.ExpectationsWereMet())
 }
+
+func (suite *UserCredentialsRepositorySuite) TestForgotPassword() {
+	email := "test@example.com"
+	newpass := "newpassword"
+
+	suite.mock.ExpectExec("update user_credential set password = (.+) where email = (.+)").
+		WithArgs(email, newpass).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	err := suite.repo.ForgotPassword(email, newpass)
+
+	assert.NoError(suite.T(), err)
+	assert.NoError(suite.T(), suite.mock.ExpectationsWereMet())
+}
+
+func (suite *UserCredentialsRepositorySuite) TestGetUserPassword() {
+	email := "test@example.com"
+	hashPassword := "hashed_password"
+
+	suite.mock.ExpectQuery("select password from user_credential where email = (.+)").
+		WithArgs(email).
+		WillReturnRows(sqlmock.NewRows([]string{"password"}).AddRow(hashPassword))
+
+	result, err := suite.repo.GetUserPassword(email)
+
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), hashPassword, result)
+	assert.NoError(suite.T(), suite.mock.ExpectationsWereMet())
+}
+
+func (suite *UserCredentialsRepositorySuite) TestCheckEmailExist() {
+	email := "test@example.com"
+
+	suite.mock.ExpectQuery("select count\\(\\*\\) from user_credential where email=(.+)").
+		WithArgs(email).
+		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
+
+	exists := suite.repo.CheckEmailExist(email)
+
+	assert.True(suite.T(), exists)
+	assert.NoError(suite.T(), suite.mock.ExpectationsWereMet())
+}
+
+func (suite *UserCredentialsRepositorySuite) TestFindUserEmailPass() {
+	email := "test@example.com"
+	expectedUser := model.ChangePasswordRequest{
+		Email:       email,
+		OldPassword: "hashed_password",
+	}
+
+	suite.mock.ExpectQuery("SELECT id, email, password FROM user_credential WHERE email = (.+)").
+		WithArgs(email).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "email", "password"}).
+			AddRow(expectedUser.ID, expectedUser.Email, expectedUser.OldPassword))
+
+	user, err := suite.repo.FindUserEmailPass(email)
+
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), expectedUser, user)
+	assert.NoError(suite.T(), suite.mock.ExpectationsWereMet())
+}
+
 func TestUserDetailsRepositorySuite(t *testing.T) {
 	suite.Run(t, new(UserCredentialsRepositorySuite))
 }

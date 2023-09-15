@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">final-project-enigma-clean/usecase/user-credentials-usecase.go (40.0%)</option>
+				<option value="file0">final-project-enigma-clean/usecase/user-credentials-usecase.go (39.5%)</option>
 				
 				</select>
 			</div>
@@ -77,6 +77,8 @@ import (
         "final-project-enigma-clean/util/helper"
         "fmt"
         "github.com/go-playground/validator/v10"
+        "github.com/gookit/slog"
+        "strconv"
 )
 
 type UserCredentialUsecase interface {
@@ -136,31 +138,37 @@ func (u *userDetailUsecase) RegisterUser(user model.UserRegisterRequest) error <
         if err = u.udetailsRepo.UserRegister(user); err != nil </span><span class="cov8" title="1">{
                 return err
         }</span>
-        <span class="cov8" title="1">return nil</span>
+
+        //email
+        <span class="cov8" title="1">helper.SendEmailRegister(user.Email, user.Name)
+        return nil</span>
 }
+
+var OTPMap = make(map[string]int)
 
 // login business logic
 func (u *userDetailUsecase) LoginUser(userlogin model.UserLoginRequest) (string, error) <span class="cov0" title="0">{
         // TODO implement me
 
-        // If email is empty
-        if userlogin.Email == "" </span><span class="cov0" title="0">{
-                return "", fmt.Errorf("Email is required")
-        }</span>
-
         // Find user email
-        <span class="cov0" title="0">user, err := u.FindingUserEmail(userlogin.Email)
+        user, err := u.FindingUserEmail(userlogin.Email)
         if err != nil </span><span class="cov0" title="0">{
                 return "", fmt.Errorf("Failed to find email %v", err.Error())
         }</span>
 
         // Compare password
         <span class="cov0" title="0">if err = helper.ComparePassword(user.Password, userlogin.Password); err != nil </span><span class="cov0" title="0">{
-                return "", fmt.Errorf("Invalid Credentials")
+                return "", err
         }</span>
 
+        //logic otp
+        <span class="cov0" title="0">otp, _ := helper.GenerateOTP()
+        helper.SendEmailWithOTP(user.Email, strconv.Itoa(otp))
+        OTPMap[user.Email] = otp
+        slog.Infof("Sending otp to %v", user.Email)
+
         // return id
-        <span class="cov0" title="0">return user.ID, nil</span>
+        return user.ID, nil</span>
 }
 
 func (u *userDetailUsecase) FindingUserEmail(email string) (user model.UserLoginRequest, err error) <span class="cov0" title="0">{

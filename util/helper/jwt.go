@@ -9,14 +9,14 @@ import (
 var secret = []byte(os.Getenv("JWT_SECRET"))
 
 type JWTClaims struct {
-	UserID string `json:"id"`
+	UserID string `json:"email"`
 	jwt.StandardClaims
 }
 
 // init jwt in here
-func GenerateJWT(UserID string) (string, error) {
+func GenerateJWT(Email string) (string, error) {
 	claims := JWTClaims{
-		UserID: UserID,
+		UserID: Email,
 		StandardClaims: jwt.StandardClaims{
 			IssuedAt:  time.Now().Unix(),
 			ExpiresAt: time.Now().Add(6 * time.Hour).Unix(),
