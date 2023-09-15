@@ -54,8 +54,8 @@ func (m *manageAssetRepository) FindByNameTransaction(name string) ([]model.Mana
 		rowsDetail.Scan(&td.Id, &td.ManageAssetId, &td.Asset.Id, &td.Asset.Name, &td.TotalItem, &td.Status)
 		transactionDetail = append(transactionDetail, td)
 	}
-	if rows.Err() != nil {
-		return nil, nil, rows.Err()
+	if rowsDetail.Err() != nil {
+		return nil, nil, rowsDetail.Err()
 	}
 
 	return transactions, transactionDetail, nil
@@ -98,8 +98,8 @@ func (m *manageAssetRepository) FindAllByTransId(id string) ([]model.ManageAsset
 		rowsDetail.Scan(&td.Id, &td.ManageAssetId, &td.Asset.Id, &td.Asset.Name, &td.TotalItem, &td.Status)
 		transactionDetail = append(transactionDetail, td)
 	}
-	if rows.Err() != nil {
-		return nil, nil, rows.Err()
+	if rowsDetail.Err() != nil {
+		return nil, nil, rowsDetail.Err()
 	}
 
 	return transactions, transactionDetail, nil
@@ -139,7 +139,6 @@ func (m *manageAssetRepository) CreateTransaction(payload dto.ManageAssetRequest
 
 	tx, err := m.db.Begin()
 	if err != nil {
-		tx.Rollback()
 		return err
 	}
 	_, err = tx.Exec(query, payload.Id, payload.IdUser, payload.NikStaff, payload.SubmisstionDate, payload.ReturnDate)
