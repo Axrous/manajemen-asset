@@ -6,6 +6,7 @@ import (
 	"errors"
 	"final-project-enigma-clean/__mock__/usecasemock"
 	"final-project-enigma-clean/model"
+	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/util/helper"
 	"net/http"
 	"net/http/httptest"
@@ -38,10 +39,10 @@ func (suite *AssetControllerTestSuite) TestCreateHandler_Success() {
 		CategoryId:  "TEST1",
 		AssetTypeId: "TEST1",
 		Name:        "Laptop",
-		Available:      5,
 		Status:      "Ready",
 		EntryDate: time.Time{},
 		ImgUrl:      "hehe",
+		Total:      5,
 	}
 
 	suite.usecase.On("Create", mockData).Return(nil)
@@ -70,10 +71,10 @@ func (suite *AssetControllerTestSuite) TestCreateHandler_Failed() {
 		CategoryId:  "TEST1",
 		AssetTypeId: "TEST1",
 		Name:        "Laptop",
-		Available:      5,
 		Status:      "Ready",
 		EntryDate: time.Time{},
 		ImgUrl:      "hehe",
+		Total:      5,
 	}
 
 	suite.usecase.On("Create", mockData).Return(errors.New("failed create"))
@@ -118,10 +119,11 @@ func (suite *AssetControllerTestSuite) TestListWithNameHandler_Success()  {
 		Name: "Elektronik",
 	},
 	Name:      "Laptop",
-	Available:    50,
+	Available: 10,
 	Status:    "Ready",
 	EntryDate: time.Time{},
-	ImgUrl:    "upss",},
+	ImgUrl:    "upss",
+	Total: 10,},
 	}
 
 	suite.usecase.On("FindByName", "laptop").Return(mockData, nil)
@@ -156,13 +158,26 @@ func (suite *AssetControllerTestSuite) TestListHandler_Success()  {
 		Name: "Elektronik",
 	},
 	Name:      "Laptop",
-	Available:    50,
+	Available:    10,
 	Status:    "Ready",
 	EntryDate: time.Time{},
-	ImgUrl:    "upss",},
+	ImgUrl:    "upss",
+	Total: 10 ,},
 	}
 
-	suite.usecase.On("FindAll").Return(mockData, nil)
+	mockDto := dto.PageRequest{
+		Page: 1,
+		Size: 5,
+	}
+
+mockPaging := dto.Paging{
+	Page:       1,
+	Size:       5,
+	TotalRows:  5,
+	TotalPages: 1,
+}
+
+	suite.usecase.On("Paging", mockDto).Return(mockData, mockPaging, nil)
 	mockRg := suite.router.Group("/api/v1")
 	NewAssetController(suite.usecase, mockRg).Route()
 
@@ -184,7 +199,11 @@ func (suite *AssetControllerTestSuite) TestListHandler_Success()  {
 
 func (suite *AssetControllerTestSuite) TestListHandler_Failed()  {
 
-	suite.usecase.On("FindAll").Return(nil, errors.New("failed get assets"))
+	mockDto := dto.PageRequest{
+		Page: 1,
+		Size: 5,
+	}
+	suite.usecase.On("Paging", mockDto).Return(nil, dto.Paging{}, errors.New("failed get assets"))
 	mockRg := suite.router.Group("/api/v1")
 	NewAssetController(suite.usecase, mockRg).Route()
 
@@ -229,6 +248,7 @@ func (suite *AssetControllerTestSuite) TestFindByIdHandler_Success()  {
 		Status:    "Ready",
 		EntryDate: time.Time{},
 		ImgUrl:    "upss",
+		Total: 50,
 		}
 
 	suite.usecase.On("FindById", "1").Return(mockData, nil)
@@ -269,6 +289,7 @@ func (suite *AssetControllerTestSuite) TestUpdateHandler_Success() {
 		Status:      "Ready",
 		EntryDate: time.Time{},
 		ImgUrl:      "hehe",
+		Total: 5,
 	}
 
 	suite.usecase.On("Update", mockData).Return(nil)
@@ -298,6 +319,7 @@ func (suite *AssetControllerTestSuite) TestUpdateHandler_Failed() {
 		Status:      "Ready",
 		EntryDate: time.Time{},
 		ImgUrl:      "hehe",
+		Total: 5,
 	}
 
 	suite.usecase.On("Update", mockData).Return(errors.New("failedddd"))
