@@ -9,6 +9,26 @@ type UserCredentialsMock struct {
 	mock.Mock
 }
 
+func (u *UserCredentialsMock) LoginUserChangePass(user model.ChangePasswordRequest) (string, error) {
+	//TODO implement me
+	return "user_token", nil
+}
+
+func (u *UserCredentialsMock) ChangePassword(email, newpass string) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (u *UserCredentialsMock) ForgotPass(email string) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (u *UserCredentialsMock) ForgotPassRequest(email, newPassword, confirmPassword string) error {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (u *UserCredentialsMock) RegisterUser(user model.UserRegisterRequest) error {
 	//TODO implement me
 	return u.Called(user).Error(0)

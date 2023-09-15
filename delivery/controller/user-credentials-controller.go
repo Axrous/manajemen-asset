@@ -89,7 +89,7 @@ func (u *UserController) LoginOTPHandler(c *gin.Context) {
 	}
 }
 
-func (u *UserController) ForgotPassHandler(c *gin.Context) {
+func (u *UserController) ChangePasswordHandler(c *gin.Context) {
 	//bind json
 	var userLogin model.ChangePasswordRequest
 
@@ -99,7 +99,7 @@ func (u *UserController) ForgotPassHandler(c *gin.Context) {
 	}
 
 	//find email + login otp
-	_, err := u.userUC.LoginUserForgotPass(userLogin)
+	_, err := u.userUC.LoginUserChangePass(userLogin)
 	if err != nil {
 		c.AbortWithStatusJSON(500, gin.H{"Error": err.Error()})
 		return
@@ -108,7 +108,7 @@ func (u *UserController) ForgotPassHandler(c *gin.Context) {
 	c.JSON(200, gin.H{"Message": fmt.Sprintf("We have sent you an email to %v with password change instructions", userLogin.Email)})
 }
 
-func (u *UserController) ForgotPassOTPHandler(c *gin.Context) {
+func (u *UserController) ChangePassOTPHandler(c *gin.Context) {
 
 	var request struct {
 		ID          string `json:"id"`
@@ -157,7 +157,7 @@ func (u *UserController) ForgotPassOTPHandler(c *gin.Context) {
 			return
 		}
 
-		if err = u.userUC.ForgotPassword(request.Email, newHashPassword); err != nil {
+		if err = u.userUC.ChangePassword(request.Email, newHashPassword); err != nil {
 			c.AbortWithStatusJSON(500, gin.H{"Error": "Invalid Password"})
 			return
 		}
@@ -166,13 +166,70 @@ func (u *UserController) ForgotPassOTPHandler(c *gin.Context) {
 	}
 }
 
+func (u *UserController) ForgotPassHandler(c *gin.Context) {
+	var request model.ForgotPassRequest
+
+	//bind json nya
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.AbortWithStatusJSON(400, gin.H{"Error": "Bad json format"})
+		return
+	}
+
+	_, err := u.userUC.FindingUserEmail(request.Email)
+	if err != nil {
+		c.AbortWithStatusJSON(400, gin.H{"Error": "Email not found"})
+		return
+	}
+
+	u.userUC.ForgotPass(request.Email)
+	c.JSON(200, gin.H{"Success": "Check your email for verification and follow the instruction"})
+}
+
+func (u *UserController) ForgotPassOTPHandler(c *gin.Context) {
+	var request struct {
+		Email              string `json:"email"`
+		OTP                int    `json:"otp"`
+		NewPassword        string `json:"new_password"`
+		ConfirmNewPassword string `json:"confirm_password"`
+	}
+
+	//bind json
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.AbortWithStatusJSON(400, gin.H{"Error": "Bad JSON Format"})
+		return
+	}
+	//is email exist?
+	u.userUC.EmailExist(request.Email)
+
+	//now validate otp
+	storedOTP, exists := usecase.OTPMap[request.Email]
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"Error": "OTP not found or expired"})
+		return
+	}
+
+	if request.OTP == storedOTP {
+		//confirm new password
+		if err := u.userUC.ForgotPassRequest(request.Email, request.NewPassword, request.ConfirmNewPassword); err != nil {
+			c.AbortWithStatusJSON(400, gin.H{"Error": err.Error()})
+			return
+		}
+
+		//delete otp
+		delete(usecase.OTPMap, request.Email)
+	}
+	c.JSON(200, gin.H{"Message": "Success"})
+}
+
 // init route
 func (u *UserController) Route() {
 	{
 		u.rg.POST("/register", u.RegisterUserHandler)
 		u.rg.POST("/login", u.LoginUserHandler)
 		u.rg.POST("/login/email-otp/start", u.LoginOTPHandler)
-		u.rg.POST("/password-new", u.ForgotPassHandler)
+		u.rg.POST("/change-password", u.ChangePasswordHandler)
+		u.rg.POST("/change-password/start", u.ChangePassOTPHandler)
+		u.rg.POST("/forgot-password", u.ForgotPassHandler)
 		u.rg.POST("/forgot-password/start", u.ForgotPassOTPHandler)
 	}
 }

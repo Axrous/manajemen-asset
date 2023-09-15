@@ -15,12 +15,14 @@ import (
 type UserCredentialUsecase interface {
 	RegisterUser(user model.UserRegisterRequest) error
 	LoginUser(user model.UserLoginRequest) (string, error)
-	LoginUserForgotPass(user model.ChangePasswordRequest) (string, error)
+	LoginUserChangePass(user model.ChangePasswordRequest) (string, error)
 	FindingUserEmail(email string) (userlogin model.UserLoginRequest, err error)
 	FindingUserEmailPass(email string) (userlogin model.ChangePasswordRequest, err error)
-	ForgotPassword(email, newpass string) error
+	ChangePassword(email, newpass string) error
 	GetUserPassword(email string) (string, error)
 	EmailExist(email string) bool
+	ForgotPass(email string) error
+	ForgotPassRequest(email, newPassword, confirmPassword string) error
 }
 
 type userDetailUsecase struct {
@@ -32,7 +34,7 @@ func (u *userDetailUsecase) FindingUserEmailPass(email string) (userlogin model.
 	return u.udetailsRepo.FindUserEmailPass(email)
 }
 
-func (u *userDetailUsecase) LoginUserForgotPass(user model.ChangePasswordRequest) (string, error) {
+func (u *userDetailUsecase) LoginUserChangePass(user model.ChangePasswordRequest) (string, error) {
 	//TODO implement me
 
 	// Find user email
@@ -43,7 +45,7 @@ func (u *userDetailUsecase) LoginUserForgotPass(user model.ChangePasswordRequest
 
 	//logic otp
 	otp, _ := helper.GenerateOTP()
-	helper.SendOTPForgotPass(user.Email, strconv.Itoa(otp))
+	helper.SendOTPChangePassword(user.Email, strconv.Itoa(otp))
 	OTPMap[user.Email] = otp
 	slog.Infof("Sending otp to %v", user.Email)
 
@@ -159,11 +161,53 @@ func (u *userDetailUsecase) GetUserPassword(email string) (string, error) {
 	return u.udetailsRepo.GetUserPassword(email)
 }
 
-func (u *userDetailUsecase) ForgotPassword(email, newpass string) error {
+func (u *userDetailUsecase) ChangePassword(email, newpass string) error {
 	//TODO implement me
 
 	//update password disini
-	u.udetailsRepo.ForgotPassword(email, newpass)
+	u.udetailsRepo.ChangePassword(email, newpass)
+	return nil
+}
+
+func (u *userDetailUsecase) ForgotPass(email string) error {
+	//TODO implement me
+	//validasi email
+	if email == "" {
+		return fmt.Errorf("email required")
+	}
+	user, err := u.udetailsRepo.FindUserEmail(email)
+	if err != nil {
+		return fmt.Errorf("Email not found")
+	}
+
+	//send otp to email
+	otp, _ := helper.GenerateOTP()
+	helper.SendOTPForgotPass(user.Email, strconv.Itoa(otp))
+	OTPMap[user.Email] = otp
+	slog.Infof("user %v has forgot password, Sending otp ....", user.Email)
+
+	return nil
+}
+
+func (u *userDetailUsecase) ForgotPassRequest(email, newPassword, confirmPassword string) error {
+	//TODO implement me
+
+	//buat password baru dan compare dengan confirm password nya
+	if newPassword != confirmPassword {
+		return fmt.Errorf("Password and confirm password do not match")
+	}
+
+	if err := u.udetailsRepo.ForgotPass(email, newPassword, confirmPassword); err != nil {
+		return fmt.Errorf("Error %v", err.Error())
+	}
+
+	//hash new password nya
+	hashedPassword, err := helper.HashPassword(newPassword)
+	if err != nil {
+		return fmt.Errorf("Failed to generate password %v", err.Error())
+	}
+
+	newPassword = hashedPassword
 	return nil
 }
 
