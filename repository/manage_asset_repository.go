@@ -38,7 +38,6 @@ func (m *manageAssetRepository) FindAllByTransId(id string) ([]model.ManageDetai
     m.return_date,
     a.id AS asset_id,
     a.name AS asset_name,
-    a.amount,
     a.status AS asset_status,
     a.entry_date AS asset_entry_date,
     a.img_url AS asset_img_url,
@@ -77,7 +76,7 @@ func (m *manageAssetRepository) FindAllByTransId(id string) ([]model.ManageDetai
 			&result.ManageAsset.ReturnDate,
 			&result.Asset.Id,
 			&result.Asset.Name,
-			&result.Asset.Amount,
+			//&result.Asset.Amount,
 			&result.Asset.Status,
 			&result.Asset.EntryDate,
 			&result.Asset.ImgUrl,
@@ -97,35 +96,141 @@ func (m *manageAssetRepository) FindAllByTransId(id string) ([]model.ManageDetai
 }
 
 // FindAll implements ManageAssetRepository.
+//func (m *manageAssetRepository) FindAllTransaction() ([]model.ManageAsset, error) {
+//
+//	//query := `select m.id, u.id, u.name, s.nik_staff, s.name, d.id, a.id, a.name, d.total_item, d.status from manage_asset
+//	//join user_credential as u on u.id = m.id_user
+//	//join staff as s on s.nik_staff = m.nik_staff
+//	//join detail_manage_asset as d on d.id_manage_asset = m.id
+//	//join asset as a on a.id = d.id_asset`
+//
+//	query := `
+//    SELECT m.id, u.id, u.name, s.nik_staff, s.name, d.id, a.id, a.name, d.total_item, d.status
+//    FROM manage_asset AS m
+//    JOIN user_credential AS u ON u.id = m.id_user
+//    JOIN staff AS s ON s.nik_staff = m.nik_staff
+//    JOIN detail_manage_asset AS d ON d.id_manage_asset = m.id
+//    JOIN asset AS a ON a.id = d.id_asset
+//`
+//
+//	//query := `select m.id, u.id, u.name, s.nik_staff, s.name, submission_date, return_date from manage_asset as m
+//	//		join user_credential as u on u.id = m.id_user
+//	//		join staff as s on s.nik_staff = m.nik_staff`
+//
+//	rows, err := m.db.Query(query)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	var transactions []model.ManageAsset
+//	for rows.Next() {
+//		var t model.ManageAsset
+//		var staff model.Staff
+//		var detail model.ManageDetailAsset
+//
+//		err = rows.Scan(
+//			&t.Id,
+//			&t.User.ID,
+//			&t.User.Name,
+//			&staff.Nik_Staff,
+//			&staff.Name,
+//			&detail.Id,
+//			&detail.Asset.Id,
+//			&detail.Asset.Name,
+//			&detail.TotalItem,
+//			&detail.Status,
+//		)
+//		if err != nil {
+//			return nil, err
+//		}
+//
+//		// Setel staf ke dalam manajemen detail aset
+//		detail.ManageAsset = t
+//		// Setel staf ke dalam manajemen aset
+//		t.Staff = staff
+//		// Tambahkan detail manajemen aset ke dalam manajemen aset
+//		t.Detail = append(t.Detail, detail)
+//
+//		transactions = append(transactions, t)
+//	}
+//	if rows.Err() != nil {
+//		return nil, rows.Err()
+//	}
+//
+//	return transactions, nil
+//}
+
 func (m *manageAssetRepository) FindAllTransaction() ([]model.ManageAsset, error) {
-
-	//query := `select m.id, u.id, u.name, s.nik_staff, s.name, d.id, a.id, a.name, d.total_item, d.status from manage_asset
-	//join user_credential as u on u.id = m.id_user
-	//join staff as s on s.nik_staff = m.nik_staff
-	//join detail_manage_asset as d on d.id_manage_asset = m.id
-	//join asset as a on a.id = d.id_asset`
-
 	query := `
-    SELECT m.id, u.id, u.name, s.nik_staff, s.name, d.id, a.id, a.name, d.total_item, d.status
-    FROM manage_asset AS m
-    JOIN user_credential AS u ON u.id = m.id_user
-    JOIN staff AS s ON s.nik_staff = m.nik_staff
-    JOIN detail_manage_asset AS d ON d.id_manage_asset = m.id
-    JOIN asset AS a ON a.id = d.id_asset
+    SELECT
+        m.id,
+        u.id,
+        u.name,
+        s.nik_staff,
+        s.name,
+        d.id,
+        a.id,
+        a.name,
+        a.id_category AS category_id,
+        c.name AS name,
+        d.total_item,
+        d.status
+    FROM
+        manage_asset AS m
+    JOIN
+        user_credential AS u ON u.id = m.id_user
+    JOIN
+        staff AS s ON s.nik_staff = m.nik_staff
+    JOIN
+        detail_manage_asset AS d ON d.id_manage_asset = m.id
+    JOIN
+        asset AS a ON a.id = d.id_asset
+    JOIN
+        category AS c ON a.id_category = c.id
 `
-
-	//query := `select m.id, u.id, u.name, s.nik_staff, s.name, submission_date, return_date from manage_asset as m
-	//		join user_credential as u on u.id = m.id_user
-	//		join staff as s on s.nik_staff = m.nik_staff`
 
 	rows, err := m.db.Query(query)
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	var transactions []model.ManageAsset
 	for rows.Next() {
 		var t model.ManageAsset
+		var staff model.Staff
+		var detail model.ManageDetailAsset
+		var categoryID, categoryName string
+
+		err = rows.Scan(
+			&t.Id,
+			&t.User.ID,
+			&t.User.Name,
+			&staff.Nik_Staff,
+			&staff.Name,
+			&detail.Id,
+			&detail.Asset.Id,
+			&detail.Asset.Name,
+			&categoryID,
+			&categoryName,
+			&detail.TotalItem,
+			&detail.Status,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		// Setel staf ke dalam manajemen detail aset
+		detail.ManageAsset = t
+		// Setel staf ke dalam manajemen aset
+		t.Staff = staff
+		// Tambahkan detail manajemen aset ke dalam manajemen aset
+		t.Detail = append(t.Detail, detail)
+
+		// Setel informasi kategori
+		t.Detail[len(t.Detail)-1].Asset.Category.Id = categoryID
+		t.Detail[len(t.Detail)-1].Asset.Category.Name = categoryName
+
 		transactions = append(transactions, t)
 	}
 	if rows.Err() != nil {

@@ -5,6 +5,7 @@ import (
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/repository"
+	"final-project-enigma-clean/util/helper"
 	"fmt"
 	"time"
 )
@@ -13,6 +14,7 @@ type ManageAssetUsecase interface {
 	CreateTransaction(payload dto.ManageAssetRequest) error
 	ShowAllAsset() ([]model.ManageAsset, error)
 	FindByTransactionID(id string) ([]model.ManageDetailAsset, error)
+	DownloadAssets() ([]byte, error)
 }
 
 type manageAssetUsecase struct {
@@ -83,6 +85,18 @@ func (m *manageAssetUsecase) FindByTransactionID(id string) ([]model.ManageDetai
 		return nil, fmt.Errorf("Failed to fetch transaction details: %v", err)
 	}
 	return detailAssets, nil
+}
+
+func (m *manageAssetUsecase) DownloadAssets() ([]byte, error) {
+	//TODO implement me
+	assets, err := m.repo.FindAllTransaction()
+	if err != nil {
+		return nil, fmt.Errorf("Failed to find assets %v", err.Error())
+	}
+
+	//convert data to csv
+	csvData, err := helper.ConvertToCSVForAssets(assets)
+	return csvData, nil
 }
 
 func NewManageAssetUsecase(repo repository.ManageAssetRepository, staffUC StaffUseCase, assetUC AssetUsecase) ManageAssetUsecase {

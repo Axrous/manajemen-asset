@@ -125,7 +125,6 @@ func (s *StaffController) DownloadlistStaffHandler(c *gin.Context) {
 	c.Set("Content-Disposition", `attachment; filename="data-staff.csv"`)
 	c.Set("Content-Type", "text/csv")
 
-	// Memanggil metode usecase untuk mengunduh data staf dalam format CSV
 	csvData, err := s.staffUC.DownloadAllStaff()
 	if err != nil {
 		c.AbortWithStatusJSON(500, gin.H{"Error": "Failed to download staff data"})

@@ -3,8 +3,8 @@ package controller
 import (
 	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/usecase"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type ManageAssetController struct {
@@ -54,10 +54,24 @@ func (m ManageAssetController) FindByIdTransaction(c *gin.Context) {
 
 	c.JSON(200, gin.H{"Data": detailAssets})
 }
+
+// download handler
+func (m ManageAssetController) DownloadAssetsHandler(c *gin.Context) {
+	//set header
+	c.Set("Content-Type", "text/csv")
+	c.Set("Content-Disposition", `attachment; filename="data-assets.csv"`)
+	csvData, err := m.manageAssetUC.DownloadAssets()
+	if err != nil {
+		c.AbortWithStatusJSON(500, gin.H{"Error": "Failed to download staff data"})
+		return
+	}
+	c.Data(http.StatusOK, "text/csv", csvData)
+}
 func (m ManageAssetController) Route() {
 	m.g.GET("/manage-assets/show-all", m.ShowAllAssetHandler)
 	m.g.POST("/manage-assets/create-new", m.CreateNewAssetHandler)
 	m.g.GET("/manage-assets/find/:id", m.FindByIdTransaction)
+	m.g.GET("/manage-assets/download/list-assets", m.DownloadAssetsHandler)
 }
 
 func NewManageAssetController(maUC usecase.ManageAssetUsecase, g *gin.RouterGroup) *ManageAssetController {

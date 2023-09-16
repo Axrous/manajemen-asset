@@ -130,7 +130,7 @@ func (s *staffUseCase) DownloadAllStaff() ([]byte, error) {
 	}
 
 	// Mengonversi data staff ke format CSV
-	csvData, err := helper.ConvertToCSV(staffs)
+	csvData, err := helper.ConvertToCSVForStaff(staffs)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert staff data to CSV: %v", err)
 	}
