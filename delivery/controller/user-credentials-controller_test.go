@@ -181,7 +181,7 @@ func (suite *RegisterControllerTestSuite) TestLoginUserOTP_Fail() {
 }
 
 // forgot pass
-func (suite *RegisterControllerTestSuite) TestForgotPass_Success() {
+func (suite *RegisterControllerTestSuite) TestChangePass_Success() {
 	mockData := model.UserLoginRequest{
 		Email: "ellizavad@gmail.com",
 	}
@@ -195,7 +195,7 @@ func (suite *RegisterControllerTestSuite) TestForgotPass_Success() {
 	marshal, err := json.Marshal(mockData)
 	assert.NoError(suite.T(), err)
 
-	request, err := http.NewRequest(http.MethodPost, "/api/v1/password-new", bytes.NewBuffer(marshal))
+	request, err := http.NewRequest(http.MethodPost, "/api/v1/change-password", bytes.NewBuffer(marshal))
 	assert.NoError(suite.T(), err)
 
 	suite.router.ServeHTTP(record, request)
@@ -206,7 +206,7 @@ func (suite *RegisterControllerTestSuite) TestForgotPass_Success() {
 	assert.Equal(suite.T(), http.StatusOK, record.Code)
 }
 
-func (suite *RegisterControllerTestSuite) TestForgotPass_InvalidJSONFormat() {
+func (suite *RegisterControllerTestSuite) TestChangePass_InvalidJSONFormat() {
 	// Create an invalid JSON request body (missing closing brace)
 	requestBody := []byte(`{"email":"ellizavad.com"`)
 
@@ -221,7 +221,7 @@ func (suite *RegisterControllerTestSuite) TestForgotPass_InvalidJSONFormat() {
 	assert.NoError(suite.T(), err)
 
 	// Create an HTTP request with the invalid JSON body
-	request, err := http.NewRequest(http.MethodPost, "/api/v1/password-new", bytes.NewBuffer(marshal))
+	request, err := http.NewRequest(http.MethodPost, "/api/v1/change-password", bytes.NewBuffer(marshal))
 	assert.NoError(suite.T(), err)
 
 	suite.router.ServeHTTP(recorder, request)

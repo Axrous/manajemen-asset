@@ -4,6 +4,7 @@ import (
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/repository"
+	"final-project-enigma-clean/util/helper"
 	"fmt"
 )
 
@@ -15,6 +16,7 @@ type StaffUseCase interface {
 	Update(payload model.Staff) error
 	Delete(nik_staff string) error
 	Paging(payload dto.PageRequest) ([]model.Staff, dto.Paging, error)
+	DownloadAllStaff() ([]byte, error)
 }
 
 type staffUseCase struct {
@@ -118,6 +120,22 @@ func (s *staffUseCase) Update(payload model.Staff) error {
 		return fmt.Errorf("failed to update staff: %v", err)
 	}
 	return nil
+}
+
+func (s *staffUseCase) DownloadAllStaff() ([]byte, error) {
+	// Mengambil data staff dari repository
+	staffs, err := s.repo.FindByAll()
+	if err != nil {
+		return nil, fmt.Errorf("failed to find staff: %v", err)
+	}
+
+	// Mengonversi data staff ke format CSV
+	csvData, err := helper.ConvertToCSVForStaff(staffs)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert staff data to CSV: %v", err)
+	}
+
+	return csvData, nil
 }
 
 func NewStaffUseCase(repo repository.StaffRepository) StaffUseCase {

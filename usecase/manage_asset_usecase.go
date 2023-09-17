@@ -148,6 +148,18 @@ func (m *manageAssetUsecase) FindByTransactionID(id string) ([]model.ManageAsset
 	return datas, nil
 }
 
+func (m *manageAssetUsecase) DownloadAssets() ([]byte, error) {
+	//TODO implement me
+	assets, err := m.repo.FindAllTransaction()
+	if err != nil {
+		return nil, fmt.Errorf("Failed to find assets %v", err.Error())
+	}
+
+	//convert data to csv
+	csvData, err := helper.ConvertToCSVForAssets(assets)
+	return csvData, nil
+}
+
 func NewManageAssetUsecase(repo repository.ManageAssetRepository, staffUC StaffUseCase, assetUC AssetUsecase) ManageAssetUsecase {
 	return &manageAssetUsecase{
 		repo:    repo,

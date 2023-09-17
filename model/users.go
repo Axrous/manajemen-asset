@@ -35,3 +35,10 @@ type ChangePasswordRequest struct {
 	OldPassword string `json:"old_password"`
 	NewPassword string `json:"new_password"`
 }
+
+type ForgotPassRequest struct {
+	Email              string `json:"email"`
+	OTP                int    `json:"otp"`
+	NewPassword        string `json:"new_password"`
+	ConfirmNewPassword string `json:"confirm_password"`
+}
