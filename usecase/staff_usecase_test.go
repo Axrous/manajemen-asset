@@ -46,7 +46,7 @@ func (suite *StaffUsecaseTestSuite) TestCreate_Success() {
 
 func (suite *StaffUsecaseTestSuite) TestCreate_EmptyField() {
 
-	gotErr := suite.usecase.CreateNew(model.Staff{
+	emptyNik := suite.usecase.CreateNew(model.Staff{
 		Nik_Staff:    "",
 		Name:         "Product A",
 		Phone_number: "082284163929",
@@ -55,7 +55,7 @@ func (suite *StaffUsecaseTestSuite) TestCreate_EmptyField() {
 		Img_url:      "jhj.jpg",
 		Divisi:       "IT",
 	})
-	gotErr = suite.usecase.CreateNew(model.Staff{
+	emptyName := suite.usecase.CreateNew(model.Staff{
 		Nik_Staff:    "qqqq",
 		Name:         "",
 		Phone_number: "082284163929",
@@ -64,7 +64,7 @@ func (suite *StaffUsecaseTestSuite) TestCreate_EmptyField() {
 		Img_url:      "jhj.jpg",
 		Divisi:       "IT",
 	})
-	gotErr = suite.usecase.CreateNew(model.Staff{
+	emptyPhone := suite.usecase.CreateNew(model.Staff{
 		Nik_Staff:    "11651103422",
 		Name:         "rizki",
 		Phone_number: "0822",
@@ -73,7 +73,7 @@ func (suite *StaffUsecaseTestSuite) TestCreate_EmptyField() {
 		Img_url:      "jhj.jpg",
 		Divisi:       "IT",
 	})
-	gotErr = suite.usecase.CreateNew(model.Staff{
+	emptyAddress := suite.usecase.CreateNew(model.Staff{
 		Nik_Staff:    "11651103422",
 		Name:         "rizki",
 		Phone_number: "082284163929",
@@ -82,7 +82,7 @@ func (suite *StaffUsecaseTestSuite) TestCreate_EmptyField() {
 		Img_url:      "images.jpg",
 		Divisi:       "IT",
 	})
-	gotErr = suite.usecase.CreateNew(model.Staff{
+	emptyDivisi := suite.usecase.CreateNew(model.Staff{
 		Nik_Staff:    "11651103422",
 		Name:         "rizki",
 		Phone_number: "082284163929",
@@ -91,7 +91,11 @@ func (suite *StaffUsecaseTestSuite) TestCreate_EmptyField() {
 		Img_url:      "images.jpg",
 		Divisi:       "",
 	})
-	assert.Error(suite.T(), gotErr)
+	assert.Error(suite.T(), emptyNik)
+	assert.Error(suite.T(), emptyName)
+	assert.Error(suite.T(), emptyPhone)
+	assert.Error(suite.T(), emptyAddress)
+	assert.Error(suite.T(), emptyDivisi)
 
 }
 
