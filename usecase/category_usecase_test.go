@@ -2,8 +2,8 @@ package usecase
 
 import (
 	"errors"
-	"final-project-enigma-clean/__mock__/repomock"
 	"final-project-enigma-clean/model"
+	"final_project-enigma-clean/__mock__/repomock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

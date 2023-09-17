@@ -2,7 +2,9 @@ package controller
 
 import (
 	"final-project-enigma-clean/model"
+	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/usecase"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -33,6 +35,9 @@ func (a *AssetController) createAssetHandler(c *gin.Context) {
 
 func (a *AssetController) ListAssetHandler(c *gin.Context) {
 	name := c.Query("name")
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	size, _ := strconv.Atoi(c.DefaultQuery("size", "5"))
+
 	if name != "" {
 		assets, err := a.usecase.FindByName(name)
 		if err != nil {
@@ -47,7 +52,10 @@ func (a *AssetController) ListAssetHandler(c *gin.Context) {
 		return
 	}
 
-	assets, err := a.usecase.FindAll()
+	assets, paging, err := a.usecase.Paging(dto.PageRequest{
+		Page: page,
+		Size: size,
+	})
 	if err != nil {
 		c.AbortWithStatusJSON(500, gin.H{"status": "Error", "message": err.Error()})
 		return
@@ -55,6 +63,7 @@ func (a *AssetController) ListAssetHandler(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"status": "OK",
 		"assets": assets,
+		"paging": paging,
 	})
 }
 
