@@ -56,6 +56,8 @@ func (suite *AssetControllerTestSuite) TestCreateHandler_Success() {
 
 	request, err := http.NewRequest(http.MethodPost, "/api/v1/assets", bytes.NewBuffer(marshal))
 	assert.NoError(suite.T(), err)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
 
 	suite.router.ServeHTTP(record, request)
 	response := record.Body.Bytes()
@@ -88,6 +90,8 @@ func (suite *AssetControllerTestSuite) TestCreateHandler_Failed() {
 
 	request, err := http.NewRequest(http.MethodPost, "/api/v1/assets", bytes.NewBuffer(marshal))
 	assert.NoError(suite.T(), err)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
 
 	suite.router.ServeHTTP(record, request)
 	response := record.Body.Bytes()
@@ -102,6 +106,9 @@ func (suite *AssetControllerTestSuite) TestCreateHandler_BindingError() {
 	NewAssetController(suite.usecase, mockRg).Route()
 	record := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodPost, "/api/v1/assets", nil)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
+
 	suite.router.ServeHTTP(record, request)
 	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), http.StatusBadRequest, record.Code)
@@ -137,6 +144,8 @@ func (suite *AssetControllerTestSuite) TestListWithNameHandler_Success() {
 
 	request, err := http.NewRequest(http.MethodGet, "/api/v1/assets?name=laptop", bytes.NewBuffer(marshal))
 	assert.NoError(suite.T(), err)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
 
 	suite.router.ServeHTTP(record, request)
 	response := record.Body.Bytes()
@@ -188,6 +197,8 @@ func (suite *AssetControllerTestSuite) TestListHandler_Success() {
 
 	request, err := http.NewRequest(http.MethodGet, "/api/v1/assets", bytes.NewBuffer(marshal))
 	assert.NoError(suite.T(), err)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
 
 	suite.router.ServeHTTP(record, request)
 	response := record.Body.Bytes()
@@ -211,6 +222,8 @@ func (suite *AssetControllerTestSuite) TestListHandler_Failed() {
 
 	request, err := http.NewRequest(http.MethodGet, "/api/v1/assets", nil)
 	assert.NoError(suite.T(), err)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
 
 	suite.router.ServeHTTP(record, request)
 	assert.Equal(suite.T(), http.StatusInternalServerError, record.Code)
@@ -226,6 +239,8 @@ func (suite *AssetControllerTestSuite) TestListByNameHandler_Failed() {
 
 	request, err := http.NewRequest(http.MethodGet, "/api/v1/assets?name=laptop", nil)
 	assert.NoError(suite.T(), err)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
 
 	suite.router.ServeHTTP(record, request)
 	assert.Equal(suite.T(), http.StatusInternalServerError, record.Code)
@@ -259,6 +274,8 @@ func (suite *AssetControllerTestSuite) TestFindByIdHandler_Success() {
 
 	request, err := http.NewRequest(http.MethodGet, "/api/v1/assets/1", nil)
 	assert.NoError(suite.T(), err)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
 
 	suite.router.ServeHTTP(record, request)
 	assert.Equal(suite.T(), http.StatusOK, record.Code)
@@ -274,6 +291,8 @@ func (suite *AssetControllerTestSuite) TestFindByIdHandler_Failed() {
 
 	request, err := http.NewRequest(http.MethodGet, "/api/v1/assets/1", nil)
 	assert.NoError(suite.T(), err)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
 
 	suite.router.ServeHTTP(record, request)
 	assert.Equal(suite.T(), http.StatusInternalServerError, record.Code)
@@ -303,6 +322,8 @@ func (suite *AssetControllerTestSuite) TestUpdateHandler_Success() {
 
 	request, err := http.NewRequest(http.MethodPut, "/api/v1/assets", bytes.NewBuffer(marshal))
 	assert.NoError(suite.T(), err)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
 
 	suite.router.ServeHTTP(record, request)
 
@@ -333,6 +354,8 @@ func (suite *AssetControllerTestSuite) TestUpdateHandler_Failed() {
 
 	request, err := http.NewRequest(http.MethodPut, "/api/v1/assets", bytes.NewBuffer(marshal))
 	assert.NoError(suite.T(), err)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
 
 	suite.router.ServeHTTP(record, request)
 
@@ -344,6 +367,9 @@ func (suite *AssetControllerTestSuite) TestUpdateHandler_BindingError() {
 	NewAssetController(suite.usecase, mockRg).Route()
 	record := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodPut, "/api/v1/assets", nil)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
+
 	suite.router.ServeHTTP(record, request)
 	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), http.StatusBadRequest, record.Code)
@@ -359,6 +385,8 @@ func (suite *AssetControllerTestSuite) TestDeletehandler_Success() {
 
 	request, err := http.NewRequest(http.MethodDelete, "/api/v1/assets/1", nil)
 	assert.NoError(suite.T(), err)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
 
 	suite.router.ServeHTTP(record, request)
 	assert.Equal(suite.T(), http.StatusOK, record.Code)
@@ -374,6 +402,8 @@ func (suite *AssetControllerTestSuite) TestDeletehandler_Failed() {
 
 	request, err := http.NewRequest(http.MethodDelete, "/api/v1/assets/1", nil)
 	assert.NoError(suite.T(), err)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNjk0MjgyNzQyLCJleHBfYXQiOiIyMDIzLTA5LTEwVDA3OjA1OjQyLjkzNDc3ODkrMDc6MDAiLCJ1c2VyX2VtYWlsIjoiZWxsaXphdmFkQHBhbC5jb20ifQ.TeRaZw60Rrtp6wHpP5oL7BAHSLxDMBxVcZNtJPHkXYM")
 
 	suite.router.ServeHTTP(record, request)
 	assert.Equal(suite.T(), http.StatusInternalServerError, record.Code)

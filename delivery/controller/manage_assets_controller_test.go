@@ -258,36 +258,40 @@ func (suite *ManageAssetsControllerSuite) TestFindTXById_Fail() {
 	assert.Equal(suite.T(), http.StatusInternalServerError, record.Code)
 }
 
-//find tx by name success
-//func (suite *ManageAssetsControllerSuite) TestFindTXByName_Success() {
-//	mockData := []model.ManageAsset{
-//		{
-//			Id:             "",
-//			User:           model.UserCredentials{},
-//			Staff:          model.Staff{},
-//			SubmissionDate: time.Time{},
-//			ReturnDate:     time.Time{},
-//			Detail:         nil,
-//		},
-//	}
-//
-//	suite.usecase.On("FindTransactionByName", "Adelia").Return([]model.ManageAsset{}, nil)
-//
-//	suite.controller.Route()
-//
-//	recorder := httptest.NewRecorder()
-//
-//	marshal, err := json.Marshal(mockData)
-//	assert.NoError(suite.T(), err)
-//
-//	req, err := http.NewRequest("POST", "/api/v1/manage-assets/find-asset", bytes.NewBuffer(marshal))
-//	assert.NoError(suite.T(), err)
-//
-//	suite.r.ServeHTTP(recorder, req)
-//	resp := recorder.Body.Bytes()
-//
-//	var manageAssetResp []model.ManageAsset
-//	json.Unmarshal(resp, &manageAssetResp)
-//	assert.Equal(suite.T(), 200, recorder.Code)
-//
-//}
+// find tx by name success
+func (suite *ManageAssetsControllerSuite) TestFindTXByName_Success() {
+	mockData := []model.ManageAsset{
+		{
+			Id:             "123",
+			User:           model.UserCredentials{},
+			Staff:          model.Staff{Name: "Adelia"},
+			SubmissionDate: time.Time{},
+			ReturnDate:     time.Time{},
+			Detail:         nil,
+		},
+	}
+
+	suite.usecase.On("FindTransactionByName", "Adelia").Return(mockData, nil)
+
+	suite.controller.Route()
+
+	recorder := httptest.NewRecorder()
+	requestData := map[string]string{
+		"Name": "Adelia",
+	}
+	marshal, err := json.Marshal(requestData)
+	assert.NoError(suite.T(), err)
+
+	req, err := http.NewRequest("POST", "/api/v1/manage-assets/find-asset", bytes.NewBuffer(marshal))
+	assert.NoError(suite.T(), err)
+
+	suite.r.ServeHTTP(recorder, req)
+	resp := recorder.Body.Bytes()
+
+	var response map[string][]model.ManageAsset
+	err = json.Unmarshal(resp, &response)
+	assert.NoError(suite.T(), err)
+
+	assert.Equal(suite.T(), 200, recorder.Code)
+	assert.Equal(suite.T(), mockData, response["Data"])
+}
