@@ -1,9 +1,5 @@
 package repomock
 
-
-type ManageAssetsRepoMock struct {
-	mock.Mock
-}
 import (
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/model/dto"

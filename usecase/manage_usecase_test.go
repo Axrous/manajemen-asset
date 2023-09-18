@@ -15,10 +15,10 @@ import (
 
 type ManageAssetUsecaseTestSuite struct {
 	suite.Suite
-	staffUC *usecasemock.StaffUsecaseMock
-	assetUC *usecasemock.AssetUsecaseMock
+	staffUC  *usecasemock.StaffUsecaseMock
+	assetUC  *usecasemock.AssetUsecaseMock
 	repoMock *repomock.ManageAssetRepoMock
-	usecase ManageAssetUsecase
+	usecase  ManageAssetUsecase
 }
 
 func (suite *ManageAssetUsecaseTestSuite) SetupTest() {
@@ -28,19 +28,19 @@ func (suite *ManageAssetUsecaseTestSuite) SetupTest() {
 	suite.usecase = NewManageAssetUsecase(suite.repoMock, suite.staffUC, suite.assetUC)
 }
 
-func TestManageAssetUsecaseTestSuite(t *testing.T)  {
+func TestManageAssetUsecaseTestSuite(t *testing.T) {
 	suite.Run(t, new(ManageAssetUsecaseTestSuite))
 }
 
 func (suite *ManageAssetUsecaseTestSuite) TestTransaction_Success() {
 
 	mockData := dto.ManageAssetRequest{
-		Id:                   "1",
-		IdUser:               "1",
-		NikStaff:             "1",
+		Id:       "1",
+		IdUser:   "1",
+		NikStaff: "1",
 		// SubmisstionDate:      time.Now(),
 		// ReturnDate:           time.Now().AddDate(0, 0, 2),
-		Duration:             2,
+		Duration: 2,
 		ManageAssetDetailReq: []dto.ManageAssetDetailRequest{{
 			Id:            "1",
 			IdManageAsset: "1",
@@ -50,8 +50,8 @@ func (suite *ManageAssetUsecaseTestSuite) TestTransaction_Success() {
 		}},
 	}
 	assetMock := model.Asset{
-		Id:        "1",
-		Category:  model.Category{
+		Id: "1",
+		Category: model.Category{
 			Id:   "1",
 			Name: "a",
 		},
@@ -80,7 +80,6 @@ func (suite *ManageAssetUsecaseTestSuite) TestTransaction_Success() {
 	for _, detail := range mockData.ManageAssetDetailReq {
 		suite.assetUC.On("FindById", detail.IdAsset).Return(assetMock, nil)
 	}
-
 
 	suite.staffUC.On("FindById", "1").Return(staffMock, nil)
 	suite.repoMock.On("CreateTransaction", mockData).Return(nil)
@@ -94,12 +93,12 @@ func (suite *ManageAssetUsecaseTestSuite) TestTransaction_Success() {
 func (suite *ManageAssetUsecaseTestSuite) TestTransaction_Failed() {
 
 	mockData := dto.ManageAssetRequest{
-		Id:                   "1",
-		IdUser:               "1",
-		NikStaff:             "1",
+		Id:       "1",
+		IdUser:   "1",
+		NikStaff: "1",
 		// SubmisstionDate:      time.Now(),
 		// ReturnDate:           time.Now().AddDate(0, 0, 2),
-		Duration:             2,
+		Duration: 2,
 		ManageAssetDetailReq: []dto.ManageAssetDetailRequest{{
 			Id:            "1",
 			IdManageAsset: "1",
@@ -109,8 +108,8 @@ func (suite *ManageAssetUsecaseTestSuite) TestTransaction_Failed() {
 		}},
 	}
 	assetMock := model.Asset{
-		Id:        "1",
-		Category:  model.Category{
+		Id: "1",
+		Category: model.Category{
 			Id:   "1",
 			Name: "a",
 		},
@@ -140,7 +139,6 @@ func (suite *ManageAssetUsecaseTestSuite) TestTransaction_Failed() {
 		suite.assetUC.On("FindById", detail.IdAsset).Return(assetMock, nil)
 	}
 
-
 	suite.staffUC.On("FindById", "1").Return(staffMock, nil)
 	suite.repoMock.On("CreateTransaction", mockData).Return(errors.New("failed save transaction"))
 	for _, detail := range mockData.ManageAssetDetailReq {
@@ -153,12 +151,12 @@ func (suite *ManageAssetUsecaseTestSuite) TestTransaction_EmptyField() {
 
 	//nik staff empty
 	err := suite.usecase.CreateTransaction(dto.ManageAssetRequest{
-		Id:                   "1",
-		IdUser:               "1",
-		NikStaff:             "",
+		Id:       "1",
+		IdUser:   "1",
+		NikStaff: "",
 		// SubmisstionDate:      time.Now(),
 		// ReturnDate:           time.Now().AddDate(0, 0, 2),
-		Duration:             2,
+		Duration: 2,
 		ManageAssetDetailReq: []dto.ManageAssetDetailRequest{{
 			Id:            "1",
 			IdManageAsset: "1",
@@ -171,12 +169,12 @@ func (suite *ManageAssetUsecaseTestSuite) TestTransaction_EmptyField() {
 
 	//id asset empty
 	err = suite.usecase.CreateTransaction(dto.ManageAssetRequest{
-		Id:                   "1",
-		IdUser:               "1",
-		NikStaff:             "1",
+		Id:       "1",
+		IdUser:   "1",
+		NikStaff: "1",
 		// SubmisstionDate:      time.Now(),
 		// ReturnDate:           time.Now().AddDate(0, 0, 2),
-		Duration:             2,
+		Duration: 2,
 		ManageAssetDetailReq: []dto.ManageAssetDetailRequest{{
 			Id:            "1",
 			IdManageAsset: "1",
@@ -189,12 +187,12 @@ func (suite *ManageAssetUsecaseTestSuite) TestTransaction_EmptyField() {
 
 	//status empty
 	err = suite.usecase.CreateTransaction(dto.ManageAssetRequest{
-		Id:                   "1",
-		IdUser:               "1",
-		NikStaff:             "1",
+		Id:       "1",
+		IdUser:   "1",
+		NikStaff: "1",
 		// SubmisstionDate:      time.Now(),
 		// ReturnDate:           time.Now().AddDate(0, 0, 2),
-		Duration:             2,
+		Duration: 2,
 		ManageAssetDetailReq: []dto.ManageAssetDetailRequest{{
 			Id:            "1",
 			IdManageAsset: "1",
@@ -207,12 +205,12 @@ func (suite *ManageAssetUsecaseTestSuite) TestTransaction_EmptyField() {
 
 	//total empty < 0
 	err = suite.usecase.CreateTransaction(dto.ManageAssetRequest{
-		Id:                   "1",
-		IdUser:               "1",
-		NikStaff:             "1",
+		Id:       "1",
+		IdUser:   "1",
+		NikStaff: "1",
 		// SubmisstionDate:      time.Now(),
 		// ReturnDate:           time.Now().AddDate(0, 0, 2),
-		Duration:             2,
+		Duration: 2,
 		ManageAssetDetailReq: []dto.ManageAssetDetailRequest{{
 			Id:            "1",
 			IdManageAsset: "1",
@@ -227,12 +225,12 @@ func (suite *ManageAssetUsecaseTestSuite) TestTransaction_EmptyField() {
 func (suite *ManageAssetUsecaseTestSuite) TestTransaction_InvalidIdAsset() {
 
 	mockData := dto.ManageAssetRequest{
-		Id:                   "1",
-		IdUser:               "1",
-		NikStaff:             "1",
+		Id:       "1",
+		IdUser:   "1",
+		NikStaff: "1",
 		// SubmisstionDate:      time.Now(),
 		// ReturnDate:           time.Now().AddDate(0, 0, 2),
-		Duration:             2,
+		Duration: 2,
 		ManageAssetDetailReq: []dto.ManageAssetDetailRequest{{
 			Id:            "1",
 			IdManageAsset: "1",
@@ -256,7 +254,6 @@ func (suite *ManageAssetUsecaseTestSuite) TestTransaction_InvalidIdAsset() {
 		suite.assetUC.On("FindById", detail.IdAsset).Return(model.Asset{}, errors.New("failed get asset"))
 	}
 
-
 	suite.staffUC.On("FindById", "1").Return(staffMock, nil)
 	suite.repoMock.On("CreateTransaction", mockData).Return(errors.New("failed save transaction"))
 	for _, detail := range mockData.ManageAssetDetailReq {
@@ -269,12 +266,12 @@ func (suite *ManageAssetUsecaseTestSuite) TestTransaction_InvalidIdAsset() {
 func (suite *ManageAssetUsecaseTestSuite) TestTransaction_InvalidStaffId() {
 
 	mockData := dto.ManageAssetRequest{
-		Id:                   "1",
-		IdUser:               "1",
-		NikStaff:             "1",
+		Id:       "1",
+		IdUser:   "1",
+		NikStaff: "1",
 		// SubmisstionDate:      time.Now(),
 		// ReturnDate:           time.Now().AddDate(0, 0, 2),
-		Duration:             2,
+		Duration: 2,
 		ManageAssetDetailReq: []dto.ManageAssetDetailRequest{{
 			Id:            "1",
 			IdManageAsset: "1",
@@ -284,8 +281,8 @@ func (suite *ManageAssetUsecaseTestSuite) TestTransaction_InvalidStaffId() {
 		}},
 	}
 	assetMock := model.Asset{
-		Id:        "1",
-		Category:  model.Category{
+		Id: "1",
+		Category: model.Category{
 			Id:   "1",
 			Name: "a",
 		},
@@ -305,7 +302,6 @@ func (suite *ManageAssetUsecaseTestSuite) TestTransaction_InvalidStaffId() {
 		suite.assetUC.On("FindById", detail.IdAsset).Return(assetMock, nil)
 	}
 
-
 	suite.staffUC.On("FindById", "1").Return(model.Staff{}, errors.New("failed get staff"))
 	suite.repoMock.On("CreateTransaction", mockData).Return(nil)
 	for _, detail := range mockData.ManageAssetDetailReq {
@@ -318,12 +314,12 @@ func (suite *ManageAssetUsecaseTestSuite) TestTransaction_InvalidStaffId() {
 func (suite *ManageAssetUsecaseTestSuite) TestTransaction_FailUpdateAsset() {
 
 	mockData := dto.ManageAssetRequest{
-		Id:                   "1",
-		IdUser:               "1",
-		NikStaff:             "1",
+		Id:       "1",
+		IdUser:   "1",
+		NikStaff: "1",
 		// SubmisstionDate:      time.Now(),
 		// ReturnDate:           time.Now().AddDate(0, 0, 2),
-		Duration:             2,
+		Duration: 2,
 		ManageAssetDetailReq: []dto.ManageAssetDetailRequest{{
 			Id:            "1",
 			IdManageAsset: "1",
@@ -333,8 +329,8 @@ func (suite *ManageAssetUsecaseTestSuite) TestTransaction_FailUpdateAsset() {
 		}},
 	}
 	assetMock := model.Asset{
-		Id:        "1",
-		Category:  model.Category{
+		Id: "1",
+		Category: model.Category{
 			Id:   "1",
 			Name: "a",
 		},
@@ -364,7 +360,6 @@ func (suite *ManageAssetUsecaseTestSuite) TestTransaction_FailUpdateAsset() {
 		suite.assetUC.On("FindById", detail.IdAsset).Return(assetMock, nil)
 	}
 
-
 	suite.staffUC.On("FindById", "1").Return(staffMock, nil)
 	suite.repoMock.On("CreateTransaction", mockData).Return(nil)
 	for _, detail := range mockData.ManageAssetDetailReq {
@@ -376,27 +371,26 @@ func (suite *ManageAssetUsecaseTestSuite) TestTransaction_FailUpdateAsset() {
 
 func (suite *ManageAssetUsecaseTestSuite) TestShowList_Success() {
 	mockData := []model.ManageAsset{{
-		Id:             "1",
-		User:           model.UserCredentials{
-			ID:       "",
-			Name:     "",
-
+		Id: "1",
+		User: model.UserCredentials{
+			ID:   "",
+			Name: "",
 		},
-		Staff:          model.Staff{
-			Nik_Staff:    "",
-			Name:         "",
+		Staff: model.Staff{
+			Nik_Staff: "",
+			Name:      "",
 		},
 		SubmissionDate: time.Time{},
 		ReturnDate:     time.Time{},
-		Detail:         []model.ManageDetailAsset{{
+		Detail: []model.ManageDetailAsset{{
 			Id:            "1",
 			ManageAssetId: "1",
-			Asset:         model.Asset{
-				Id:        "1",
-				Name:      "a",
+			Asset: model.Asset{
+				Id:   "1",
+				Name: "a",
 			},
-			TotalItem:     1,
-			Status:        "a",
+			TotalItem: 1,
+			Status:    "a",
 		}},
 	}}
 
@@ -408,15 +402,14 @@ func (suite *ManageAssetUsecaseTestSuite) TestShowList_Success() {
 
 func (suite *ManageAssetUsecaseTestSuite) TestShowById_Success() {
 	mockData := []model.ManageAsset{{
-		Id:             "1",
-		User:           model.UserCredentials{
-			ID:       "",
-			Name:     "",
-
+		Id: "1",
+		User: model.UserCredentials{
+			ID:   "",
+			Name: "",
 		},
-		Staff:          model.Staff{
-			Nik_Staff:    "",
-			Name:         "",
+		Staff: model.Staff{
+			Nik_Staff: "",
+			Name:      "",
 		},
 		SubmissionDate: time.Time{},
 		ReturnDate:     time.Time{},
@@ -424,12 +417,12 @@ func (suite *ManageAssetUsecaseTestSuite) TestShowById_Success() {
 	mockDataDetail := []model.ManageDetailAsset{{
 		Id:            "1",
 		ManageAssetId: "1",
-		Asset:         model.Asset{
-			Id:        "1",
-			Name:      "a",
+		Asset: model.Asset{
+			Id:   "1",
+			Name: "a",
 		},
-		TotalItem:     1,
-		Status:        "a",
+		TotalItem: 1,
+		Status:    "a",
 	}}
 
 	suite.repoMock.On("FindAllByTransId", "1").Return(mockData, mockDataDetail, nil)
@@ -454,15 +447,14 @@ func (suite *ManageAssetUsecaseTestSuite) TestShowById_IdEmpty() {
 
 func (suite *ManageAssetUsecaseTestSuite) TestShowByName_Success() {
 	mockData := []model.ManageAsset{{
-		Id:             "1",
-		User:           model.UserCredentials{
-			ID:       "123",
-			Name:     "Jhon",
-
+		Id: "1",
+		User: model.UserCredentials{
+			ID:   "123",
+			Name: "Jhon",
 		},
-		Staff:          model.Staff{
-			Nik_Staff:    "123",
-			Name:         "jarjit",
+		Staff: model.Staff{
+			Nik_Staff: "123",
+			Name:      "jarjit",
 		},
 		SubmissionDate: time.Time{},
 		ReturnDate:     time.Time{},
@@ -470,12 +462,12 @@ func (suite *ManageAssetUsecaseTestSuite) TestShowByName_Success() {
 	mockDataDetail := []model.ManageDetailAsset{{
 		Id:            "1",
 		ManageAssetId: "1",
-		Asset:         model.Asset{
-			Id:        "1",
-			Name:      "a",
+		Asset: model.Asset{
+			Id:   "1",
+			Name: "a",
 		},
-		TotalItem:     1,
-		Status:        "a",
+		TotalItem: 1,
+		Status:    "a",
 	}}
 
 	suite.repoMock.On("FindByNameTransaction", "jarjit").Return(mockData, mockDataDetail, nil)
@@ -500,27 +492,26 @@ func (suite *ManageAssetUsecaseTestSuite) TestShowByName_IdEmpty() {
 
 func (suite *ManageAssetUsecaseTestSuite) TestDownload_Success() {
 	mockData := []model.ManageAsset{{
-		Id:             "1",
-		User:           model.UserCredentials{
-			ID:       "",
-			Name:     "",
-
+		Id: "1",
+		User: model.UserCredentials{
+			ID:   "",
+			Name: "",
 		},
-		Staff:          model.Staff{
-			Nik_Staff:    "",
-			Name:         "",
+		Staff: model.Staff{
+			Nik_Staff: "",
+			Name:      "",
 		},
 		SubmissionDate: time.Time{},
 		ReturnDate:     time.Time{},
-		Detail:         []model.ManageDetailAsset{{
+		Detail: []model.ManageDetailAsset{{
 			Id:            "1",
 			ManageAssetId: "1",
-			Asset:         model.Asset{
-				Id:        "1",
-				Name:      "a",
+			Asset: model.Asset{
+				Id:   "1",
+				Name: "a",
 			},
-			TotalItem:     1,
-			Status:        "a",
+			TotalItem: 1,
+			Status:    "a",
 		}},
 	}}
 
