@@ -11,6 +11,11 @@ type StaffUsecaseMock struct {
 	mock.Mock
 }
 
+// DownloadAllStaff implements usecase.StaffUseCase.
+func (*StaffUsecaseMock) DownloadAllStaff() ([]byte, error) {
+	panic("unimplemented")
+}
+
 // FindByName implements usecase.StaffUseCase.
 func (s *StaffUsecaseMock) FindByName(name string) ([]model.Staff, error) {
 	args := s.Called(name)

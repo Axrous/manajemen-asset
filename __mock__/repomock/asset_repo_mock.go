@@ -1,4 +1,4 @@
-package usecasemock
+package repomock
 
 import (
 	"final-project-enigma-clean/model"
@@ -7,12 +7,17 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type AssetUsecaseMock struct {
+type AssetRepoMock struct {
 	mock.Mock
 }
 
-// Paging implements usecase.AssetUsecase.
-func (a *AssetUsecaseMock) Paging(payload dto.PageRequest) ([]model.Asset, dto.Paging, error) {
+// UpdateAvailable implements repository.AssetRepository.
+func (a *AssetRepoMock) UpdateAvailable(id string, amount int) error {
+	return a.Called(id, amount).Error(0)
+}
+
+// Paging implements repository.AssetRepository.
+func (a *AssetRepoMock) Paging(payload dto.PageRequest) ([]model.Asset, dto.Paging, error) {
 	args := a.Called(payload)
 	if args.Get(2) != nil {
 		return nil, dto.Paging{}, args.Error(2)
@@ -21,13 +26,8 @@ func (a *AssetUsecaseMock) Paging(payload dto.PageRequest) ([]model.Asset, dto.P
 	return args.Get(0).([]model.Asset), args.Get(1).(dto.Paging), nil
 }
 
-// UpdateAvailable implements usecase.AssetUsecase.
-func (a *AssetUsecaseMock) UpdateAvailable(id string, amount int) error {
-	return a.Called(id, amount).Error(0)
-}
-
-// FindByName implements usecase.AssetUsecase.
-func (a *AssetUsecaseMock) FindByName(name string) ([]model.Asset, error) {
+// FindByName implements repository.AssetRepository.
+func (a *AssetRepoMock) FindByName(name string) ([]model.Asset, error) {
 	args := a.Called(name)
 	if args.Get(1) != nil {
 		return nil, args.Error(1)
@@ -36,36 +36,35 @@ func (a *AssetUsecaseMock) FindByName(name string) ([]model.Asset, error) {
 	return args.Get(0).([]model.Asset), nil
 }
 
-// Create implements AssetUsecase.
-func (a *AssetUsecaseMock) Create(payload model.AssetRequest) error {
-	return a.Called(payload).Error(0)
-}
-
-// Delete implements AssetUsecase.
-func (a *AssetUsecaseMock) Delete(id string) error {
+// Delete implements AssetRepoMock.
+func (a *AssetRepoMock) Delete(id string) error {
 	return a.Called(id).Error(0)
 }
 
-// FindAll implements AssetUsecase.
-func (a *AssetUsecaseMock) FindAll() ([]model.Asset, error) {
+// FindAll implements AssetRepoMock.
+func (a *AssetRepoMock) FindAll() ([]model.Asset, error) {
 	args := a.Called()
 	if args.Get(1) != nil {
 		return nil, args.Error(1)
 	}
-
 	return args.Get(0).([]model.Asset), nil
 }
 
-func (a *AssetUsecaseMock) FindById(id string) (model.Asset, error) {
+// FindById implements AssetRepoMock.
+func (a *AssetRepoMock) FindById(id string) (model.Asset, error) {
 	args := a.Called(id)
 	if args.Get(1) != nil {
 		return model.Asset{}, args.Error(1)
 	}
-
 	return args.Get(0).(model.Asset), nil
 }
 
-// Update implements AssetUsecase.
-func (a *AssetUsecaseMock) Update(payload model.AssetRequest) error {
-	return a.Called(payload).Error(0)
+// Save implements AssetRepoMock.
+func (a *AssetRepoMock) Save(asset model.AssetRequest) error {
+	return a.Called(asset).Error(0)
+}
+
+// Update implements AssetRepoMock.
+func (a *AssetRepoMock) Update(asset model.AssetRequest) error {
+	return a.Called(asset).Error(0)
 }

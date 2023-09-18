@@ -2,6 +2,7 @@ package usecasemock
 
 import (
 	"final-project-enigma-clean/model"
+
 	"github.com/stretchr/testify/mock"
 )
 
