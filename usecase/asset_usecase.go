@@ -93,7 +93,7 @@ func (a *assetUsecase) Create(payload model.AssetRequest) error {
 		return err
 	}
 
-	//commented for unit testing
+	//commented id and entrydate for unit testing
 	payload.Id = helper.GenerateUUID()
 	payload.EntryDate = time.Now()
 	payload.Available = payload.Total

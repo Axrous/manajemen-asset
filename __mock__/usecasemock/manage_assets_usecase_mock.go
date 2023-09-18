@@ -11,6 +11,16 @@ type ManageAssetsMock struct {
 	mock.Mock
 }
 
+// FindByTransactionID implements usecase.ManageAssetUsecase.
+func (*ManageAssetsMock) FindByTransactionID(id string) ([]model.ManageAsset, error) {
+	panic("unimplemented")
+}
+
+// FindTransactionByName implements usecase.ManageAssetUsecase.
+func (*ManageAssetsMock) FindTransactionByName(name string) ([]model.ManageAsset, error) {
+	panic("unimplemented")
+}
+
 func (m ManageAssetsMock) CreateTransaction(payload dto.ManageAssetRequest) error {
 	//TODO implement me
 	panic("implement me")
