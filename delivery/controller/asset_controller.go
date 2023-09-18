@@ -26,7 +26,7 @@ func (a *AssetController) createAssetHandler(c *gin.Context) {
 
 	err = a.usecase.Create(assetRequest)
 	if err != nil {
-		c.AbortWithStatusJSON(500, gin.H{"status": "Error", "message": err.Error()})
+		c.Error(err)
 		return
 	}
 

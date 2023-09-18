@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"final-project-enigma-clean/exception"
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/repository"
@@ -69,7 +70,7 @@ func (a *assetUsecase) FindByName(name string) ([]model.Asset, error) {
 // Create implements AssetUsecase.
 func (a *assetUsecase) Create(payload model.AssetRequest) error {
 	if payload.Name == "" {
-		return fmt.Errorf("name cannot empty")
+		return exception.BadRequestErr("name cannot empty")
 	}
 	if payload.AssetTypeId == "" || payload.CategoryId == "" {
 		return fmt.Errorf("asset type id or category id cannot empty")

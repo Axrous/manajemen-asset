@@ -26,6 +26,7 @@ func (s *Server) initMiddlewares() {
 
 	// Use the logger
 	s.gin.Use(middleware.ZapLogger(logger))
+	s.gin.Use(middleware.ErrorHandler())
 
 }
 
