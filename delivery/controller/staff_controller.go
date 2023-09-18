@@ -75,7 +75,7 @@ func (s *StaffController) getByIdteHandlerStaff(c *gin.Context) {
 
 func (s *StaffController) getByNameteHandlerStaff(c *gin.Context) {
 	name := c.Param("name")
-	staff, err := s.staffUC.FindByName(name)
+	staffs, err := s.staffUC.FindByName(name)
 	if err != nil {
 		c.AbortWithStatusJSON(500, gin.H{
 			"message": err.Error(),
@@ -83,8 +83,8 @@ func (s *StaffController) getByNameteHandlerStaff(c *gin.Context) {
 		return
 	}
 	response := gin.H{
-		"message": "successfully get by name type asset",
-		"data":    staff,
+		"message": "successfully get by name staff",
+		"data":    staffs,
 	}
 	c.JSON(200, response)
 }

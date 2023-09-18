@@ -21,7 +21,7 @@ import (
 type AssetControllerTestSuite struct {
 	suite.Suite
 	usecase *usecasemock.AssetUsecaseMock
-	router *gin.Engine
+	router  *gin.Engine
 }
 
 func (suite *AssetControllerTestSuite) SetupTest() {
@@ -29,7 +29,7 @@ func (suite *AssetControllerTestSuite) SetupTest() {
 	suite.router = gin.Default()
 }
 
-func TestAssetusecaseTestSuite(t *testing.T)  {
+func TestAssetusecaseTestSuite(t *testing.T) {
 	suite.Run(t, new(AssetControllerTestSuite))
 }
 
@@ -40,9 +40,9 @@ func (suite *AssetControllerTestSuite) TestCreateHandler_Success() {
 		AssetTypeId: "TEST1",
 		Name:        "Laptop",
 		Status:      "Ready",
-		EntryDate: time.Time{},
+		EntryDate:   time.Time{},
 		ImgUrl:      "hehe",
-		Total:      5,
+		Total:       5,
 	}
 
 	suite.usecase.On("Create", mockData).Return(nil)
@@ -72,9 +72,9 @@ func (suite *AssetControllerTestSuite) TestCreateHandler_Failed() {
 		AssetTypeId: "TEST1",
 		Name:        "Laptop",
 		Status:      "Ready",
-		EntryDate: time.Time{},
+		EntryDate:   time.Time{},
 		ImgUrl:      "hehe",
-		Total:      5,
+		Total:       5,
 	}
 
 	suite.usecase.On("Create", mockData).Return(errors.New("failed create"))
@@ -107,23 +107,23 @@ func (suite *AssetControllerTestSuite) TestCreateHandler_BindingError() {
 	assert.Equal(suite.T(), http.StatusBadRequest, record.Code)
 }
 
-func (suite *AssetControllerTestSuite) TestListWithNameHandler_Success()  {
+func (suite *AssetControllerTestSuite) TestListWithNameHandler_Success() {
 	mockData := []model.Asset{{
-	Id:        helper.GenerateUUID(),
-	Category:  model.Category{
-		Id:   "1",
-		Name: "Bergerak",
-	},
-	AssetType: model.TypeAsset{
-		Id:   "1",
-		Name: "Elektronik",
-	},
-	Name:      "Laptop",
-	Available: 10,
-	Status:    "Ready",
-	EntryDate: time.Time{},
-	ImgUrl:    "upss",
-	Total: 10,},
+		Id: helper.GenerateUUID(),
+		Category: model.Category{
+			Id:   "1",
+			Name: "Bergerak",
+		},
+		AssetType: model.TypeAsset{
+			Id:   "1",
+			Name: "Elektronik",
+		},
+		Name:      "Laptop",
+		Available: 10,
+		Status:    "Ready",
+		EntryDate: time.Time{},
+		ImgUrl:    "upss",
+		Total:     10},
 	}
 
 	suite.usecase.On("FindByName", "laptop").Return(mockData, nil)
@@ -146,23 +146,23 @@ func (suite *AssetControllerTestSuite) TestListWithNameHandler_Success()  {
 	assert.Equal(suite.T(), http.StatusOK, record.Code)
 }
 
-func (suite *AssetControllerTestSuite) TestListHandler_Success()  {
+func (suite *AssetControllerTestSuite) TestListHandler_Success() {
 	mockData := []model.Asset{{
-	Id:        helper.GenerateUUID(),
-	Category:  model.Category{
-		Id:   "1",
-		Name: "Bergerak",
-	},
-	AssetType: model.TypeAsset{
-		Id:   "1",
-		Name: "Elektronik",
-	},
-	Name:      "Laptop",
-	Available:    10,
-	Status:    "Ready",
-	EntryDate: time.Time{},
-	ImgUrl:    "upss",
-	Total: 10 ,},
+		Id: helper.GenerateUUID(),
+		Category: model.Category{
+			Id:   "1",
+			Name: "Bergerak",
+		},
+		AssetType: model.TypeAsset{
+			Id:   "1",
+			Name: "Elektronik",
+		},
+		Name:      "Laptop",
+		Available: 10,
+		Status:    "Ready",
+		EntryDate: time.Time{},
+		ImgUrl:    "upss",
+		Total:     10},
 	}
 
 	mockDto := dto.PageRequest{
@@ -170,12 +170,12 @@ func (suite *AssetControllerTestSuite) TestListHandler_Success()  {
 		Size: 5,
 	}
 
-mockPaging := dto.Paging{
-	Page:       1,
-	Size:       5,
-	TotalRows:  5,
-	TotalPages: 1,
-}
+	mockPaging := dto.Paging{
+		Page:       1,
+		Size:       5,
+		TotalRows:  5,
+		TotalPages: 1,
+	}
 
 	suite.usecase.On("Paging", mockDto).Return(mockData, mockPaging, nil)
 	mockRg := suite.router.Group("/api/v1")
@@ -197,7 +197,7 @@ mockPaging := dto.Paging{
 	assert.Equal(suite.T(), http.StatusOK, record.Code)
 }
 
-func (suite *AssetControllerTestSuite) TestListHandler_Failed()  {
+func (suite *AssetControllerTestSuite) TestListHandler_Failed() {
 
 	mockDto := dto.PageRequest{
 		Page: 1,
@@ -216,7 +216,7 @@ func (suite *AssetControllerTestSuite) TestListHandler_Failed()  {
 	assert.Equal(suite.T(), http.StatusInternalServerError, record.Code)
 }
 
-func (suite *AssetControllerTestSuite) TestListByNameHandler_Failed()  {
+func (suite *AssetControllerTestSuite) TestListByNameHandler_Failed() {
 
 	suite.usecase.On("FindByName", "laptop").Return(nil, errors.New("failed get assets"))
 	mockRg := suite.router.Group("/api/v1")
@@ -231,11 +231,11 @@ func (suite *AssetControllerTestSuite) TestListByNameHandler_Failed()  {
 	assert.Equal(suite.T(), http.StatusInternalServerError, record.Code)
 }
 
-func (suite *AssetControllerTestSuite) TestFindByIdHandler_Success()  {
+func (suite *AssetControllerTestSuite) TestFindByIdHandler_Success() {
 
 	mockData := model.Asset{
-		Id:        helper.GenerateUUID(),
-		Category:  model.Category{
+		Id: helper.GenerateUUID(),
+		Category: model.Category{
 			Id:   "1",
 			Name: "Bergerak",
 		},
@@ -244,12 +244,12 @@ func (suite *AssetControllerTestSuite) TestFindByIdHandler_Success()  {
 			Name: "Elektronik",
 		},
 		Name:      "Laptop",
-		Available:    50,
+		Available: 50,
 		Status:    "Ready",
 		EntryDate: time.Time{},
 		ImgUrl:    "upss",
-		Total: 50,
-		}
+		Total:     50,
+	}
 
 	suite.usecase.On("FindById", "1").Return(mockData, nil)
 	mockRg := suite.router.Group("/api/v1")
@@ -264,7 +264,7 @@ func (suite *AssetControllerTestSuite) TestFindByIdHandler_Success()  {
 	assert.Equal(suite.T(), http.StatusOK, record.Code)
 }
 
-func (suite *AssetControllerTestSuite) TestFindByIdHandler_Failed()  {
+func (suite *AssetControllerTestSuite) TestFindByIdHandler_Failed() {
 
 	suite.usecase.On("FindById", "1").Return(model.Asset{}, errors.New("failed get asset by id"))
 	mockRg := suite.router.Group("/api/v1")
@@ -285,11 +285,11 @@ func (suite *AssetControllerTestSuite) TestUpdateHandler_Success() {
 		CategoryId:  "TEST1",
 		AssetTypeId: "TEST1",
 		Name:        "Laptop",
-		Available:      5,
+		Available:   5,
 		Status:      "Ready",
-		EntryDate: time.Time{},
+		EntryDate:   time.Time{},
 		ImgUrl:      "hehe",
-		Total: 5,
+		Total:       5,
 	}
 
 	suite.usecase.On("Update", mockData).Return(nil)
@@ -315,11 +315,11 @@ func (suite *AssetControllerTestSuite) TestUpdateHandler_Failed() {
 		CategoryId:  "TEST1",
 		AssetTypeId: "TEST1",
 		Name:        "Laptop",
-		Available:      5,
+		Available:   5,
 		Status:      "Ready",
-		EntryDate: time.Time{},
+		EntryDate:   time.Time{},
 		ImgUrl:      "hehe",
-		Total: 5,
+		Total:       5,
 	}
 
 	suite.usecase.On("Update", mockData).Return(errors.New("failedddd"))
@@ -350,7 +350,7 @@ func (suite *AssetControllerTestSuite) TestUpdateHandler_BindingError() {
 }
 
 func (suite *AssetControllerTestSuite) TestDeletehandler_Success() {
-	
+
 	suite.usecase.On("Delete", "1").Return(nil)
 	mockRg := suite.router.Group("/api/v1")
 	NewAssetController(suite.usecase, mockRg).Route()
@@ -365,7 +365,7 @@ func (suite *AssetControllerTestSuite) TestDeletehandler_Success() {
 }
 
 func (suite *AssetControllerTestSuite) TestDeletehandler_Failed() {
-	
+
 	suite.usecase.On("Delete", "1").Return(errors.New("failed delete asset"))
 	mockRg := suite.router.Group("/api/v1")
 	NewAssetController(suite.usecase, mockRg).Route()

@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"errors"
-	"final-project-enigma-clean/__mock__/repomock"
 	"final-project-enigma-clean/model"
 	"testing"
 
@@ -12,7 +11,7 @@ import (
 
 type CategoryUsecaseTest struct {
 	suite.Suite
-	repo *repomock.CategoryRepoMock
+	repo    *repomock.CategoryRepoMock
 	usecase CategoryUsecase
 }
 
@@ -21,12 +20,12 @@ func (suite *CategoryUsecaseTest) SetupTest() {
 	suite.usecase = NewCategoryUseCase(suite.repo)
 }
 
-func TestCategoryUsecaseSuiteTest(t *testing.T)  {
-	suite.Run(t ,new(CategoryUsecaseTest))
+func TestCategoryUsecaseSuiteTest(t *testing.T) {
+	suite.Run(t, new(CategoryUsecaseTest))
 }
 
 func (suite *CategoryUsecaseTest) TestCreate_Success() {
-	
+
 	mockData := model.Category{
 		Id:   "",
 		Name: "Bergerak",
@@ -38,7 +37,7 @@ func (suite *CategoryUsecaseTest) TestCreate_Success() {
 }
 
 func (suite *CategoryUsecaseTest) TestCreate_EmptyField() {
-	
+
 	gotErr := suite.usecase.CreateNew(model.Category{
 		Id:   "1",
 		Name: "",
@@ -54,7 +53,7 @@ func (suite *CategoryUsecaseTest) TestCreate_Failed() {
 
 	suite.repo.On("Save", mockData).Return(errors.New("failed save category"))
 	gotErr := suite.usecase.CreateNew(mockData)
-	assert.Error(suite.T(), gotErr)	
+	assert.Error(suite.T(), gotErr)
 }
 
 func (suite *CategoryUsecaseTest) TestFindAll_Success() {
@@ -67,7 +66,7 @@ func (suite *CategoryUsecaseTest) TestFindAll_Success() {
 	suite.repo.On("FindAll").Return(mockData, nil)
 	assets, err := suite.usecase.FindAll()
 	assert.NoError(suite.T(), err)
-	assert.Equal(suite.T(), mockData,  assets)
+	assert.Equal(suite.T(), mockData, assets)
 }
 
 func (suite *CategoryUsecaseTest) TestFindAll_Failed() {
@@ -109,7 +108,7 @@ func (suite *CategoryUsecaseTest) TestUpdate_Success() {
 }
 
 func (suite *CategoryUsecaseTest) TestUpdate_EmptyField() {
-	
+
 	gotErr := suite.usecase.Update(model.Category{
 		Id:   "1",
 		Name: "",
@@ -136,7 +135,7 @@ func (suite *CategoryUsecaseTest) TestUpdate_Failed() {
 	suite.repo.On("FindById", "1").Return(mockData, nil)
 	suite.repo.On("Update", mockData).Return(errors.New("failed update category"))
 	gotErr := suite.usecase.Update(mockData)
-	assert.Error(suite.T(), gotErr)	
+	assert.Error(suite.T(), gotErr)
 }
 
 func (suite *CategoryUsecaseTest) TestDelete_Success() {

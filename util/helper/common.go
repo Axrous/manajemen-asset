@@ -1,9 +1,10 @@
 package helper
 
 import (
-	"github.com/google/uuid"
 	"regexp"
 	"unicode"
+
+	"github.com/google/uuid"
 )
 
 func GenerateUUID() string {

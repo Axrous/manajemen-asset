@@ -28,12 +28,11 @@ type assetUsecase struct {
 	typeAssetUC TypeAssetUseCase
 }
 
-// Paging implements AssetUsecase.
 func (a *assetUsecase) Paging(payload dto.PageRequest) ([]model.Asset, dto.Paging, error) {
 	if payload.Page <= 0 {
 		payload.Page = 1
 	}
-	
+
 	return a.repo.Paging(payload)
 }
 
