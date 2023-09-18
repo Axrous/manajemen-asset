@@ -1,27 +1,4 @@
 mode: set
-final-project-enigma-clean/delivery/controller/asset_controller.go:18.62,22.16 3 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:27.2,28.16 2 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:33.2,33.100 1 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:22.16,25.3 2 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:28.16,31.3 2 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:37.60,42.16 4 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:56.2,60.16 2 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:64.2,68.4 1 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:42.16,44.17 2 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:49.3,53.9 2 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:44.17,47.4 2 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:60.16,63.3 2 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:71.59,76.16 3 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:81.2,84.4 1 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:76.16,79.3 2 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:87.57,91.16 3 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:96.2,97.16 2 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:102.2,102.76 1 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:91.16,94.3 2 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:97.16,100.3 2 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:105.57,110.16 3 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:115.2,115.76 1 0
-final-project-enigma-clean/delivery/controller/asset_controller.go:110.16,113.3 2 0
 final-project-enigma-clean/delivery/controller/asset_controller.go:118.35,124.2 5 1
 final-project-enigma-clean/delivery/controller/asset_controller.go:126.93,131.2 1 1
 final-project-enigma-clean/delivery/controller/category_controller.go:17.69,19.52 2 0
