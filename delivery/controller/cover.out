@@ -1,4 +1,6 @@
 mode: set
+<<<<<<<<< Temporary merge branch 1
+<<<<<<< HEAD
 final-project-enigma-clean/delivery/controller/asset_controller.go:17.62,21.16 3 1
 final-project-enigma-clean/delivery/controller/asset_controller.go:21.16,24.3 2 1
 final-project-enigma-clean/delivery/controller/asset_controller.go:26.2,27.16 2 1
@@ -63,6 +65,9 @@ final-project-enigma-clean/delivery/controller/manage_asset_controller.go:69.16,
 final-project-enigma-clean/delivery/controller/manage_asset_controller.go:74.2,74.36 1 0
 final-project-enigma-clean/delivery/controller/manage_asset_controller.go:77.40,82.2 4 0
 final-project-enigma-clean/delivery/controller/manage_asset_controller.go:84.107,89.2 1 0
+=======
+=========
+>>>>>>>>> Temporary merge branch 2
 final-project-enigma-clean/delivery/controller/user-credentials-controller.go:20.62,24.54 2 1
 final-project-enigma-clean/delivery/controller/user-credentials-controller.go:29.2,29.58 1 1
 final-project-enigma-clean/delivery/controller/user-credentials-controller.go:34.2,34.56 1 1
@@ -176,54 +181,57 @@ final-project-enigma-clean/delivery/controller/manage_asset_controller.go:55.2,5
 final-project-enigma-clean/delivery/controller/manage_asset_controller.go:50.16,53.3 2 0
 final-project-enigma-clean/delivery/controller/manage_asset_controller.go:57.40,61.2 3 0
 final-project-enigma-clean/delivery/controller/manage_asset_controller.go:63.107,68.2 1 0
+>>>>>>> db117303062901030b3f8d7d1bd6fe9e51743f55
 final-project-enigma-clean/delivery/controller/staff_controller.go:19.62,21.49 2 0
-final-project-enigma-clean/delivery/controller/staff_controller.go:21.49,26.3 2 0
 final-project-enigma-clean/delivery/controller/staff_controller.go:27.2,28.16 2 0
-final-project-enigma-clean/delivery/controller/staff_controller.go:28.16,33.3 2 0
 final-project-enigma-clean/delivery/controller/staff_controller.go:34.2,37.23 2 0
+final-project-enigma-clean/delivery/controller/staff_controller.go:21.49,26.3 2 0
+final-project-enigma-clean/delivery/controller/staff_controller.go:28.16,33.3 2 0
 final-project-enigma-clean/delivery/controller/staff_controller.go:39.60,46.16 4 0
-final-project-enigma-clean/delivery/controller/staff_controller.go:46.16,51.3 2 0
 final-project-enigma-clean/delivery/controller/staff_controller.go:52.2,57.23 2 0
+final-project-enigma-clean/delivery/controller/staff_controller.go:46.16,51.3 2 0
 final-project-enigma-clean/delivery/controller/staff_controller.go:59.65,62.16 3 0
-final-project-enigma-clean/delivery/controller/staff_controller.go:62.16,67.3 2 0
 final-project-enigma-clean/delivery/controller/staff_controller.go:68.2,72.23 2 0
+final-project-enigma-clean/delivery/controller/staff_controller.go:62.16,67.3 2 0
 final-project-enigma-clean/delivery/controller/staff_controller.go:75.67,78.16 3 0
-final-project-enigma-clean/delivery/controller/staff_controller.go:78.16,83.3 2 0
 final-project-enigma-clean/delivery/controller/staff_controller.go:84.2,88.23 2 0
+final-project-enigma-clean/delivery/controller/staff_controller.go:78.16,83.3 2 0
 final-project-enigma-clean/delivery/controller/staff_controller.go:90.62,92.49 2 0
-final-project-enigma-clean/delivery/controller/staff_controller.go:92.49,97.3 2 0
 final-project-enigma-clean/delivery/controller/staff_controller.go:98.2,99.16 2 0
-final-project-enigma-clean/delivery/controller/staff_controller.go:99.16,104.3 2 0
 final-project-enigma-clean/delivery/controller/staff_controller.go:105.2,107.4 1 0
+final-project-enigma-clean/delivery/controller/staff_controller.go:92.49,97.3 2 0
+final-project-enigma-clean/delivery/controller/staff_controller.go:99.16,104.3 2 0
 final-project-enigma-clean/delivery/controller/staff_controller.go:109.62,111.52 2 0
-final-project-enigma-clean/delivery/controller/staff_controller.go:111.52,116.3 2 0
 final-project-enigma-clean/delivery/controller/staff_controller.go:117.2,120.4 2 0
+final-project-enigma-clean/delivery/controller/staff_controller.go:111.52,116.3 2 0
 final-project-enigma-clean/delivery/controller/staff_controller.go:122.35,129.2 6 0
 final-project-enigma-clean/delivery/controller/staff_controller.go:131.93,136.2 1 0
 final-project-enigma-clean/delivery/controller/type_asset_controller.go:19.70,21.53 2 0
-final-project-enigma-clean/delivery/controller/type_asset_controller.go:21.53,26.3 2 0
 final-project-enigma-clean/delivery/controller/type_asset_controller.go:28.2,29.16 2 0
-final-project-enigma-clean/delivery/controller/type_asset_controller.go:29.16,34.3 2 0
 final-project-enigma-clean/delivery/controller/type_asset_controller.go:35.2,38.23 2 0
+final-project-enigma-clean/delivery/controller/type_asset_controller.go:21.53,26.3 2 0
+final-project-enigma-clean/delivery/controller/type_asset_controller.go:29.16,34.3 2 0
 final-project-enigma-clean/delivery/controller/type_asset_controller.go:40.68,47.16 4 0
-final-project-enigma-clean/delivery/controller/type_asset_controller.go:47.16,52.3 2 0
 final-project-enigma-clean/delivery/controller/type_asset_controller.go:53.2,58.23 2 0
+final-project-enigma-clean/delivery/controller/type_asset_controller.go:47.16,52.3 2 0
 final-project-enigma-clean/delivery/controller/type_asset_controller.go:60.73,63.16 3 0
-final-project-enigma-clean/delivery/controller/type_asset_controller.go:63.16,68.3 2 0
 final-project-enigma-clean/delivery/controller/type_asset_controller.go:69.2,73.23 2 0
+final-project-enigma-clean/delivery/controller/type_asset_controller.go:63.16,68.3 2 0
 final-project-enigma-clean/delivery/controller/type_asset_controller.go:76.75,79.16 3 0
-final-project-enigma-clean/delivery/controller/type_asset_controller.go:79.16,84.3 2 0
 final-project-enigma-clean/delivery/controller/type_asset_controller.go:85.2,89.23 2 0
+final-project-enigma-clean/delivery/controller/type_asset_controller.go:79.16,84.3 2 0
 final-project-enigma-clean/delivery/controller/type_asset_controller.go:91.70,93.53 2 0
-final-project-enigma-clean/delivery/controller/type_asset_controller.go:93.53,98.3 2 0
 final-project-enigma-clean/delivery/controller/type_asset_controller.go:99.2,100.16 2 0
-final-project-enigma-clean/delivery/controller/type_asset_controller.go:100.16,105.3 2 0
 final-project-enigma-clean/delivery/controller/type_asset_controller.go:106.2,108.4 1 0
+final-project-enigma-clean/delivery/controller/type_asset_controller.go:93.53,98.3 2 0
+final-project-enigma-clean/delivery/controller/type_asset_controller.go:100.16,105.3 2 0
 final-project-enigma-clean/delivery/controller/type_asset_controller.go:110.70,112.49 2 0
-final-project-enigma-clean/delivery/controller/type_asset_controller.go:112.49,117.3 2 0
 final-project-enigma-clean/delivery/controller/type_asset_controller.go:118.2,121.4 2 0
+final-project-enigma-clean/delivery/controller/type_asset_controller.go:112.49,117.3 2 0
 final-project-enigma-clean/delivery/controller/type_asset_controller.go:123.39,130.2 6 0
 final-project-enigma-clean/delivery/controller/type_asset_controller.go:132.109,137.2 1 0
+<<<<<<<<< Temporary merge branch 1
+<<<<<<< HEAD
 final-project-enigma-clean/delivery/controller/user-credentials-controller.go:20.62,24.54 2 1
 final-project-enigma-clean/delivery/controller/user-credentials-controller.go:24.54,27.3 2 0
 final-project-enigma-clean/delivery/controller/user-credentials-controller.go:29.2,29.58 1 1
@@ -264,3 +272,7 @@ final-project-enigma-clean/delivery/controller/user-credentials-controller.go:16
 final-project-enigma-clean/delivery/controller/user-credentials-controller.go:170.34,171.2 1 1
 final-project-enigma-clean/delivery/controller/user-credentials-controller.go:171.2,177.3 5 1
 final-project-enigma-clean/delivery/controller/user-credentials-controller.go:180.99,185.2 1 1
+=======
+>>>>>>> db117303062901030b3f8d7d1bd6fe9e51743f55
+=========
+>>>>>>>>> Temporary merge branch 2

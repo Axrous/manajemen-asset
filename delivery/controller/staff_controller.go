@@ -26,9 +26,7 @@ func (s *StaffController) createHandlerStaff(c *gin.Context) {
 	}
 	err := s.staffUC.CreateNew(staff)
 	if err != nil {
-		c.AbortWithStatusJSON(500, gin.H{
-			"message": err.Error(),
-		})
+		c.Error(err)
 		return
 	}
 	response := gin.H{
@@ -60,9 +58,7 @@ func (s *StaffController) getByIdteHandlerStaff(c *gin.Context) {
 	nik_staff := c.Param("nik_staff")
 	staff, err := s.staffUC.FindById(nik_staff)
 	if err != nil {
-		c.AbortWithStatusJSON(500, gin.H{
-			"message": err.Error(),
-		})
+		c.Error(err)
 		return
 	}
 	response := gin.H{
@@ -76,9 +72,7 @@ func (s *StaffController) getByNameteHandlerStaff(c *gin.Context) {
 	name := c.Param("name")
 	staffs, err := s.staffUC.FindByName(name)
 	if err != nil {
-		c.AbortWithStatusJSON(500, gin.H{
-			"message": err.Error(),
-		})
+		c.Error(err)
 		return
 	}
 	response := gin.H{
@@ -97,9 +91,7 @@ func (s *StaffController) updateHandlerStaff(c *gin.Context) {
 	}
 	err := s.staffUC.Update(staff)
 	if err != nil {
-		c.AbortWithStatusJSON(500, gin.H{
-			"message": err.Error(),
-		})
+		c.Error(err)
 		return
 	}
 	c.JSON(200, gin.H{
