@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"final-project-enigma-clean/delivery/middleware"
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/usecase"
@@ -89,10 +90,10 @@ func (m ManageAssetController) DownloadAssetsHandler(c *gin.Context) {
 }
 
 func (m ManageAssetController) Route() {
-	m.g.GET("/manage-assets/show-all", m.ShowAllAssetHandler)
-	m.g.POST("/manage-assets/create-new", m.CreateNewAssetHandler)
-	m.g.GET("/manage-assets/find/:id", m.FindByIdTransaction)
-	m.g.POST("/manage-assets/find-asset", m.FindByName)
+	m.g.GET("/manage-assets/show-all", middleware.AuthMiddleware(), m.ShowAllAssetHandler)
+	m.g.POST("/manage-assets/create-new", middleware.AuthMiddleware(), m.CreateNewAssetHandler)
+	m.g.GET("/manage-assets/find/:id", middleware.AuthMiddleware(), m.FindByIdTransaction)
+	m.g.POST("/manage-assets/find-asset", middleware.AuthMiddleware(), m.FindByName)
 	m.g.GET("/manage-assets/download/list-assets", m.DownloadAssetsHandler)
 
 }

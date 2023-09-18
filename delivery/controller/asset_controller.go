@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"final-project-enigma-clean/delivery/middleware"
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/usecase"
@@ -115,11 +116,11 @@ func (a *AssetController) deleteHandler(c *gin.Context) {
 }
 
 func (a *AssetController) Route() {
-	a.rg.POST("/assets", a.createAssetHandler)
-	a.rg.GET("/assets", a.ListAssetHandler)
-	a.rg.GET("/assets/:id", a.findByIdHandler)
-	a.rg.PUT("/assets", a.updateHandler)
-	a.rg.DELETE("/assets/:id", a.deleteHandler)
+	a.rg.POST("/assets", middleware.AuthMiddleware(), a.createAssetHandler)
+	a.rg.GET("/assets", middleware.AuthMiddleware(), a.ListAssetHandler)
+	a.rg.GET("/assets/:id", middleware.AuthMiddleware(), a.findByIdHandler)
+	a.rg.PUT("/assets", middleware.AuthMiddleware(), a.updateHandler)
+	a.rg.DELETE("/assets/:id", middleware.AuthMiddleware(), a.deleteHandler)
 }
 
 func NewAssetController(usecase usecase.AssetUsecase, rg *gin.RouterGroup) *AssetController {
