@@ -15,7 +15,7 @@ type ManageAssetUsecase interface {
 	FindByTransactionID(id string) ([]model.ManageAsset, error)
 	FindTransactionByName(name string) ([]model.ManageAsset, error)
 	DownloadAssets() ([]byte, error)
-
+}
 
 type manageAssetUsecase struct {
 	repo    repository.ManageAssetRepository

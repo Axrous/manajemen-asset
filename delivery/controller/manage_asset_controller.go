@@ -4,10 +4,7 @@ import (
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/usecase"
-<<<<<<< HEAD
 	"net/http"
-=======
->>>>>>> b38a0cf033d70c5cdbbb256727efc5ee9c6887f2
 
 	"github.com/gin-gonic/gin"
 )
@@ -60,13 +57,8 @@ func (m ManageAssetController) FindByIdTransaction(c *gin.Context) {
 	c.JSON(200, gin.H{"Data": detailAssets})
 }
 
-<<<<<<< HEAD
-func (m *ManageAssetController) FindByName(c *gin.Context)  {
-	
-=======
 func (m *ManageAssetController) FindByName(c *gin.Context) {
 
->>>>>>> b38a0cf033d70c5cdbbb256727efc5ee9c6887f2
 	var staff model.Staff
 	err := c.ShouldBindJSON(&staff)
 	if err != nil {
@@ -83,7 +75,6 @@ func (m *ManageAssetController) FindByName(c *gin.Context) {
 	c.JSON(200, gin.H{"Data": result})
 }
 
-<<<<<<< HEAD
 // download handler
 func (m ManageAssetController) DownloadAssetsHandler(c *gin.Context) {
 	//set header
@@ -96,17 +87,14 @@ func (m ManageAssetController) DownloadAssetsHandler(c *gin.Context) {
 	}
 	c.Data(http.StatusOK, "text/csv", csvData)
 }
-=======
->>>>>>> b38a0cf033d70c5cdbbb256727efc5ee9c6887f2
+
 func (m ManageAssetController) Route() {
 	m.g.GET("/manage-assets/show-all", m.ShowAllAssetHandler)
 	m.g.POST("/manage-assets/create-new", m.CreateNewAssetHandler)
 	m.g.GET("/manage-assets/find/:id", m.FindByIdTransaction)
 	m.g.POST("/manage-assets/find-asset", m.FindByName)
-<<<<<<< HEAD
 	m.g.GET("/manage-assets/download/list-assets", m.DownloadAssetsHandler)
-=======
->>>>>>> b38a0cf033d70c5cdbbb256727efc5ee9c6887f2
+
 }
 
 func NewManageAssetController(maUC usecase.ManageAssetUsecase, g *gin.RouterGroup) *ManageAssetController {
