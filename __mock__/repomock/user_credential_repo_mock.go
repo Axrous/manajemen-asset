@@ -14,7 +14,7 @@ func (m *MockUserCredentialsRepository) FindUserEmailPass(email string) (userPas
 	panic("implement me")
 }
 
-func (m *MockUserCredentialsRepository) ForgotPassword(email, newpass string) error {
+func (m *MockUserCredentialsRepository) ChangePassword(email, newpass string) error {
 	//TODO implement me
 	panic("implement me")
 }

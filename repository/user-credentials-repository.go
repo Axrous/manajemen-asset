@@ -11,9 +11,10 @@ type UserCredentialsRepository interface {
 	UserLogin(user model.UserLoginRequest) (string, error)
 	FindUserEmail(email string) (user model.UserLoginRequest, err error)
 	FindUserEmailPass(email string) (userPass model.ChangePasswordRequest, err error)
-	ForgotPassword(email, newpass string) error
+	ChangePassword(email, newpass string) error
 	GetUserPassword(email string) (string, error)
 	CheckEmailExist(email string) bool
+	ForgotPass(email, newPass, confirmPass string) error
 }
 
 type userCredentialRepository struct {
@@ -21,7 +22,6 @@ type userCredentialRepository struct {
 }
 
 func (u userCredentialRepository) FindUserEmailPass(email string) (userPass model.ChangePasswordRequest, err error) {
-	// Query SQL untuk mencari pengguna berdasarkan email
 	query := "SELECT id, email, password FROM user_credential WHERE email = $1"
 	var user model.ChangePasswordRequest
 
@@ -87,12 +87,22 @@ func (u userCredentialRepository) FindUserEmail(email string) (model.UserLoginRe
 	return user, nil
 }
 
-func (u userCredentialRepository) ForgotPassword(email, newpass string) error {
+func (u userCredentialRepository) ChangePassword(email, newpass string) error {
 	//TODO implement me
 	query := "update user_credential set password = $2 where email = $1 "
 	_, err := u.db.Exec(query, email, newpass)
 	if err != nil {
 		return fmt.Errorf("Failed to exec %v", err.Error())
+	}
+	return nil
+}
+
+func (u userCredentialRepository) ForgotPass(email, newPassword, confirmPass string) error {
+	//TODO implement me
+	query := "update user_credential set password = $1 where email = $2"
+	_, err := u.db.Exec(query, newPassword, email)
+	if err != nil {
+		return fmt.Errorf("Database error %v", err.Error())
 	}
 	return nil
 }
@@ -113,14 +123,14 @@ func (u userCredentialRepository) GetUserPassword(email string) (string, error) 
 func (u userCredentialRepository) CheckEmailExist(email string) bool {
 	//TODO implement me
 
-	//do query untuk mencari apakah username sudah tersedia atau belum
+	//do query untuk mencari apakah email sudah tersedia atau belum
 	query := "select count(*) from user_credential where email=$1" // count(*) : menghitung jumlah baris
 
 	var count int
 	err := u.db.QueryRow(query, email).Scan(&count)
 	if err != nil {
 		fmt.Println(err.Error())
-		return true //anggap username sudah ada jika error dalam query nya
+		return true //anggap email sudah ada jika error dalam query nya
 	}
 	return count > 0 //count > 0 mean is username already exist on database
 }

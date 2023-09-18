@@ -117,6 +117,7 @@ func (m *manageAssetRepository) FindAllTransaction() ([]model.ManageAsset, error
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	var transactions []model.ManageAsset
 	for rows.Next() {

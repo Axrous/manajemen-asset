@@ -155,7 +155,7 @@ func (suite *UserCredentialsRepositorySuite) TestForgotPassword() {
 		WithArgs(email, newpass).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	err := suite.repo.ForgotPassword(email, newpass)
+	err := suite.repo.ChangePassword(email, newpass)
 
 	assert.NoError(suite.T(), err)
 	assert.NoError(suite.T(), suite.mock.ExpectationsWereMet())

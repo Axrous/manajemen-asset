@@ -57,11 +57,15 @@
 				
 				<option value="file0">final-project-enigma-clean/delivery/controller/asset_controller.go (100.0%)</option>
 				
-				<option value="file1">final-project-enigma-clean/delivery/controller/staff_controller.go (0.0%)</option>
+				<option value="file1">final-project-enigma-clean/delivery/controller/category_controller.go (100.0%)</option>
 				
-				<option value="file2">final-project-enigma-clean/delivery/controller/type_asset_controller.go (0.0%)</option>
+				<option value="file2">final-project-enigma-clean/delivery/controller/manage_asset_controller.go (0.0%)</option>
 				
-				<option value="file3">final-project-enigma-clean/delivery/controller/user-credentials-controller.go (54.7%)</option>
+				<option value="file3">final-project-enigma-clean/delivery/controller/staff_controller.go (0.0%)</option>
+				
+				<option value="file4">final-project-enigma-clean/delivery/controller/type_asset_controller.go (0.0%)</option>
+				
+				<option value="file5">final-project-enigma-clean/delivery/controller/user-credentials-controller.go (42.2%)</option>
 				
 				</select>
 			</div>
@@ -203,6 +207,192 @@ func NewAssetController(usecase usecase.AssetUsecase, rg *gin.RouterGroup) *Asse
 		<pre class="file" id="file1" style="display: none">package controller
 
 import (
+        "final-project-enigma-clean/model"
+        "final-project-enigma-clean/usecase"
+        "fmt"
+
+        "github.com/gin-gonic/gin"
+)
+
+type CategoryController struct {
+        categoryUC usecase.CategoryUsecase
+        rg          *gin.RouterGroup
+}
+
+func (cc *CategoryController) createHandlerCategory(c *gin.Context) <span class="cov8" title="1">{
+        var category model.Category
+        if err := c.ShouldBindJSON(&amp;category); err != nil </span><span class="cov8" title="1">{
+                c.AbortWithStatusJSON(400, gin.H{
+                        "message": err.Error(),
+                })
+                return
+        }</span>
+        // category.Id = helper.GenerateUUID()
+        <span class="cov8" title="1">err := cc.categoryUC.CreateNew(category)
+        if err != nil </span><span class="cov8" title="1">{
+                c.AbortWithStatusJSON(500, gin.H{
+                        "message": err.Error(),
+                })
+                return
+        }</span>
+        <span class="cov8" title="1">response := gin.H{
+                "message": "successfully created category",
+        }
+        c.JSON(201, response)</span>
+}
+func (cc *CategoryController) listHandlerCategory(c *gin.Context) <span class="cov8" title="1">{
+
+        category, err := cc.categoryUC.FindAll()
+        if err != nil </span><span class="cov8" title="1">{
+                c.AbortWithStatusJSON(500, gin.H{
+                        "message": err.Error(),
+                })
+                return
+        }</span>
+        <span class="cov8" title="1">response := gin.H{
+                "message": "successfully get category",
+                "data":    category,
+        }
+        c.JSON(200, response)</span>
+}
+func (cc *CategoryController) getByIdteHandlerCategory(c *gin.Context) <span class="cov8" title="1">{
+        id := c.Param("id")
+        category, err := cc.categoryUC.FindById(id)
+        if err != nil </span><span class="cov8" title="1">{
+                c.AbortWithStatusJSON(500, gin.H{
+                        "message": err.Error(),
+                })
+                return
+        }</span>
+        <span class="cov8" title="1">response := gin.H{
+                "message": "successfully get by id category",
+                "data":    category,
+        }
+        c.JSON(200, response)</span>
+}
+
+
+func (cc *CategoryController) updateHandlerCategory(c *gin.Context) <span class="cov8" title="1">{
+        var category model.Category
+        if err := c.ShouldBindJSON(&amp;category); err != nil </span><span class="cov8" title="1">{
+                c.AbortWithStatusJSON(400, gin.H{
+                        "message": err.Error(),
+                })
+                return
+        }</span>
+        <span class="cov8" title="1">err := cc.categoryUC.Update(category)
+        if err != nil </span><span class="cov8" title="1">{
+                c.AbortWithStatusJSON(500, gin.H{
+                        "message": err.Error(),
+                })
+                return
+        }</span>
+        <span class="cov8" title="1">c.JSON(200, gin.H{
+                "message": "successfully update category",
+        })</span>
+}
+func (cc *CategoryController) deleteHandlerCategory(c *gin.Context) <span class="cov8" title="1">{
+        id := c.Param("id")
+        if err := cc.categoryUC.Delete(id); err != nil </span><span class="cov8" title="1">{
+                c.AbortWithStatusJSON(500, gin.H{
+                        "message": err.Error(),
+                })
+                return
+        }</span>
+        <span class="cov8" title="1">message := fmt.Sprintf("successfulyy delete category with id %s", id)
+        c.JSON(200, gin.H{
+                "message": message,
+        })</span>
+}
+func (cc *CategoryController) Route() <span class="cov8" title="1">{
+        cc.rg.POST("/categories", cc.createHandlerCategory)
+        cc.rg.GET("/categories", cc.listHandlerCategory)
+        cc.rg.GET("/categories/:id", cc.getByIdteHandlerCategory)
+        cc.rg.PUT("/categories", cc.updateHandlerCategory)
+        cc.rg.DELETE("/categories/:id", cc.deleteHandlerCategory)
+}</span>
+
+func NewCategoryController(categoryUC usecase.CategoryUsecase, rg *gin.RouterGroup) *CategoryController <span class="cov8" title="1">{
+        return &amp;CategoryController{
+                categoryUC: categoryUC,
+                rg:          rg,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package controller
+
+import (
+        "final-project-enigma-clean/model/dto"
+        "final-project-enigma-clean/usecase"
+
+        "github.com/gin-gonic/gin"
+)
+
+type ManageAssetController struct {
+        manageAssetUC usecase.ManageAssetUsecase
+        g             *gin.RouterGroup
+}
+
+// show assets handler
+func (m ManageAssetController) ShowAllAssetHandler(c *gin.Context) <span class="cov0" title="0">{
+
+        mAssets, err := m.manageAssetUC.ShowAllAsset()
+        if err != nil </span><span class="cov0" title="0">{
+                c.AbortWithStatusJSON(500, gin.H{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov0" title="0">c.JSON(200, gin.H{"Message": "Success", "Data": mAssets})</span>
+}
+
+//create a new asset handler
+
+func (m ManageAssetController) CreateNewAssetHandler(c *gin.Context) <span class="cov0" title="0">{
+
+        var manageAssetReq dto.ManageAssetRequest
+        if err := c.ShouldBindJSON(&amp;manageAssetReq); err != nil </span><span class="cov0" title="0">{
+                c.AbortWithStatusJSON(400, gin.H{"Error": "Bad JSON Format", "error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">if err := m.manageAssetUC.CreateTransaction(manageAssetReq); err != nil </span><span class="cov0" title="0">{
+                c.AbortWithStatusJSON(500, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">c.JSON(200, gin.H{"Message": "Success"})
+        return</span>
+
+}
+
+func (m ManageAssetController) FindByIdTransaction(c *gin.Context) <span class="cov0" title="0">{
+        id := c.Param("id")
+
+        detailAssets, err := m.manageAssetUC.FindByTransactionID(id)
+        if err != nil </span><span class="cov0" title="0">{
+                c.AbortWithStatusJSON(500, gin.H{"Error": "Failed to find transaction", "Fail": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">c.JSON(200, gin.H{"Data": detailAssets})</span>
+}
+func (m ManageAssetController) Route() <span class="cov0" title="0">{
+        m.g.GET("/manage-assets/show-all", m.ShowAllAssetHandler)
+        m.g.POST("/manage-assets/create-new", m.CreateNewAssetHandler)
+        m.g.GET("/manage-assets/find/:id", m.FindByIdTransaction)
+}</span>
+
+func NewManageAssetController(maUC usecase.ManageAssetUsecase, g *gin.RouterGroup) *ManageAssetController <span class="cov0" title="0">{
+        return &amp;ManageAssetController{
+                manageAssetUC: maUC,
+                g:             g,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package controller
+
+import (
         "final-project-enigma-clean/delivery/middleware"
         "final-project-enigma-clean/model"
         "final-project-enigma-clean/model/dto"
@@ -338,7 +528,7 @@ func NewStaffController(staffUC usecase.StaffUseCase, rg *gin.RouterGroup) *Staf
 }</span>
 </pre>
 		
-		<pre class="file" id="file2" style="display: none">package controller
+		<pre class="file" id="file4" style="display: none">package controller
 
 import (
         "final-project-enigma-clean/delivery/middleware"
@@ -477,7 +667,7 @@ func NewTypeAssetController(typeAssetUC usecase.TypeAssetUseCase, rg *gin.Router
 }</span>
 </pre>
 		
-		<pre class="file" id="file3" style="display: none">package controller
+		<pre class="file" id="file5" style="display: none">package controller
 
 import (
         "final-project-enigma-clean/model"
@@ -568,7 +758,7 @@ func (u *UserController) LoginOTPHandler(c *gin.Context) <span class="cov8" titl
         }
 }
 
-func (u *UserController) ForgotPassHandler(c *gin.Context) <span class="cov8" title="1">{
+func (u *UserController) ChangePasswordHandler(c *gin.Context) <span class="cov8" title="1">{
         //bind json
         var userLogin model.ChangePasswordRequest
 
@@ -578,7 +768,7 @@ func (u *UserController) ForgotPassHandler(c *gin.Context) <span class="cov8" ti
         }</span>
 
         //find email + login otp
-        <span class="cov8" title="1">_, err := u.userUC.LoginUserForgotPass(userLogin)
+        <span class="cov8" title="1">_, err := u.userUC.LoginUserChangePass(userLogin)
         if err != nil </span><span class="cov0" title="0">{
                 c.AbortWithStatusJSON(500, gin.H{"Error": err.Error()})
                 return
@@ -587,7 +777,7 @@ func (u *UserController) ForgotPassHandler(c *gin.Context) <span class="cov8" ti
         <span class="cov8" title="1">c.JSON(200, gin.H{"Message": fmt.Sprintf("We have sent you an email to %v with password change instructions", userLogin.Email)})</span>
 }
 
-func (u *UserController) ForgotPassOTPHandler(c *gin.Context) <span class="cov8" title="1">{
+func (u *UserController) ChangePassOTPHandler(c *gin.Context) <span class="cov0" title="0">{
 
         var request struct {
                 ID          string `json:"id"`
@@ -597,7 +787,7 @@ func (u *UserController) ForgotPassOTPHandler(c *gin.Context) <span class="cov8"
                 NewPassword string `json:"new_password"`
         }
 
-        if err := c.ShouldBindJSON(&amp;request); err != nil </span><span class="cov8" title="1">{
+        if err := c.ShouldBindJSON(&amp;request); err != nil </span><span class="cov0" title="0">{
                 c.AbortWithStatusJSON(400, gin.H{"Error": "Bad JSON Format"})
                 return
         }</span>
@@ -636,7 +826,7 @@ func (u *UserController) ForgotPassOTPHandler(c *gin.Context) <span class="cov8"
                         return
                 }</span>
 
-                <span class="cov0" title="0">if err = u.userUC.ForgotPassword(request.Email, newHashPassword); err != nil </span><span class="cov0" title="0">{
+                <span class="cov0" title="0">if err = u.userUC.ChangePassword(request.Email, newHashPassword); err != nil </span><span class="cov0" title="0">{
                         c.AbortWithStatusJSON(500, gin.H{"Error": "Invalid Password"})
                         return
                 }</span>
@@ -645,13 +835,70 @@ func (u *UserController) ForgotPassOTPHandler(c *gin.Context) <span class="cov8"
         }
 }
 
+func (u *UserController) ForgotPassHandler(c *gin.Context) <span class="cov0" title="0">{
+        var request model.ForgotPassRequest
+
+        //bind json nya
+        if err := c.ShouldBindJSON(&amp;request); err != nil </span><span class="cov0" title="0">{
+                c.AbortWithStatusJSON(400, gin.H{"Error": "Bad json format"})
+                return
+        }</span>
+
+        <span class="cov0" title="0">_, err := u.userUC.FindingUserEmail(request.Email)
+        if err != nil </span><span class="cov0" title="0">{
+                c.AbortWithStatusJSON(400, gin.H{"Error": "Email not found"})
+                return
+        }</span>
+
+        <span class="cov0" title="0">u.userUC.ForgotPass(request.Email)
+        c.JSON(200, gin.H{"Success": "Check your email for verification and follow the instruction"})</span>
+}
+
+func (u *UserController) ForgotPassOTPHandler(c *gin.Context) <span class="cov8" title="1">{
+        var request struct {
+                Email              string `json:"email"`
+                OTP                int    `json:"otp"`
+                NewPassword        string `json:"new_password"`
+                ConfirmNewPassword string `json:"confirm_password"`
+        }
+
+        //bind json
+        if err := c.ShouldBindJSON(&amp;request); err != nil </span><span class="cov8" title="1">{
+                c.AbortWithStatusJSON(400, gin.H{"Error": "Bad JSON Format"})
+                return
+        }</span>
+        //is email exist?
+        <span class="cov0" title="0">u.userUC.EmailExist(request.Email)
+
+        //now validate otp
+        storedOTP, exists := usecase.OTPMap[request.Email]
+        if !exists </span><span class="cov0" title="0">{
+                c.JSON(http.StatusUnauthorized, gin.H{"Error": "OTP not found or expired"})
+                return
+        }</span>
+
+        <span class="cov0" title="0">if request.OTP == storedOTP </span><span class="cov0" title="0">{
+                //confirm new password
+                if err := u.userUC.ForgotPassRequest(request.Email, request.NewPassword, request.ConfirmNewPassword); err != nil </span><span class="cov0" title="0">{
+                        c.AbortWithStatusJSON(400, gin.H{"Error": err.Error()})
+                        return
+                }</span>
+
+                //delete otp
+                <span class="cov0" title="0">delete(usecase.OTPMap, request.Email)</span>
+        }
+        <span class="cov0" title="0">c.JSON(200, gin.H{"Message": "Success"})</span>
+}
+
 // init route
 func (u *UserController) Route() <span class="cov8" title="1">{
         </span><span class="cov8" title="1">{
                 u.rg.POST("/register", u.RegisterUserHandler)
                 u.rg.POST("/login", u.LoginUserHandler)
                 u.rg.POST("/login/email-otp/start", u.LoginOTPHandler)
-                u.rg.POST("/password-new", u.ForgotPassHandler)
+                u.rg.POST("/change-password", u.ChangePasswordHandler)
+                u.rg.POST("/change-password/start", u.ChangePassOTPHandler)
+                u.rg.POST("/forgot-password", u.ForgotPassHandler)
                 u.rg.POST("/forgot-password/start", u.ForgotPassOTPHandler)
         }</span>
 }
