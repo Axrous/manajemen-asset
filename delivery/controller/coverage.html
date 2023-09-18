@@ -59,11 +59,11 @@
 				
 				<option value="file1">final-project-enigma-clean/delivery/controller/category_controller.go (100.0%)</option>
 				
-				<option value="file2">final-project-enigma-clean/delivery/controller/manage_asset_controller.go (0.0%)</option>
+				<option value="file2">final-project-enigma-clean/delivery/controller/manage_asset_controller.go (54.8%)</option>
 				
-				<option value="file3">final-project-enigma-clean/delivery/controller/staff_controller.go (0.0%)</option>
+				<option value="file3">final-project-enigma-clean/delivery/controller/staff_controller.go (75.8%)</option>
 				
-				<option value="file4">final-project-enigma-clean/delivery/controller/type_asset_controller.go (0.0%)</option>
+				<option value="file4">final-project-enigma-clean/delivery/controller/type_asset_controller.go (85.2%)</option>
 				
 				<option value="file5">final-project-enigma-clean/delivery/controller/user-credentials-controller.go (42.2%)</option>
 				
@@ -83,91 +83,99 @@
 
 import (
         "final-project-enigma-clean/model"
+        "final-project-enigma-clean/model/dto"
         "final-project-enigma-clean/usecase"
+        "strconv"
 
         "github.com/gin-gonic/gin"
 )
 
 type AssetController struct {
         usecase usecase.AssetUsecase
-        rg *gin.RouterGroup
+        rg      *gin.RouterGroup
 }
 
 func (a *AssetController) createAssetHandler(c *gin.Context) <span class="cov8" title="1">{
-        
+
         var assetRequest model.AssetRequest
         err := c.ShouldBindJSON(&amp;assetRequest)
         if err != nil </span><span class="cov8" title="1">{
-                c.AbortWithStatusJSON(400, gin.H{"status": "Error", "message" : err.Error()})
+                c.AbortWithStatusJSON(400, gin.H{"status": "Error", "message": err.Error()})
                 return
         }</span>
 
         <span class="cov8" title="1">err = a.usecase.Create(assetRequest)
         if err != nil </span><span class="cov8" title="1">{
-                c.AbortWithStatusJSON(500, gin.H{"status": "Error", "message" : err.Error()})
+                c.AbortWithStatusJSON(500, gin.H{"status": "Error", "message": err.Error()})
                 return
         }</span>
 
-        <span class="cov8" title="1">c.JSON(201, gin.H{"status": "OK", "message": "successfully created Asset", "asset" : assetRequest})</span>
+        <span class="cov8" title="1">c.JSON(201, gin.H{"status": "OK", "message": "successfully created Asset", "asset": assetRequest})</span>
         // c.JSON(201, assetRequest)
 }
 
 func (a *AssetController) ListAssetHandler(c *gin.Context) <span class="cov8" title="1">{
         name := c.Query("name")
+        page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+        size, _ := strconv.Atoi(c.DefaultQuery("size", "5"))
+
         if name != "" </span><span class="cov8" title="1">{
                 assets, err := a.usecase.FindByName(name)
                 if err != nil </span><span class="cov8" title="1">{
-                        c.AbortWithStatusJSON(500, gin.H{"status": "Error", "message" : err.Error()})
+                        c.AbortWithStatusJSON(500, gin.H{"status": "Error", "message": err.Error()})
                         return
                 }</span>
-        
+
                 <span class="cov8" title="1">c.JSON(200, gin.H{
-                        "status" : "OK",
-                        "assets" : assets,
+                        "status": "OK",
+                        "assets": assets,
                 })
                 return</span>
         }
 
-
-        <span class="cov8" title="1">assets, err := a.usecase.FindAll()
+        <span class="cov8" title="1">assets, paging, err := a.usecase.Paging(dto.PageRequest{
+                Page: page,
+                Size: size,
+        })
         if err != nil </span><span class="cov8" title="1">{
-                c.AbortWithStatusJSON(500, gin.H{"status": "Error", "message" : err.Error()})
+                c.AbortWithStatusJSON(500, gin.H{"status": "Error", "message": err.Error()})
                 return
         }</span>
         <span class="cov8" title="1">c.JSON(200, gin.H{
-                "status" : "OK",
-                "assets" : assets,
+                "status": "OK",
+                "assets": assets,
+                "paging": paging,
         })</span>
 }
 
-func (a *AssetController) findByIdHandler(c *gin.Context)  <span class="cov8" title="1">{
-        
+func (a *AssetController) findByIdHandler(c *gin.Context) <span class="cov8" title="1">{
+
         id := c.Param("id")
 
         asset, err := a.usecase.FindById(id)
         if err != nil </span><span class="cov8" title="1">{
-                c.AbortWithStatusJSON(500, gin.H{"status": "Error", "message" : err.Error()})
+                c.AbortWithStatusJSON(500, gin.H{"status": "Error", "message": err.Error()})
                 return
         }</span>
 
         <span class="cov8" title="1">c.JSON(200, gin.H{
-                "status" : "OK",
-                "assets" : asset,
+                "status": "OK",
+                "assets": asset,
         })</span>
 }
 
-func (a *AssetController) updateHandler(c *gin.Context)  <span class="cov8" title="1">{
-        
+func (a *AssetController) updateHandler(c *gin.Context) <span class="cov8" title="1">{
+
         var assetRequest model.AssetRequest
         err := c.ShouldBindJSON(&amp;assetRequest)
         if err != nil </span><span class="cov8" title="1">{
-                c.AbortWithStatusJSON(400, gin.H{"status": "Error", "message" : err.Error()})
+                c.AbortWithStatusJSON(400, gin.H{"status": "Error", "message": err.Error()})
                 return
         }</span>
 
         <span class="cov8" title="1">err = a.usecase.Update(assetRequest)
         if err != nil </span><span class="cov8" title="1">{
-                c.AbortWithStatusJSON(500, gin.H{"status": "Error", "message" : err.Error()})
+                c.AbortWithStatusJSON(500, gin.H{"status": "Error", "message": err.Error()})
                 return
         }</span>
 
@@ -180,13 +188,12 @@ func (a *AssetController) deleteHandler(c *gin.Context) <span class="cov8" title
 
         err := a.usecase.Delete(id)
         if err != nil </span><span class="cov8" title="1">{
-                c.AbortWithStatusJSON(500, gin.H{"status": "Error", "message" : err.Error()})
+                c.AbortWithStatusJSON(500, gin.H{"status": "Error", "message": err.Error()})
                 return
         }</span>
 
         <span class="cov8" title="1">c.JSON(200, gin.H{"status": "OK", "message": "successfully delete asset"})</span>
 }
-
 
 func (a *AssetController) Route() <span class="cov8" title="1">{
         a.rg.POST("/assets", a.createAssetHandler)
@@ -196,13 +203,13 @@ func (a *AssetController) Route() <span class="cov8" title="1">{
         a.rg.DELETE("/assets/:id", a.deleteHandler)
 }</span>
 
-
 func NewAssetController(usecase usecase.AssetUsecase, rg *gin.RouterGroup) *AssetController <span class="cov8" title="1">{
         return &amp;AssetController{
                 usecase: usecase,
                 rg:      rg,
         }
-}</pre>
+}</span>
+</pre>
 		
 		<pre class="file" id="file1" style="display: none">package controller
 
@@ -323,8 +330,10 @@ func NewCategoryController(categoryUC usecase.CategoryUsecase, rg *gin.RouterGro
 		<pre class="file" id="file2" style="display: none">package controller
 
 import (
+        "final-project-enigma-clean/model"
         "final-project-enigma-clean/model/dto"
         "final-project-enigma-clean/usecase"
+        "net/http"
 
         "github.com/gin-gonic/gin"
 )
@@ -335,54 +344,85 @@ type ManageAssetController struct {
 }
 
 // show assets handler
-func (m ManageAssetController) ShowAllAssetHandler(c *gin.Context) <span class="cov0" title="0">{
+func (m ManageAssetController) ShowAllAssetHandler(c *gin.Context) <span class="cov8" title="1">{
 
         mAssets, err := m.manageAssetUC.ShowAllAsset()
         if err != nil </span><span class="cov0" title="0">{
                 c.AbortWithStatusJSON(500, gin.H{"error": err.Error()})
                 return
         }</span>
-        <span class="cov0" title="0">c.JSON(200, gin.H{"Message": "Success", "Data": mAssets})</span>
+        <span class="cov8" title="1">c.JSON(200, gin.H{"Message": "Success", "Data": mAssets})</span>
 }
 
 //create a new asset handler
 
-func (m ManageAssetController) CreateNewAssetHandler(c *gin.Context) <span class="cov0" title="0">{
+func (m ManageAssetController) CreateNewAssetHandler(c *gin.Context) <span class="cov8" title="1">{
 
         var manageAssetReq dto.ManageAssetRequest
-        if err := c.ShouldBindJSON(&amp;manageAssetReq); err != nil </span><span class="cov0" title="0">{
+        if err := c.ShouldBindJSON(&amp;manageAssetReq); err != nil </span><span class="cov8" title="1">{
                 c.AbortWithStatusJSON(400, gin.H{"Error": "Bad JSON Format", "error": err.Error()})
                 return
         }</span>
 
-        <span class="cov0" title="0">if err := m.manageAssetUC.CreateTransaction(manageAssetReq); err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err := m.manageAssetUC.CreateTransaction(manageAssetReq); err != nil </span><span class="cov8" title="1">{
                 c.AbortWithStatusJSON(500, gin.H{"error": err.Error()})
                 return
         }</span>
 
-        <span class="cov0" title="0">c.JSON(200, gin.H{"Message": "Success"})
-        return</span>
+        <span class="cov8" title="1">c.JSON(200, gin.H{"Message": "Success"})</span>
 
 }
 
-func (m ManageAssetController) FindByIdTransaction(c *gin.Context) <span class="cov0" title="0">{
+func (m ManageAssetController) FindByIdTransaction(c *gin.Context) <span class="cov8" title="1">{
         id := c.Param("id")
 
         detailAssets, err := m.manageAssetUC.FindByTransactionID(id)
+        if err != nil </span><span class="cov8" title="1">{
+                c.AbortWithStatusJSON(500, gin.H{"Error": "Failed to find transaction", "Fail": err.Error()})
+                return
+        }</span>
+
+        <span class="cov8" title="1">c.JSON(200, gin.H{"Data": detailAssets})</span>
+}
+func (m *ManageAssetController) FindByName(c *gin.Context) <span class="cov0" title="0">{
+
+        var staff model.Staff
+        err := c.ShouldBindJSON(&amp;staff)
+        if err != nil </span><span class="cov0" title="0">{
+                c.AbortWithStatusJSON(400, gin.H{"Error": "Bad JSON Format", "error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">result, err := m.manageAssetUC.FindTransactionByName(staff.Name)
         if err != nil </span><span class="cov0" title="0">{
                 c.AbortWithStatusJSON(500, gin.H{"Error": "Failed to find transaction", "Fail": err.Error()})
                 return
         }</span>
 
-        <span class="cov0" title="0">c.JSON(200, gin.H{"Data": detailAssets})</span>
+        <span class="cov0" title="0">c.JSON(200, gin.H{"Data": result})</span>
 }
-func (m ManageAssetController) Route() <span class="cov0" title="0">{
+
+// download handler
+func (m ManageAssetController) DownloadAssetsHandler(c *gin.Context) <span class="cov0" title="0">{
+        //set header
+        c.Set("Content-Type", "text/csv")
+        c.Set("Content-Disposition", `attachment; filename="data-assets.csv"`)
+        csvData, err := m.manageAssetUC.DownloadAssets()
+        if err != nil </span><span class="cov0" title="0">{
+                c.AbortWithStatusJSON(500, gin.H{"Error": "Failed to download staff data"})
+                return
+        }</span>
+        <span class="cov0" title="0">c.Data(http.StatusOK, "text/csv", csvData)</span>
+}
+func (m ManageAssetController) Route() <span class="cov8" title="1">{
         m.g.GET("/manage-assets/show-all", m.ShowAllAssetHandler)
         m.g.POST("/manage-assets/create-new", m.CreateNewAssetHandler)
         m.g.GET("/manage-assets/find/:id", m.FindByIdTransaction)
+        m.g.POST("/manage-assets/find-asset", m.FindByName)
+        m.g.GET("/manage-assets/download/list-assets", m.DownloadAssetsHandler)
 }</span>
 
-func NewManageAssetController(maUC usecase.ManageAssetUsecase, g *gin.RouterGroup) *ManageAssetController <span class="cov0" title="0">{
+func NewManageAssetController(maUC usecase.ManageAssetUsecase, g *gin.RouterGroup) *ManageAssetController <span class="cov8" title="1">{
         return &amp;ManageAssetController{
                 manageAssetUC: maUC,
                 g:             g,
@@ -398,6 +438,7 @@ import (
         "final-project-enigma-clean/model/dto"
         "final-project-enigma-clean/usecase"
         "fmt"
+        "net/http"
         "strconv"
 
         "github.com/gin-gonic/gin"
@@ -408,22 +449,22 @@ type StaffController struct {
         rg      *gin.RouterGroup
 }
 
-func (s *StaffController) createHandlerStaff(c *gin.Context) <span class="cov0" title="0">{
+func (s *StaffController) createHandlerStaff(c *gin.Context) <span class="cov8" title="1">{
         var staff model.Staff
-        if err := c.ShouldBindJSON(&amp;staff); err != nil </span><span class="cov0" title="0">{
+        if err := c.ShouldBindJSON(&amp;staff); err != nil </span><span class="cov8" title="1">{
                 c.AbortWithStatusJSON(400, gin.H{
                         "message": err.Error(),
                 })
                 return
         }</span>
-        <span class="cov0" title="0">err := s.staffUC.CreateNew(staff)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">err := s.staffUC.CreateNew(staff)
+        if err != nil </span><span class="cov8" title="1">{
                 c.AbortWithStatusJSON(500, gin.H{
                         "message": err.Error(),
                 })
                 return
         }</span>
-        <span class="cov0" title="0">response := gin.H{
+        <span class="cov8" title="1">response := gin.H{
                 "message": "successfully created staff",
         }
         c.JSON(200, response)</span>
@@ -448,79 +489,93 @@ func (s *StaffController) listHandlerStaff(c *gin.Context) <span class="cov0" ti
         }
         c.JSON(200, response)</span>
 }
-func (s *StaffController) getByIdteHandlerStaff(c *gin.Context) <span class="cov0" title="0">{
+func (s *StaffController) getByIdteHandlerStaff(c *gin.Context) <span class="cov8" title="1">{
         nik_staff := c.Param("nik_staff")
         staff, err := s.staffUC.FindById(nik_staff)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 c.AbortWithStatusJSON(500, gin.H{
                         "message": err.Error(),
                 })
                 return
         }</span>
-        <span class="cov0" title="0">response := gin.H{
+        <span class="cov8" title="1">response := gin.H{
                 "message": "successfully get by nik staff staff",
                 "data":    staff,
         }
         c.JSON(200, response)</span>
 }
 
-func (s *StaffController) getByNameteHandlerStaff(c *gin.Context) <span class="cov0" title="0">{
+func (s *StaffController) getByNameteHandlerStaff(c *gin.Context) <span class="cov8" title="1">{
         name := c.Param("name")
-        staff, err := s.staffUC.FindByName(name)
-        if err != nil </span><span class="cov0" title="0">{
+        staffs, err := s.staffUC.FindByName(name)
+        if err != nil </span><span class="cov8" title="1">{
                 c.AbortWithStatusJSON(500, gin.H{
                         "message": err.Error(),
                 })
                 return
         }</span>
-        <span class="cov0" title="0">response := gin.H{
-                "message": "successfully get by name type asset",
-                "data":    staff,
+        <span class="cov8" title="1">response := gin.H{
+                "message": "successfully get by name staff",
+                "data":    staffs,
         }
         c.JSON(200, response)</span>
 }
-func (s *StaffController) updateHandlerStaff(c *gin.Context) <span class="cov0" title="0">{
+func (s *StaffController) updateHandlerStaff(c *gin.Context) <span class="cov8" title="1">{
         var staff model.Staff
-        if err := c.ShouldBindJSON(&amp;staff); err != nil </span><span class="cov0" title="0">{
+        if err := c.ShouldBindJSON(&amp;staff); err != nil </span><span class="cov8" title="1">{
                 c.AbortWithStatusJSON(400, gin.H{
                         "message": err.Error(),
                 })
                 return
         }</span>
-        <span class="cov0" title="0">err := s.staffUC.Update(staff)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">err := s.staffUC.Update(staff)
+        if err != nil </span><span class="cov8" title="1">{
                 c.AbortWithStatusJSON(500, gin.H{
                         "message": err.Error(),
                 })
                 return
         }</span>
-        <span class="cov0" title="0">c.JSON(200, gin.H{
+        <span class="cov8" title="1">c.JSON(200, gin.H{
                 "message": "successfully update staff",
         })</span>
 }
-func (s *StaffController) deleteHandlerStaff(c *gin.Context) <span class="cov0" title="0">{
+func (s *StaffController) deleteHandlerStaff(c *gin.Context) <span class="cov8" title="1">{
         nik_staff := c.Param("nik_staff")
-        if err := s.staffUC.Delete(nik_staff); err != nil </span><span class="cov0" title="0">{
+        if err := s.staffUC.Delete(nik_staff); err != nil </span><span class="cov8" title="1">{
                 c.AbortWithStatusJSON(500, gin.H{
                         "message": err.Error(),
                 })
                 return
         }</span>
-        <span class="cov0" title="0">message := fmt.Sprintf("successfulyy delete staff with nik %s", nik_staff)
+        <span class="cov8" title="1">message := fmt.Sprintf("successfulyy delete staff with nik %s", nik_staff)
         c.JSON(200, gin.H{
                 "message": message,
         })</span>
 }
-func (s *StaffController) Route() <span class="cov0" title="0">{
+
+func (s *StaffController) DownloadlistStaffHandler(c *gin.Context) <span class="cov0" title="0">{
+        c.Set("Content-Disposition", `attachment; filename="data-staff.csv"`)
+        c.Set("Content-Type", "text/csv")
+
+        csvData, err := s.staffUC.DownloadAllStaff()
+        if err != nil </span><span class="cov0" title="0">{
+                c.AbortWithStatusJSON(500, gin.H{"Error": "Failed to download staff data"})
+                return
+        }</span>
+        <span class="cov0" title="0">c.Data(http.StatusOK, "text/csv", csvData)</span>
+}
+
+func (s *StaffController) Route() <span class="cov8" title="1">{
         s.rg.POST("/staffs", middleware.AuthMiddleware(), s.createHandlerStaff)
         s.rg.GET("/staffs", middleware.AuthMiddleware(), s.listHandlerStaff)
         s.rg.GET("/staffs/:nik_staff", middleware.AuthMiddleware(), s.getByIdteHandlerStaff)
         s.rg.GET("/staffs/name/:name", middleware.AuthMiddleware(), s.getByNameteHandlerStaff)
         s.rg.PUT("/staffs", middleware.AuthMiddleware(), s.updateHandlerStaff)
         s.rg.DELETE("/staffs/:nik_staff", middleware.AuthMiddleware(), s.deleteHandlerStaff)
+        s.rg.GET("/staffs/list-staff-download", s.DownloadlistStaffHandler)
 }</span>
 
-func NewStaffController(staffUC usecase.StaffUseCase, rg *gin.RouterGroup) *StaffController <span class="cov0" title="0">{
+func NewStaffController(staffUC usecase.StaffUseCase, rg *gin.RouterGroup) *StaffController <span class="cov8" title="1">{
         return &amp;StaffController{
                 staffUC: staffUC,
                 rg:      rg,
@@ -546,23 +601,23 @@ type TypeAssetController struct {
         rg          *gin.RouterGroup
 }
 
-func (t *TypeAssetController) createHandlerTypeAsset(c *gin.Context) <span class="cov0" title="0">{
+func (t *TypeAssetController) createHandlerTypeAsset(c *gin.Context) <span class="cov8" title="1">{
         var typeAsset model.TypeAsset
-        if err := c.ShouldBindJSON(&amp;typeAsset); err != nil </span><span class="cov0" title="0">{
+        if err := c.ShouldBindJSON(&amp;typeAsset); err != nil </span><span class="cov8" title="1">{
                 c.AbortWithStatusJSON(400, gin.H{
                         "message": err.Error(),
                 })
                 return
         }</span>
         // typeAsset.Id = helper.GenerateUUID()
-        <span class="cov0" title="0">err := t.typeAssetUC.CreateNew(typeAsset)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">err := t.typeAssetUC.CreateNew(typeAsset)
+        if err != nil </span><span class="cov8" title="1">{
                 c.AbortWithStatusJSON(500, gin.H{
                         "message": err.Error(),
                 })
                 return
         }</span>
-        <span class="cov0" title="0">response := gin.H{
+        <span class="cov8" title="1">response := gin.H{
                 "message": "successfully created type asset",
         }
         c.JSON(200, response)</span>
@@ -587,70 +642,70 @@ func (t *TypeAssetController) listHandlerTypeAsset(c *gin.Context) <span class="
         }
         c.JSON(200, response)</span>
 }
-func (t *TypeAssetController) getByIdteHandlerTypeAsset(c *gin.Context) <span class="cov0" title="0">{
+func (t *TypeAssetController) getByIdteHandlerTypeAsset(c *gin.Context) <span class="cov8" title="1">{
         id := c.Param("id")
         typeAsset, err := t.typeAssetUC.FindById(id)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 c.AbortWithStatusJSON(500, gin.H{
                         "message": err.Error(),
                 })
                 return
         }</span>
-        <span class="cov0" title="0">response := gin.H{
+        <span class="cov8" title="1">response := gin.H{
                 "message": "successfully get by id type asset",
                 "data":    typeAsset,
         }
         c.JSON(200, response)</span>
 }
 
-func (t *TypeAssetController) getByNameteHandlerTypeAsset(c *gin.Context) <span class="cov0" title="0">{
+func (t *TypeAssetController) getByNameteHandlerTypeAsset(c *gin.Context) <span class="cov8" title="1">{
         name := c.Param("name")
         typeAsset, err := t.typeAssetUC.FindByName(name)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 c.AbortWithStatusJSON(500, gin.H{
                         "message": err.Error(),
                 })
                 return
         }</span>
-        <span class="cov0" title="0">response := gin.H{
+        <span class="cov8" title="1">response := gin.H{
                 "message": "successfully get by name type asset",
                 "data":    typeAsset,
         }
         c.JSON(200, response)</span>
 }
-func (t *TypeAssetController) updateHandlerTypeAsset(c *gin.Context) <span class="cov0" title="0">{
+func (t *TypeAssetController) updateHandlerTypeAsset(c *gin.Context) <span class="cov8" title="1">{
         var typeAsset model.TypeAsset
-        if err := c.ShouldBindJSON(&amp;typeAsset); err != nil </span><span class="cov0" title="0">{
+        if err := c.ShouldBindJSON(&amp;typeAsset); err != nil </span><span class="cov8" title="1">{
                 c.AbortWithStatusJSON(400, gin.H{
                         "message": err.Error(),
                 })
                 return
         }</span>
-        <span class="cov0" title="0">err := t.typeAssetUC.Update(typeAsset)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">err := t.typeAssetUC.Update(typeAsset)
+        if err != nil </span><span class="cov8" title="1">{
                 c.AbortWithStatusJSON(500, gin.H{
                         "message": err.Error(),
                 })
                 return
         }</span>
-        <span class="cov0" title="0">c.JSON(200, gin.H{
+        <span class="cov8" title="1">c.JSON(200, gin.H{
                 "message": "successfully update type asset",
         })</span>
 }
-func (t *TypeAssetController) deleteHandlerTypeAsset(c *gin.Context) <span class="cov0" title="0">{
+func (t *TypeAssetController) deleteHandlerTypeAsset(c *gin.Context) <span class="cov8" title="1">{
         id := c.Param("id")
-        if err := t.typeAssetUC.Delete(id); err != nil </span><span class="cov0" title="0">{
+        if err := t.typeAssetUC.Delete(id); err != nil </span><span class="cov8" title="1">{
                 c.AbortWithStatusJSON(500, gin.H{
                         "message": err.Error(),
                 })
                 return
         }</span>
-        <span class="cov0" title="0">message := fmt.Sprintf("successfulyy delete type asset with id %s", id)
+        <span class="cov8" title="1">message := fmt.Sprintf("successfulyy delete type asset with id %s", id)
         c.JSON(200, gin.H{
                 "message": message,
         })</span>
 }
-func (t *TypeAssetController) Route() <span class="cov0" title="0">{
+func (t *TypeAssetController) Route() <span class="cov8" title="1">{
         t.rg.POST("/typeAsset", middleware.AuthMiddleware(), t.createHandlerTypeAsset)
         t.rg.GET("/typeAsset", middleware.AuthMiddleware(), t.listHandlerTypeAsset)
         t.rg.GET("/typeAsset/:id", middleware.AuthMiddleware(), t.getByIdteHandlerTypeAsset)
@@ -659,7 +714,7 @@ func (t *TypeAssetController) Route() <span class="cov0" title="0">{
         t.rg.DELETE("/typeAsset/:id", middleware.AuthMiddleware(), t.deleteHandlerTypeAsset)
 }</span>
 
-func NewTypeAssetController(typeAssetUC usecase.TypeAssetUseCase, rg *gin.RouterGroup) *TypeAssetController <span class="cov0" title="0">{
+func NewTypeAssetController(typeAssetUC usecase.TypeAssetUseCase, rg *gin.RouterGroup) *TypeAssetController <span class="cov8" title="1">{
         return &amp;TypeAssetController{
                 typeAssetUC: typeAssetUC,
                 rg:          rg,
@@ -855,12 +910,7 @@ func (u *UserController) ForgotPassHandler(c *gin.Context) <span class="cov0" ti
 }
 
 func (u *UserController) ForgotPassOTPHandler(c *gin.Context) <span class="cov8" title="1">{
-        var request struct {
-                Email              string `json:"email"`
-                OTP                int    `json:"otp"`
-                NewPassword        string `json:"new_password"`
-                ConfirmNewPassword string `json:"confirm_password"`
-        }
+        var request model.ForgotPassRequest
 
         //bind json
         if err := c.ShouldBindJSON(&amp;request); err != nil </span><span class="cov8" title="1">{

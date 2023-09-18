@@ -15,7 +15,7 @@ type ManageAssetController struct {
 }
 
 // show assets handler
-func (m ManageAssetController) ShowAllAssetHandler(c *gin.Context) {
+func (m *ManageAssetController) ShowAllAssetHandler(c *gin.Context) {
 
 	mAssets, err := m.manageAssetUC.ShowAllAsset()
 	if err != nil {
@@ -27,7 +27,7 @@ func (m ManageAssetController) ShowAllAssetHandler(c *gin.Context) {
 
 //create a new asset handler
 
-func (m ManageAssetController) CreateNewAssetHandler(c *gin.Context) {
+func (m *ManageAssetController) CreateNewAssetHandler(c *gin.Context) {
 
 	var manageAssetReq dto.ManageAssetRequest
 	if err := c.ShouldBindJSON(&manageAssetReq); err != nil {
@@ -44,7 +44,7 @@ func (m ManageAssetController) CreateNewAssetHandler(c *gin.Context) {
 
 }
 
-func (m ManageAssetController) FindByIdTransaction(c *gin.Context) {
+func (m *ManageAssetController) FindByIdTransaction(c *gin.Context) {
 	id := c.Param("id")
 
 	detailAssets, err := m.manageAssetUC.FindByTransactionID(id)
@@ -74,7 +74,7 @@ func (m *ManageAssetController) FindByName(c *gin.Context) {
 }
 
 // download handler
-func (m ManageAssetController) DownloadAssetsHandler(c *gin.Context) {
+func (m *ManageAssetController) DownloadAssetsHandler(c *gin.Context) {
 	//set header
 	c.Set("Content-Type", "text/csv")
 	c.Set("Content-Disposition", `attachment; filename="data-assets.csv"`)
@@ -85,7 +85,7 @@ func (m ManageAssetController) DownloadAssetsHandler(c *gin.Context) {
 	}
 	c.Data(http.StatusOK, "text/csv", csvData)
 }
-func (m ManageAssetController) Route() {
+func (m *ManageAssetController) Route() {
 	m.g.GET("/manage-assets/show-all", m.ShowAllAssetHandler)
 	m.g.POST("/manage-assets/create-new", m.CreateNewAssetHandler)
 	m.g.GET("/manage-assets/find/:id", m.FindByIdTransaction)
