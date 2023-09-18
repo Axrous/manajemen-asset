@@ -2,11 +2,17 @@ package repomock
 
 import (
 	"final-project-enigma-clean/model"
+
 	"github.com/stretchr/testify/mock"
 )
 
 type MockUserCredentialsRepository struct {
 	mock.Mock
+}
+
+// ForgotPass implements repository.UserCredentialsRepository.
+func (*MockUserCredentialsRepository) ForgotPass(email string, newPass string, confirmPass string) error {
+	panic("unimplemented")
 }
 
 func (m *MockUserCredentialsRepository) FindUserEmailPass(email string) (userPass model.ChangePasswordRequest, err error) {

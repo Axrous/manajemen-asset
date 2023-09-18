@@ -8,12 +8,13 @@ import (
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/usecase"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
 type RegisterControllerTestSuite struct {

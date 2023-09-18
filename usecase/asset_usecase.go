@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"final-project-enigma-clean/model"
+	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/repository"
 	"final-project-enigma-clean/util/helper"
 	"fmt"
@@ -13,8 +14,10 @@ type AssetUsecase interface {
 	FindAll() ([]model.Asset, error)
 	FindById(id string) (model.Asset, error)
 	Update(payload model.AssetRequest) error
+	UpdateAvailable(id string, amount int) error
 	Delete(id string) error
 	FindByName(name string) ([]model.Asset, error)
+	Paging(payload dto.PageRequest) ([]model.Asset, dto.Paging, error)
 }
 
 type assetUsecase struct {
@@ -23,6 +26,31 @@ type assetUsecase struct {
 	categoryUc CategoryUsecase
 	//get asset type usecase
 	typeAssetUC TypeAssetUseCase
+}
+
+func (a *assetUsecase) Paging(payload dto.PageRequest) ([]model.Asset, dto.Paging, error) {
+	if payload.Page <= 0 {
+		payload.Page = 1
+	}
+
+	return a.repo.Paging(payload)
+}
+
+// UpdateAmount implements AssetUsecase.
+func (a *assetUsecase) UpdateAvailable(id string, amount int) error {
+
+	asset, err := a.FindById(id)
+	if err != nil {
+		return err
+	}
+
+	asset.Available -= amount
+	err = a.repo.UpdateAvailable(id, asset.Available)
+	if err != nil {
+		return fmt.Errorf("failed update amount, %s", err)
+	}
+
+	return nil
 }
 
 // FindByName implements AssetUsecase.
@@ -46,8 +74,8 @@ func (a *assetUsecase) Create(payload model.AssetRequest) error {
 	if payload.AssetTypeId == "" || payload.CategoryId == "" {
 		return fmt.Errorf("asset type id or category id cannot empty")
 	}
-	if payload.Amount < 0 {
-		return fmt.Errorf("amoun cannot negative number")
+	if payload.Total < 0 {
+		return fmt.Errorf("Total cannot negative number")
 	}
 	if payload.Status == "" {
 		return fmt.Errorf("status cannot empty")
@@ -68,6 +96,7 @@ func (a *assetUsecase) Create(payload model.AssetRequest) error {
 	//commented for unit testing
 	payload.Id = helper.GenerateUUID()
 	payload.EntryDate = time.Now()
+	payload.Available = payload.Total
 	err = a.repo.Save(payload)
 	if err != nil {
 		return fmt.Errorf("failed save asset %s", err)
@@ -119,7 +148,7 @@ func (a *assetUsecase) Update(payload model.AssetRequest) error {
 	if payload.AssetTypeId == "" || payload.CategoryId == "" {
 		return fmt.Errorf("asset type id or category id cannot empty")
 	}
-	if payload.Amount < 0 {
+	if payload.Total < 0 {
 		return fmt.Errorf("amoun cannot negative number")
 	}
 	if payload.Status == "" {
@@ -131,17 +160,20 @@ func (a *assetUsecase) Update(payload model.AssetRequest) error {
 	if err != nil {
 		return err
 	}
-	
+
 	//implement category find by id
 	_, err = a.categoryUc.FindById(payload.CategoryId)
 	if err != nil {
 		return err
 	}
 
-	_, err = a.FindById(payload.Id)
+	asset, err := a.FindById(payload.Id)
 	if err != nil {
 		return err
 	}
+
+	//calculation for update available
+	payload.Available = (payload.Total - asset.Total) + asset.Available
 
 	err = a.repo.Update(payload)
 	if err != nil {

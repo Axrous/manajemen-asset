@@ -1,10 +1,12 @@
 package controller
 
 import (
+	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/usecase"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type ManageAssetController struct {
@@ -39,7 +41,6 @@ func (m ManageAssetController) CreateNewAssetHandler(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{"Message": "Success"})
-	return
 
 }
 
@@ -53,6 +54,23 @@ func (m ManageAssetController) FindByIdTransaction(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{"Data": detailAssets})
+}
+func (m *ManageAssetController) FindByName(c *gin.Context) {
+
+	var staff model.Staff
+	err := c.ShouldBindJSON(&staff)
+	if err != nil {
+		c.AbortWithStatusJSON(400, gin.H{"Error": "Bad JSON Format", "error": err.Error()})
+		return
+	}
+
+	result, err := m.manageAssetUC.FindTransactionByName(staff.Name)
+	if err != nil {
+		c.AbortWithStatusJSON(500, gin.H{"Error": "Failed to find transaction", "Fail": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"Data": result})
 }
 
 // download handler
@@ -71,6 +89,7 @@ func (m ManageAssetController) Route() {
 	m.g.GET("/manage-assets/show-all", m.ShowAllAssetHandler)
 	m.g.POST("/manage-assets/create-new", m.CreateNewAssetHandler)
 	m.g.GET("/manage-assets/find/:id", m.FindByIdTransaction)
+	m.g.POST("/manage-assets/find-asset", m.FindByName)
 	m.g.GET("/manage-assets/download/list-assets", m.DownloadAssetsHandler)
 }
 

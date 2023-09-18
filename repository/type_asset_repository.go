@@ -45,18 +45,18 @@ func (t *typeAssetRepository) Delete(id string) error {
 
 // FindAll implements TypeAssetRepository.
 func (t *typeAssetRepository) FindAll() ([]model.TypeAsset, error) {
-	rows, err := t.db.Query("SELECT * FROM asset_type")
+	rows, err := t.db.Query("SELECT id, name FROM asset_type")
 	if err != nil {
 		return nil, err
 	}
 	var typeAssets []model.TypeAsset
 	for rows.Next() {
 		var typeAsset model.TypeAsset
-		err = rows.Scan(&typeAsset.Id, &typeAsset.Name)
-		if err != nil {
-			return nil, err
-		}
+		rows.Scan(&typeAsset.Id, &typeAsset.Name)
 		typeAssets = append(typeAssets, typeAsset)
+	}
+	if rows.Err() != nil {
+		return nil, rows.Err()
 	}
 	return typeAssets, nil
 }
@@ -69,15 +69,12 @@ func (t *typeAssetRepository) FindByName(name string) ([]model.TypeAsset, error)
 	}
 	var typeAssets []model.TypeAsset
 	for rows.Next() {
-		typeAsset := model.TypeAsset{}
-		err := rows.Scan(
-			&typeAsset.Id,
-			&typeAsset.Name,
-		)
-		if err != nil {
-			return nil, err
-		}
+		var typeAsset model.TypeAsset
+		rows.Scan(&typeAsset.Id, &typeAsset.Name)
 		typeAssets = append(typeAssets, typeAsset)
+	}
+	if rows.Err() != nil {
+		return nil, rows.Err()
 	}
 	return typeAssets, nil
 

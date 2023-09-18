@@ -3,6 +3,7 @@ package usecasemock
 import (
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/model/dto"
+
 	"github.com/stretchr/testify/mock"
 )
 
@@ -16,11 +17,6 @@ func (m ManageAssetsMock) CreateTransaction(payload dto.ManageAssetRequest) erro
 }
 
 func (m ManageAssetsMock) ShowAllAsset() ([]model.ManageAsset, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (m ManageAssetsMock) FindByTransactionID(id string) ([]model.ManageDetailAsset, error) {
 	//TODO implement me
 	panic("implement me")
 }

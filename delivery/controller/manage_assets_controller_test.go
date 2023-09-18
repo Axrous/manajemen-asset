@@ -2,6 +2,7 @@ package controller
 
 import (
 	"final-project-enigma-clean/__mock__/usecasemock"
+
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/suite"
 )
