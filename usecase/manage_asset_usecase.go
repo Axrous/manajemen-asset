@@ -59,8 +59,8 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 	if payload.NikStaff == "" {
 		return fmt.Errorf("nik staff cannot empty")
 	}
-	uid := helper.GenerateUUID()
-	payload.Id = uid
+
+	payload.Id = helper.GenerateUUID()
 	var newManageDetail []dto.ManageAssetDetailRequest
 	//looping for validation request detail
 	for _, detail := range payload.ManageAssetDetailReq {
@@ -96,6 +96,8 @@ func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) e
 	//reassign value
 
 	payload.ManageAssetDetailReq = newManageDetail
+
+	//comment time.now if you want to run unit testing
 	payload.SubmisstionDate = time.Now()
 	payload.ReturnDate = payload.SubmisstionDate.AddDate(0, 0, payload.Duration)
 	err = m.repo.CreateTransaction(payload)

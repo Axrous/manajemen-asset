@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"final-project-enigma-clean/exception"
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/repository"
@@ -26,7 +27,7 @@ type typeAssetUseCase struct {
 func (t *typeAssetUseCase) FindById(id string) (model.TypeAsset, error) {
 	typeAsset, err := t.repo.FindById(id)
 	if err != nil {
-		return model.TypeAsset{}, fmt.Errorf("type asset not found")
+		return model.TypeAsset{}, exception.BadRequestErr("type asset not found")
 	}
 	return typeAsset, nil
 
@@ -35,7 +36,7 @@ func (t *typeAssetUseCase) FindById(id string) (model.TypeAsset, error) {
 // CreateNew implements TypeAssetUseCase.
 func (t *typeAssetUseCase) CreateNew(payload model.TypeAsset) error {
 	if payload.Name == "" {
-		return fmt.Errorf("name is required")
+		return exception.BadRequestErr("name cannot Empty")
 	}
 	payload.Id = helper.GenerateUUID()
 	err := t.repo.Save(payload)
@@ -71,7 +72,7 @@ func (t *typeAssetUseCase) FindAll() ([]model.TypeAsset, error) {
 func (t *typeAssetUseCase) FindByName(name string) ([]model.TypeAsset, error) {
 	typeAsset, err := t.repo.FindByName(name)
 	if err != nil {
-		return nil, fmt.Errorf("name type asset not found: %v", err)
+		return nil, exception.BadRequestErr("name type asset not found")
 	}
 	return typeAsset, nil
 
@@ -85,7 +86,7 @@ func (t *typeAssetUseCase) Paging(payload dto.PageRequest) ([]model.TypeAsset, d
 // Update implements TypeAssetUseCase.
 func (t *typeAssetUseCase) Update(payload model.TypeAsset) error {
 	if payload.Name == "" {
-		return fmt.Errorf("name is required")
+		return exception.BadRequestErr("name cannot Empty")
 	}
 	_, err := t.FindById(payload.Id)
 	if err != nil {

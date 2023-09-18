@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"final-project-enigma-clean/delivery/middleware"
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/usecase"
 	"fmt"
@@ -99,11 +100,11 @@ func (cc *CategoryController) deleteHandlerCategory(c *gin.Context) {
 	})
 }
 func (cc *CategoryController) Route() {
-	cc.rg.POST("/categories", cc.createHandlerCategory)
-	cc.rg.GET("/categories", cc.listHandlerCategory)
-	cc.rg.GET("/categories/:id", cc.getByIdteHandlerCategory)
-	cc.rg.PUT("/categories", cc.updateHandlerCategory)
-	cc.rg.DELETE("/categories/:id", cc.deleteHandlerCategory)
+	cc.rg.POST("/categories", middleware.AuthMiddleware(), cc.createHandlerCategory)
+	cc.rg.GET("/categories", middleware.AuthMiddleware(), cc.listHandlerCategory)
+	cc.rg.GET("/categories/:id", middleware.AuthMiddleware(), cc.getByIdteHandlerCategory)
+	cc.rg.PUT("/categories", middleware.AuthMiddleware(), cc.updateHandlerCategory)
+	cc.rg.DELETE("/categories/:id", middleware.AuthMiddleware(), cc.deleteHandlerCategory)
 }
 
 func NewCategoryController(categoryUC usecase.CategoryUsecase, rg *gin.RouterGroup) *CategoryController {

@@ -27,9 +27,7 @@ func (t *TypeAssetController) createHandlerTypeAsset(c *gin.Context) {
 	// typeAsset.Id = helper.GenerateUUID()
 	err := t.typeAssetUC.CreateNew(typeAsset)
 	if err != nil {
-		c.AbortWithStatusJSON(500, gin.H{
-			"message": err.Error(),
-		})
+		c.Error(err)
 		return
 	}
 	response := gin.H{
@@ -61,9 +59,7 @@ func (t *TypeAssetController) getByIdteHandlerTypeAsset(c *gin.Context) {
 	id := c.Param("id")
 	typeAsset, err := t.typeAssetUC.FindById(id)
 	if err != nil {
-		c.AbortWithStatusJSON(500, gin.H{
-			"message": err.Error(),
-		})
+		c.Error(err)
 		return
 	}
 	response := gin.H{
@@ -77,9 +73,7 @@ func (t *TypeAssetController) getByNameteHandlerTypeAsset(c *gin.Context) {
 	name := c.Param("name")
 	typeAsset, err := t.typeAssetUC.FindByName(name)
 	if err != nil {
-		c.AbortWithStatusJSON(500, gin.H{
-			"message": err.Error(),
-		})
+		c.Error(err)
 		return
 	}
 	response := gin.H{
@@ -98,9 +92,7 @@ func (t *TypeAssetController) updateHandlerTypeAsset(c *gin.Context) {
 	}
 	err := t.typeAssetUC.Update(typeAsset)
 	if err != nil {
-		c.AbortWithStatusJSON(500, gin.H{
-			"message": err.Error(),
-		})
+		c.Error(err)
 		return
 	}
 	c.JSON(200, gin.H{
