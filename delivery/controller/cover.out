@@ -1,5 +1,5 @@
 mode: set
-<<<<<<< HEAD
+<<<<<<<<< Temporary merge branch 1
 <<<<<<< HEAD
 final-project-enigma-clean/delivery/controller/asset_controller.go:17.62,21.16 3 1
 final-project-enigma-clean/delivery/controller/asset_controller.go:21.16,24.3 2 1
@@ -66,8 +66,8 @@ final-project-enigma-clean/delivery/controller/manage_asset_controller.go:74.2,7
 final-project-enigma-clean/delivery/controller/manage_asset_controller.go:77.40,82.2 4 0
 final-project-enigma-clean/delivery/controller/manage_asset_controller.go:84.107,89.2 1 0
 =======
-=======
->>>>>>> b38a0cf033d70c5cdbbb256727efc5ee9c6887f2
+=========
+>>>>>>>>> Temporary merge branch 2
 final-project-enigma-clean/delivery/controller/user-credentials-controller.go:20.62,24.54 2 1
 final-project-enigma-clean/delivery/controller/user-credentials-controller.go:29.2,29.58 1 1
 final-project-enigma-clean/delivery/controller/user-credentials-controller.go:34.2,34.56 1 1
@@ -181,10 +181,7 @@ final-project-enigma-clean/delivery/controller/manage_asset_controller.go:55.2,5
 final-project-enigma-clean/delivery/controller/manage_asset_controller.go:50.16,53.3 2 0
 final-project-enigma-clean/delivery/controller/manage_asset_controller.go:57.40,61.2 3 0
 final-project-enigma-clean/delivery/controller/manage_asset_controller.go:63.107,68.2 1 0
-<<<<<<< HEAD
 >>>>>>> db117303062901030b3f8d7d1bd6fe9e51743f55
-=======
->>>>>>> b38a0cf033d70c5cdbbb256727efc5ee9c6887f2
 final-project-enigma-clean/delivery/controller/staff_controller.go:19.62,21.49 2 0
 final-project-enigma-clean/delivery/controller/staff_controller.go:27.2,28.16 2 0
 final-project-enigma-clean/delivery/controller/staff_controller.go:34.2,37.23 2 0
@@ -233,7 +230,7 @@ final-project-enigma-clean/delivery/controller/type_asset_controller.go:118.2,12
 final-project-enigma-clean/delivery/controller/type_asset_controller.go:112.49,117.3 2 0
 final-project-enigma-clean/delivery/controller/type_asset_controller.go:123.39,130.2 6 0
 final-project-enigma-clean/delivery/controller/type_asset_controller.go:132.109,137.2 1 0
-<<<<<<< HEAD
+<<<<<<<<< Temporary merge branch 1
 <<<<<<< HEAD
 final-project-enigma-clean/delivery/controller/user-credentials-controller.go:20.62,24.54 2 1
 final-project-enigma-clean/delivery/controller/user-credentials-controller.go:24.54,27.3 2 0
@@ -277,5 +274,5 @@ final-project-enigma-clean/delivery/controller/user-credentials-controller.go:17
 final-project-enigma-clean/delivery/controller/user-credentials-controller.go:180.99,185.2 1 1
 =======
 >>>>>>> db117303062901030b3f8d7d1bd6fe9e51743f55
-=======
->>>>>>> b38a0cf033d70c5cdbbb256727efc5ee9c6887f2
+=========
+>>>>>>>>> Temporary merge branch 2

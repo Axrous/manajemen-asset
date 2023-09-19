@@ -6,7 +6,6 @@ import (
 	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/usecase"
 	"fmt"
-	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -27,9 +26,7 @@ func (s *StaffController) createHandlerStaff(c *gin.Context) {
 	}
 	err := s.staffUC.CreateNew(staff)
 	if err != nil {
-		c.AbortWithStatusJSON(500, gin.H{
-			"message": err.Error(),
-		})
+		c.Error(err)
 		return
 	}
 	response := gin.H{
@@ -61,9 +58,7 @@ func (s *StaffController) getByIdteHandlerStaff(c *gin.Context) {
 	nik_staff := c.Param("nik_staff")
 	staff, err := s.staffUC.FindById(nik_staff)
 	if err != nil {
-		c.AbortWithStatusJSON(500, gin.H{
-			"message": err.Error(),
-		})
+		c.Error(err)
 		return
 	}
 	response := gin.H{
@@ -77,9 +72,7 @@ func (s *StaffController) getByNameteHandlerStaff(c *gin.Context) {
 	name := c.Param("name")
 	staffs, err := s.staffUC.FindByName(name)
 	if err != nil {
-		c.AbortWithStatusJSON(500, gin.H{
-			"message": err.Error(),
-		})
+		c.Error(err)
 		return
 	}
 	response := gin.H{
@@ -98,9 +91,7 @@ func (s *StaffController) updateHandlerStaff(c *gin.Context) {
 	}
 	err := s.staffUC.Update(staff)
 	if err != nil {
-		c.AbortWithStatusJSON(500, gin.H{
-			"message": err.Error(),
-		})
+		c.Error(err)
 		return
 	}
 	c.JSON(200, gin.H{
@@ -121,18 +112,6 @@ func (s *StaffController) deleteHandlerStaff(c *gin.Context) {
 	})
 }
 
-func (s *StaffController) DownloadlistStaffHandler(c *gin.Context) {
-	c.Set("Content-Disposition", `attachment; filename="data-staff.csv"`)
-	c.Set("Content-Type", "text/csv")
-
-	csvData, err := s.staffUC.DownloadAllStaff()
-	if err != nil {
-		c.AbortWithStatusJSON(500, gin.H{"Error": "Failed to download staff data"})
-		return
-	}
-	c.Data(http.StatusOK, "text/csv", csvData)
-}
-
 func (s *StaffController) Route() {
 	s.rg.POST("/staffs", middleware.AuthMiddleware(), s.createHandlerStaff)
 	s.rg.GET("/staffs", middleware.AuthMiddleware(), s.listHandlerStaff)
@@ -140,7 +119,6 @@ func (s *StaffController) Route() {
 	s.rg.GET("/staffs/name/:name", middleware.AuthMiddleware(), s.getByNameteHandlerStaff)
 	s.rg.PUT("/staffs", middleware.AuthMiddleware(), s.updateHandlerStaff)
 	s.rg.DELETE("/staffs/:nik_staff", middleware.AuthMiddleware(), s.deleteHandlerStaff)
-	s.rg.GET("/staffs/list-staff-download", s.DownloadlistStaffHandler)
 }
 
 func NewStaffController(staffUC usecase.StaffUseCase, rg *gin.RouterGroup) *StaffController {

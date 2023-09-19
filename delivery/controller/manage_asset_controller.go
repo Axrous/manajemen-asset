@@ -42,7 +42,6 @@ func (m ManageAssetController) CreateNewAssetHandler(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{"Message": "Success"})
-	return
 
 }
 
@@ -57,7 +56,6 @@ func (m ManageAssetController) FindByIdTransaction(c *gin.Context) {
 
 	c.JSON(200, gin.H{"Data": detailAssets})
 }
-
 func (m *ManageAssetController) FindByName(c *gin.Context) {
 
 	var staff model.Staff

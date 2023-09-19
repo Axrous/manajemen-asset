@@ -89,7 +89,7 @@ func (m *manageAssetRepository) FindAllByTransId(id string) ([]model.ManageAsset
 		transactions = append(transactions, t)
 	}
 	if rows.Err() != nil {
-		return nil,nil, rows.Err()
+		return nil, nil, rows.Err()
 	}
 
 	var transactionDetail []model.ManageDetailAsset
