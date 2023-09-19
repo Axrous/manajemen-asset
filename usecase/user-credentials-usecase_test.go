@@ -100,7 +100,9 @@ func (suite *UserCredentialSuite) TestRegisterUser_InvalidEmailFormat() {
 	assert.Error(suite.T(), err)
 	assert.Contains(suite.T(), err.Error(), "Invalid email")
 
+
 	// suite.repo.AssertExpectations(suite.T())
+
 }
 
 func TestUserCredentialSuite(t *testing.T) {
