@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"final-project-enigma-clean/delivery/middleware"
 	"final-project-enigma-clean/model"
 	"final-project-enigma-clean/model/dto"
 	"final-project-enigma-clean/usecase"
@@ -16,7 +15,7 @@ type ManageAssetController struct {
 }
 
 // show assets handler
-func (m ManageAssetController) ShowAllAssetHandler(c *gin.Context) {
+func (m *ManageAssetController) ShowAllAssetHandler(c *gin.Context) {
 
 	mAssets, err := m.manageAssetUC.ShowAllAsset()
 	if err != nil {
@@ -28,7 +27,7 @@ func (m ManageAssetController) ShowAllAssetHandler(c *gin.Context) {
 
 //create a new asset handler
 
-func (m ManageAssetController) CreateNewAssetHandler(c *gin.Context) {
+func (m *ManageAssetController) CreateNewAssetHandler(c *gin.Context) {
 
 	var manageAssetReq dto.ManageAssetRequest
 	if err := c.ShouldBindJSON(&manageAssetReq); err != nil {
@@ -45,7 +44,7 @@ func (m ManageAssetController) CreateNewAssetHandler(c *gin.Context) {
 
 }
 
-func (m ManageAssetController) FindByIdTransaction(c *gin.Context) {
+func (m *ManageAssetController) FindByIdTransaction(c *gin.Context) {
 	id := c.Param("id")
 
 	detailAssets, err := m.manageAssetUC.FindByTransactionID(id)
@@ -75,7 +74,7 @@ func (m *ManageAssetController) FindByName(c *gin.Context) {
 }
 
 // download handler
-func (m ManageAssetController) DownloadAssetsHandler(c *gin.Context) {
+func (m *ManageAssetController) DownloadAssetsHandler(c *gin.Context) {
 	//set header
 	c.Set("Content-Type", "text/csv")
 	c.Set("Content-Disposition", `attachment; filename="data-assets.csv"`)
@@ -86,14 +85,12 @@ func (m ManageAssetController) DownloadAssetsHandler(c *gin.Context) {
 	}
 	c.Data(http.StatusOK, "text/csv", csvData)
 }
-
-func (m ManageAssetController) Route() {
-	m.g.GET("/manage-assets/show-all", middleware.AuthMiddleware(), m.ShowAllAssetHandler)
-	m.g.POST("/manage-assets/create-new", middleware.AuthMiddleware(), m.CreateNewAssetHandler)
-	m.g.GET("/manage-assets/find/:id", middleware.AuthMiddleware(), m.FindByIdTransaction)
-	m.g.POST("/manage-assets/find-asset", middleware.AuthMiddleware(), m.FindByName)
+func (m *ManageAssetController) Route() {
+	m.g.GET("/manage-assets/show-all", m.ShowAllAssetHandler)
+	m.g.POST("/manage-assets/create-new", m.CreateNewAssetHandler)
+	m.g.GET("/manage-assets/find/:id", m.FindByIdTransaction)
+	m.g.POST("/manage-assets/find-asset", m.FindByName)
 	m.g.GET("/manage-assets/download/list-assets", m.DownloadAssetsHandler)
-
 }
 
 func NewManageAssetController(maUC usecase.ManageAssetUsecase, g *gin.RouterGroup) *ManageAssetController {
