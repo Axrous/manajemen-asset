@@ -72,6 +72,7 @@ func (suite *ManageAssetsControllerSuite) TestShowAllAssetsSuccess() {
 	assert.Equal(suite.T(), http.StatusOK, record.Code)
 }
 
+//
 //func (suite *ManageAssetsControllerSuite) TestShowAllAssetsFailed() {
 //	mockData := []model.ManageAsset{{
 //		Id: "123124",
