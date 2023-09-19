@@ -55,7 +55,17 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">final-project-enigma-clean/usecase/user-credentials-usecase.go (39.5%)</option>
+				<option value="file0">final-project-enigma-clean/usecase/asset_usecase.go (98.6%)</option>
+				
+				<option value="file1">final-project-enigma-clean/usecase/category_usecase.go (100.0%)</option>
+				
+				<option value="file2">final-project-enigma-clean/usecase/manage_asset_usecase.go (98.4%)</option>
+				
+				<option value="file3">final-project-enigma-clean/usecase/staff_usecase.go (100.0%)</option>
+				
+				<option value="file4">final-project-enigma-clean/usecase/type_asset_usecase.go (100.0%)</option>
+				
+				<option value="file5">final-project-enigma-clean/usecase/user-credentials-usecase.go (32.5%)</option>
 				
 				</select>
 			</div>
@@ -72,23 +82,749 @@
 		<pre class="file" id="file0" style="display: none">package usecase
 
 import (
+        "final-project-enigma-clean/exception"
+        "final-project-enigma-clean/model"
+        "final-project-enigma-clean/model/dto"
+        "final-project-enigma-clean/repository"
+        "fmt"
+)
+
+type AssetUsecase interface {
+        Create(payload model.AssetRequest) error
+        FindAll() ([]model.Asset, error)
+        FindById(id string) (model.Asset, error)
+        Update(payload model.AssetRequest) error
+        UpdateAvailable(id string, amount int) error
+        Delete(id string) error
+        FindByName(name string) ([]model.Asset, error)
+        Paging(payload dto.PageRequest) ([]model.Asset, dto.Paging, error)
+}
+
+type assetUsecase struct {
+        repo repository.AssetRepository
+        //get category usecase
+        categoryUc CategoryUsecase
+        //get asset type usecase
+        typeAssetUC TypeAssetUseCase
+}
+
+func (a *assetUsecase) Paging(payload dto.PageRequest) ([]model.Asset, dto.Paging, error) <span class="cov8" title="1">{
+        if payload.Page &lt;= 0 </span><span class="cov0" title="0">{
+                payload.Page = 1
+        }</span>
+
+        <span class="cov8" title="1">return a.repo.Paging(payload)</span>
+}
+
+// UpdateAmount implements AssetUsecase.
+func (a *assetUsecase) UpdateAvailable(id string, amount int) error <span class="cov8" title="1">{
+
+        asset, err := a.FindById(id)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">asset.Available -= amount
+        err = a.repo.UpdateAvailable(id, asset.Available)
+        if err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("failed update amount, %s", err)
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// FindByName implements AssetUsecase.
+func (a *assetUsecase) FindByName(name string) ([]model.Asset, error) <span class="cov8" title="1">{
+        if name == "" </span><span class="cov8" title="1">{
+                return nil, exception.BadRequestErr("name cannot empty")
+        }</span>
+
+        <span class="cov8" title="1">assets, err := a.repo.FindByName(name)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("failed get assets, %s", err)
+        }</span>
+        <span class="cov8" title="1">return assets, nil</span>
+}
+
+// Create implements AssetUsecase.
+func (a *assetUsecase) Create(payload model.AssetRequest) error <span class="cov8" title="1">{
+        if payload.Name == "" </span><span class="cov8" title="1">{
+                return exception.BadRequestErr("name cannot empty")
+        }</span>
+        <span class="cov8" title="1">if payload.AssetTypeId == "" || payload.CategoryId == "" </span><span class="cov8" title="1">{
+                return exception.BadRequestErr("asset type id or category id cannot empty")
+        }</span>
+        <span class="cov8" title="1">if payload.Total &lt; 0 </span><span class="cov8" title="1">{
+                return exception.BadRequestErr("Total cannot negative number")
+        }</span>
+        <span class="cov8" title="1">if payload.Status == "" </span><span class="cov8" title="1">{
+                return exception.BadRequestErr("status cannot empty")
+        }</span>
+
+        //implement asset type find by id
+        <span class="cov8" title="1">_, err := a.typeAssetUC.FindById(payload.AssetTypeId)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        //implement category find by id
+        <span class="cov8" title="1">_, err = a.categoryUc.FindById(payload.CategoryId)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        //commented id and entrydate for unit testing
+        //payload.Id = helper.GenerateUUID()
+        //payload.EntryDate = time.Now()
+        <span class="cov8" title="1">payload.Available = payload.Total
+        err = a.repo.Save(payload)
+        if err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("failed save asset %s", err)
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// Delete implements AssetUsecase.
+func (a *assetUsecase) Delete(id string) error <span class="cov8" title="1">{
+        //find assert first
+        _, err := a.FindById(id)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">err = a.repo.Delete(id)
+        if err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("failed to delete asset, %s", err)
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// FindAll implements AssetUsecase.
+func (a *assetUsecase) FindAll() ([]model.Asset, error) <span class="cov8" title="1">{
+        assets, err := a.repo.FindAll()
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("failed get assets, %s", err)
+        }</span>
+        <span class="cov8" title="1">return assets, nil</span>
+}
+
+// FindById implements AssetUsecase.
+func (a *assetUsecase) FindById(id string) (model.Asset, error) <span class="cov8" title="1">{
+        asset, err := a.repo.FindById(id)
+        if err != nil </span><span class="cov8" title="1">{
+                return model.Asset{}, exception.BadRequestErr(fmt.Sprintf("asset by id:%s cannot found, err:%s", id, err))
+        }</span>
+
+        <span class="cov8" title="1">return asset, nil</span>
+}
+
+// Update implements AssetUsecase.
+func (a *assetUsecase) Update(payload model.AssetRequest) error <span class="cov8" title="1">{
+        if payload.Name == "" </span><span class="cov8" title="1">{
+                return exception.BadRequestErr("name cannot empty")
+        }</span>
+        <span class="cov8" title="1">if payload.AssetTypeId == "" || payload.CategoryId == "" </span><span class="cov8" title="1">{
+                return exception.BadRequestErr("asset type id or category id cannot empty")
+        }</span>
+        <span class="cov8" title="1">if payload.Total &lt; 0 </span><span class="cov8" title="1">{
+                return exception.BadRequestErr("amoun cannot negative number")
+        }</span>
+        <span class="cov8" title="1">if payload.Status == "" </span><span class="cov8" title="1">{
+                return exception.BadRequestErr("status cannot empty")
+        }</span>
+
+        //implement asset type find by id
+        <span class="cov8" title="1">_, err := a.typeAssetUC.FindById(payload.AssetTypeId)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        //implement category find by id
+        <span class="cov8" title="1">_, err = a.categoryUc.FindById(payload.CategoryId)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">asset, err := a.FindById(payload.Id)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        //calculation for update available
+        <span class="cov8" title="1">payload.Available = (payload.Total - asset.Total) + asset.Available
+
+        err = a.repo.Update(payload)
+        if err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("failed update asset %s", err)
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+func NewAssetUsecase(assetRepo repository.AssetRepository, typeAssetUC TypeAssetUseCase, categoryUC CategoryUsecase) AssetUsecase <span class="cov8" title="1">{
+        return &amp;assetUsecase{
+                repo:        assetRepo,
+                categoryUc:  categoryUC,
+                typeAssetUC: typeAssetUC,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package usecase
+
+import (
+        "final-project-enigma-clean/exception"
+        "final-project-enigma-clean/model"
+        "final-project-enigma-clean/repository"
+        "fmt"
+)
+
+type CategoryUsecase interface {
+        CreateNew(payload model.Category) error
+        FindById(id string) (model.Category, error)
+        FindAll() ([]model.Category, error)
+        Update(payload model.Category) error
+        Delete(id string) error
+}
+
+type categoryUsecase struct {
+        repo repository.CategoryRepository
+}
+
+// FindById implements CategoryUseCase.
+func (c *categoryUsecase) FindById(id string) (model.Category, error) <span class="cov8" title="1">{
+        category, err := c.repo.FindById(id)
+        if err != nil </span><span class="cov8" title="1">{
+                return model.Category{}, exception.BadRequestErr("category not found")
+        }</span>
+        <span class="cov8" title="1">return category, nil</span>
+
+}
+
+// CreateNew implements CategoryUseCase.
+func (c *categoryUsecase) CreateNew(payload model.Category) error <span class="cov8" title="1">{
+        if payload.Name == "" </span><span class="cov8" title="1">{
+                return exception.BadRequestErr("name is required")
+        }</span>
+
+        //commented for unit testing
+        //payload.Id = helper.GenerateUUID()
+        <span class="cov8" title="1">err := c.repo.Save(payload)
+        if err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("failed to create new category: %v", err)
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+// Delete implements CategoryUseCase.
+func (c *categoryUsecase) Delete(id string) error <span class="cov8" title="1">{
+        Category, err := c.FindById(id)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        <span class="cov8" title="1">err = c.repo.Delete(Category.Id)
+        if err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("failed to delete category: %v", err)
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+// FindAll implements CategoryUseCase.
+func (c *categoryUsecase) FindAll() ([]model.Category, error) <span class="cov8" title="1">{
+        Category, err := c.repo.FindAll()
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("failed to find all type asset: %v", err)
+        }</span>
+        <span class="cov8" title="1">return Category, nil</span>
+}
+
+// Update implements CategoryUseCase.
+func (c *categoryUsecase) Update(payload model.Category) error <span class="cov8" title="1">{
+        if payload.Name == "" </span><span class="cov8" title="1">{
+                return exception.BadRequestErr("name is required")
+        }</span>
+        <span class="cov8" title="1">_, err := c.FindById(payload.Id)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        <span class="cov8" title="1">err = c.repo.Update(payload)
+        if err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("failed to update category: %v", err)
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+func NewCategoryUseCase(repo repository.CategoryRepository) CategoryUsecase <span class="cov8" title="1">{
+        return &amp;categoryUsecase{
+                repo: repo,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package usecase
+
+import (
+        "final-project-enigma-clean/exception"
+        "final-project-enigma-clean/model"
+        "final-project-enigma-clean/model/dto"
+        "final-project-enigma-clean/repository"
+        "final-project-enigma-clean/util/helper"
+        "fmt"
+)
+
+type ManageAssetUsecase interface {
+        CreateTransaction(payload dto.ManageAssetRequest) error
+        ShowAllAsset() ([]model.ManageAsset, error)
+        FindByTransactionID(id string) ([]model.ManageAsset, error)
+        FindTransactionByName(name string) ([]model.ManageAsset, error)
+        DownloadAssets() ([]byte, error)
+}
+
+type manageAssetUsecase struct {
+        repo    repository.ManageAssetRepository
+        staffUC StaffUseCase
+        assetUC AssetUsecase
+}
+
+// FindTransactionByName implements ManageAssetUsecase.
+func (m *manageAssetUsecase) FindTransactionByName(name string) ([]model.ManageAsset, error) <span class="cov8" title="1">{
+        if name == "" </span><span class="cov8" title="1">{
+                return nil, exception.BadRequestErr("name cannot empty")
+        }</span>
+
+        <span class="cov8" title="1">transactions, transactionDetails, err := m.repo.FindByNameTransaction(name)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">detailMap := make(map[string][]model.ManageDetailAsset)
+
+        // Kelompokkan detail transaksi berdasarkan Id ManageAsset
+        for _, detail := range transactionDetails </span><span class="cov8" title="1">{
+                detailMap[detail.ManageAssetId] = append(detailMap[detail.ManageAssetId], detail)
+        }</span>
+
+        // Inisialisasi slice datas
+        <span class="cov8" title="1">datas := make([]model.ManageAsset, 0)
+
+        // Iterasi melalui transaksi untuk membangun datas
+        for _, transaction := range transactions </span><span class="cov8" title="1">{
+                if details, ok := detailMap[transaction.Id]; ok </span><span class="cov8" title="1">{
+                        transaction.Detail = details
+                        datas = append(datas, transaction)
+                }</span>
+        }
+        <span class="cov8" title="1">return datas, nil</span>
+}
+
+// CreateTransaction implements ManageAssetUsecase.
+func (m *manageAssetUsecase) CreateTransaction(payload dto.ManageAssetRequest) error <span class="cov8" title="1">{
+        if payload.NikStaff == "" </span><span class="cov8" title="1">{
+                return exception.BadRequestErr("nik staff cannot empty")
+        }</span>
+
+        ///payload.Id = helper.GenerateUUID()
+        <span class="cov8" title="1">var newManageDetail []dto.ManageAssetDetailRequest
+        //looping for validation request detail
+        for _, detail := range payload.ManageAssetDetailReq </span><span class="cov8" title="1">{
+                if detail.IdAsset == "" </span><span class="cov8" title="1">{
+                        return exception.BadRequestErr("id asset cannot empty")
+                }</span>
+
+                <span class="cov8" title="1">if detail.Status == "" </span><span class="cov8" title="1">{
+                        return exception.BadRequestErr("status cannot empty")
+                }</span>
+
+                <span class="cov8" title="1">if detail.TotalItem &lt; 0 </span><span class="cov8" title="1">{
+                        return exception.BadRequestErr("total item must equal than 0")
+                }</span>
+
+                <span class="cov8" title="1">asset, err := m.assetUC.FindById(detail.IdAsset)
+                if err != nil </span><span class="cov8" title="1">{
+                        return err
+                }</span>
+                //valdiation asset amount available or not
+                <span class="cov8" title="1">if asset.Available &lt; detail.TotalItem </span><span class="cov0" title="0">{
+                        return exception.BadRequestErr("Barang tidak cukup")
+                }</span>
+                //detail.Id = helper.GenerateUUID()
+                <span class="cov8" title="1">newManageDetail = append(newManageDetail, detail)</span>
+        }
+        //validate nikstaff
+        <span class="cov8" title="1">_, err := m.staffUC.FindById(payload.NikStaff)
+        if err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf(err.Error())
+        }</span>
+
+        //reassign value
+
+        <span class="cov8" title="1">payload.ManageAssetDetailReq = newManageDetail
+
+        //comment time.now if you want to run unit testing
+        //payload.SubmisstionDate = time.Now()
+        //payload.ReturnDate = payload.SubmisstionDate.AddDate(0, 0, payload.Duration)
+        err = m.repo.CreateTransaction(payload)
+        if err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf(err.Error())
+        }</span>
+        //update amount of asset when success
+        <span class="cov8" title="1">for _, detail := range payload.ManageAssetDetailReq </span><span class="cov8" title="1">{
+                err = m.assetUC.UpdateAvailable(detail.IdAsset, detail.TotalItem)
+                if err != nil </span><span class="cov8" title="1">{
+                        return err
+                }</span>
+        }
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (m *manageAssetUsecase) ShowAllAsset() ([]model.ManageAsset, error) <span class="cov8" title="1">{
+        //TODO implement me
+        return m.repo.FindAllTransaction()
+}</span>
+
+func (m *manageAssetUsecase) FindByTransactionID(id string) ([]model.ManageAsset, error) <span class="cov8" title="1">{
+        //TODO implement me
+        if id == "" </span><span class="cov8" title="1">{
+                return nil, exception.BadRequestErr("ID is required")
+        }</span>
+
+        <span class="cov8" title="1">transactions, transactionDetails, err := m.repo.FindAllByTransId(id)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">detailMap := make(map[string][]model.ManageDetailAsset)
+
+        // Kelompokkan detail transaksi berdasarkan Id ManageAsset
+        for _, detail := range transactionDetails </span><span class="cov8" title="1">{
+                detailMap[detail.ManageAssetId] = append(detailMap[detail.ManageAssetId], detail)
+        }</span>
+
+        // Inisialisasi slice datas
+        <span class="cov8" title="1">datas := make([]model.ManageAsset, 0)
+
+        // Iterasi melalui transaksi untuk membangun datas
+        for _, transaction := range transactions </span><span class="cov8" title="1">{
+                if details, ok := detailMap[transaction.Id]; ok </span><span class="cov8" title="1">{
+                        transaction.Detail = details
+                        datas = append(datas, transaction)
+                }</span>
+        }
+        <span class="cov8" title="1">return datas, nil</span>
+}
+
+func (m *manageAssetUsecase) DownloadAssets() ([]byte, error) <span class="cov8" title="1">{
+        //TODO implement me
+        assets, err := m.repo.FindAllTransaction()
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("Failed to find assets %v", err.Error())
+        }</span>
+
+        //convert data to csv
+        <span class="cov8" title="1">csvData, err := helper.ConvertToCSVForAssets(assets)
+        return csvData, nil</span>
+}
+
+func NewManageAssetUsecase(repo repository.ManageAssetRepository, staffUC StaffUseCase, assetUC AssetUsecase) ManageAssetUsecase <span class="cov8" title="1">{
+        return &amp;manageAssetUsecase{
+                repo:    repo,
+                staffUC: staffUC,
+                assetUC: assetUC,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package usecase
+
+import (
+        "final-project-enigma-clean/model"
+        "final-project-enigma-clean/model/dto"
+        "final-project-enigma-clean/repository"
+        "fmt"
+)
+
+type StaffUseCase interface {
+        CreateNew(payload model.Staff) error
+        FindByName(name string) ([]model.Staff, error)
+        FindById(nik_staff string) (model.Staff, error)
+        FindByAll() ([]model.Staff, error)
+        Update(payload model.Staff) error
+        Delete(nik_staff string) error
+        Paging(payload dto.PageRequest) ([]model.Staff, dto.Paging, error)
+}
+
+type staffUseCase struct {
+        repo repository.StaffRepository
+}
+
+// FindById implements StaffUseCase.
+func (s *staffUseCase) FindById(nik_staff string) (model.Staff, error) <span class="cov8" title="1">{
+        staff, err := s.repo.FindById(nik_staff)
+        if err != nil </span><span class="cov8" title="1">{
+                return model.Staff{}, fmt.Errorf("staff not found")
+        }</span>
+        <span class="cov8" title="1">return staff, nil</span>
+
+}
+
+// CreateNew implements StaffUseCase.
+func (s *staffUseCase) CreateNew(payload model.Staff) error <span class="cov8" title="1">{
+        if payload.Nik_Staff == "" </span><span class="cov8" title="1">{
+                return fmt.Errorf("nik staff is required")
+        }</span>
+        <span class="cov8" title="1">if payload.Name == "" </span><span class="cov8" title="1">{
+                return fmt.Errorf("name is required")
+        }</span>
+        <span class="cov8" title="1">if len(payload.Phone_number) &lt; 10 || len(payload.Phone_number) &gt; 15 </span><span class="cov8" title="1">{
+                return fmt.Errorf("phone number must be between 10 and 15 characters")
+        }</span>
+        <span class="cov8" title="1">if payload.Address == "" </span><span class="cov8" title="1">{
+                return fmt.Errorf("address is required")
+        }</span>
+        <span class="cov8" title="1">if payload.Divisi == "" </span><span class="cov8" title="1">{
+                return fmt.Errorf("divisi is required")
+        }</span>
+        <span class="cov8" title="1">err := s.repo.Save(payload)
+        if err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("failed to create new staff: %v", err)
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+// Delete implements StaffUseCase.
+func (s *staffUseCase) Delete(nik_staff string) error <span class="cov8" title="1">{
+        staff, err := s.FindById(nik_staff)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        <span class="cov8" title="1">err = s.repo.Delete(staff.Nik_Staff)
+        if err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("failed to delete staff: %v", err)
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+// FindAll implements StaffUseCase.
+func (s *staffUseCase) FindByAll() ([]model.Staff, error) <span class="cov8" title="1">{
+        staff, err := s.repo.FindByAll()
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("failed to find by all staff: %v", err)
+        }</span>
+        <span class="cov8" title="1">return staff, nil</span>
+}
+
+// FindByName implements StaffUseCase.
+func (s *staffUseCase) FindByName(name string) ([]model.Staff, error) <span class="cov8" title="1">{
+        staff, err := s.repo.FindByName(name)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("name staff not found: %v", err)
+        }</span>
+        <span class="cov8" title="1">return staff, nil</span>
+
+}
+
+// Paging implements StaffUseCase.
+func (s *staffUseCase) Paging(payload dto.PageRequest) ([]model.Staff, dto.Paging, error) <span class="cov8" title="1">{
+        return s.repo.Paging(payload)
+}</span>
+
+// Update implements StaffUseCase.
+func (s *staffUseCase) Update(payload model.Staff) error <span class="cov8" title="1">{
+        if payload.Nik_Staff == "" </span><span class="cov8" title="1">{
+                return fmt.Errorf("nik staff is required")
+        }</span>
+        <span class="cov8" title="1">if payload.Name == "" </span><span class="cov8" title="1">{
+                return fmt.Errorf("name is required")
+        }</span>
+        <span class="cov8" title="1">if len(payload.Phone_number) &lt; 10 || len(payload.Phone_number) &gt; 15 </span><span class="cov8" title="1">{
+                return fmt.Errorf("phone number must be between 10 and 15 characters")
+        }</span>
+        <span class="cov8" title="1">if payload.Address == "" </span><span class="cov8" title="1">{
+                return fmt.Errorf("address is required")
+        }</span>
+        <span class="cov8" title="1">if payload.Divisi == "" </span><span class="cov8" title="1">{
+                return fmt.Errorf("divisi is required")
+        }</span>
+        <span class="cov8" title="1">_, err := s.FindById(payload.Nik_Staff)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        <span class="cov8" title="1">err = s.repo.Update(payload)
+        if err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("failed to update staff: %v", err)
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+func NewStaffUseCase(repo repository.StaffRepository) StaffUseCase <span class="cov8" title="1">{
+        return &amp;staffUseCase{
+                repo: repo,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package usecase
+
+import (
+        "final-project-enigma-clean/model"
+        "final-project-enigma-clean/model/dto"
+        "final-project-enigma-clean/repository"
+        "fmt"
+)
+
+type TypeAssetUseCase interface {
+        CreateNew(payload model.TypeAsset) error
+        FindByName(name string) ([]model.TypeAsset, error)
+        FindById(id string) (model.TypeAsset, error)
+        FindAll() ([]model.TypeAsset, error)
+        Update(payload model.TypeAsset) error
+        Delete(id string) error
+        Paging(payload dto.PageRequest) ([]model.TypeAsset, dto.Paging, error)
+}
+
+type typeAssetUseCase struct {
+        repo repository.TypeAssetRepository
+}
+
+// FindById implements TypeAssetUseCase.
+func (t *typeAssetUseCase) FindById(id string) (model.TypeAsset, error) <span class="cov8" title="1">{
+        typeAsset, err := t.repo.FindById(id)
+        if err != nil </span><span class="cov8" title="1">{
+                return model.TypeAsset{}, fmt.Errorf("type asset not found")
+        }</span>
+        <span class="cov8" title="1">return typeAsset, nil</span>
+
+}
+
+// CreateNew implements TypeAssetUseCase.
+func (t *typeAssetUseCase) CreateNew(payload model.TypeAsset) error <span class="cov8" title="1">{
+        if payload.Name == "" </span><span class="cov8" title="1">{
+                return fmt.Errorf("name is required")
+        }</span>
+        //payload.Id = helper.GenerateUUID()
+        <span class="cov8" title="1">err := t.repo.Save(payload)
+        if err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("failed to create new type asset: %v", err)
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+// Delete implements TypeAssetUseCase.
+func (t *typeAssetUseCase) Delete(id string) error <span class="cov8" title="1">{
+        typeAsset, err := t.FindById(id)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        <span class="cov8" title="1">err = t.repo.Delete(typeAsset.Id)
+        if err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("failed to delete type asset: %v", err)
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+// FindAll implements TypeAssetUseCase.
+func (t *typeAssetUseCase) FindAll() ([]model.TypeAsset, error) <span class="cov8" title="1">{
+        typeAsset, err := t.repo.FindAll()
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("failed to find all type asset: %v", err)
+        }</span>
+        <span class="cov8" title="1">return typeAsset, nil</span>
+}
+
+// FindByName implements TypeAssetUseCase.
+func (t *typeAssetUseCase) FindByName(name string) ([]model.TypeAsset, error) <span class="cov8" title="1">{
+        typeAsset, err := t.repo.FindByName(name)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("name type asset not found: %v", err)
+        }</span>
+        <span class="cov8" title="1">return typeAsset, nil</span>
+
+}
+
+// Paging implements TypeAssetUseCase.
+func (t *typeAssetUseCase) Paging(payload dto.PageRequest) ([]model.TypeAsset, dto.Paging, error) <span class="cov8" title="1">{
+        return t.repo.Paging(payload)
+}</span>
+
+// Update implements TypeAssetUseCase.
+func (t *typeAssetUseCase) Update(payload model.TypeAsset) error <span class="cov8" title="1">{
+        if payload.Name == "" </span><span class="cov8" title="1">{
+                return fmt.Errorf("name is required")
+        }</span>
+        <span class="cov8" title="1">_, err := t.FindById(payload.Id)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        <span class="cov8" title="1">err = t.repo.Update(payload)
+        if err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("failed to update type asset: %v", err)
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+func NewTypeAssetUseCase(repo repository.TypeAssetRepository) TypeAssetUseCase <span class="cov8" title="1">{
+        return &amp;typeAssetUseCase{
+                repo: repo,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package usecase
+
+import (
+        "errors"
         "final-project-enigma-clean/model"
         "final-project-enigma-clean/repository"
         "final-project-enigma-clean/util/helper"
         "fmt"
+        "regexp"
+        "strconv"
+
         "github.com/go-playground/validator/v10"
         "github.com/gookit/slog"
-        "strconv"
 )
 
 type UserCredentialUsecase interface {
         RegisterUser(user model.UserRegisterRequest) error
         LoginUser(user model.UserLoginRequest) (string, error)
+        LoginUserChangePass(user model.ChangePasswordRequest) (string, error)
         FindingUserEmail(email string) (userlogin model.UserLoginRequest, err error)
+        FindingUserEmailPass(email string) (userlogin model.ChangePasswordRequest, err error)
+        ChangePassword(email, newpass string) error
+        GetUserPassword(email string) (string, error)
+        EmailExist(email string) bool
+        ForgotPass(email string) error
+        ForgotPassRequest(email, newPassword, confirmPassword string) error
 }
 
 type userDetailUsecase struct {
         udetailsRepo repository.UserCredentialsRepository
+}
+
+func (u *userDetailUsecase) FindingUserEmailPass(email string) (userlogin model.ChangePasswordRequest, err error) <span class="cov0" title="0">{
+        //TODO implement me
+        return u.udetailsRepo.FindUserEmailPass(email)
+}</span>
+
+func (u *userDetailUsecase) LoginUserChangePass(user model.ChangePasswordRequest) (string, error) <span class="cov0" title="0">{
+        //TODO implement me
+
+        // Find user email
+        user, err := u.FindingUserEmailPass(user.Email)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+
+        //logic otp
+        <span class="cov0" title="0">otp, _ := helper.GenerateOTP()
+        helper.SendOTPChangePassword(user.Email, strconv.Itoa(otp))
+        OTPMap[user.Email] = otp
+        slog.Infof("Sending otp to %v", user.Email)
+
+        return user.NewPassword, nil</span>
 }
 
 // register user business logic
@@ -98,19 +834,26 @@ func (u *userDetailUsecase) RegisterUser(user model.UserRegisterRequest) error <
         //validate struct
         val := validator.New()
         err := val.Struct(user)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 var errMsg string
-                for _, err := range err.(validator.ValidationErrors) </span><span class="cov0" title="0">{
-                        if err.Field() == "Email" &amp;&amp; err.Tag() == "email" </span><span class="cov0" title="0">{
+                for _, err := range err.(validator.ValidationErrors) </span><span class="cov8" title="1">{
+                        if err.Field() == "Email" &amp;&amp; err.Tag() == "email" </span><span class="cov8" title="1">{
                                 errMsg = "Invalid email format"
                                 break</span>
                         }
                 }
-                <span class="cov0" title="0">if errMsg == "" </span><span class="cov0" title="0">{
+                <span class="cov8" title="1">if errMsg == "" </span><span class="cov0" title="0">{
                         errMsg = "Bad request format"
                         return err
                 }</span>
         }
+
+        // Check if email is valid (e.g., gmail.com)
+        <span class="cov8" title="1">emailPattern := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$`
+        validEmail := regexp.MustCompile(emailPattern)
+        if !validEmail.MatchString(user.Email) </span><span class="cov8" title="1">{
+                return errors.New("Invalid email")
+        }</span>
 
         //password requirement area
         <span class="cov8" title="1">if len(user.Password) &lt; 6 </span><span class="cov0" title="0">{
@@ -153,12 +896,12 @@ func (u *userDetailUsecase) LoginUser(userlogin model.UserLoginRequest) (string,
         // Find user email
         user, err := u.FindingUserEmail(userlogin.Email)
         if err != nil </span><span class="cov0" title="0">{
-                return "", fmt.Errorf("Failed to find email %v", err.Error())
+                return "", err
         }</span>
 
         // Compare password
         <span class="cov0" title="0">if err = helper.ComparePassword(user.Password, userlogin.Password); err != nil </span><span class="cov0" title="0">{
-                return "", err
+                return "", fmt.Errorf("Invalid credential")
         }</span>
 
         //logic otp
@@ -175,6 +918,74 @@ func (u *userDetailUsecase) FindingUserEmail(email string) (user model.UserLogin
         //TODO implement me
         return u.udetailsRepo.FindUserEmail(email)
 }</span>
+
+func (u *userDetailUsecase) EmailExist(email string) bool <span class="cov0" title="0">{
+        //TODO implement me
+
+        var count int
+        if !u.udetailsRepo.CheckEmailExist(email) </span><span class="cov0" title="0">{
+                return false
+        }</span>
+
+        <span class="cov0" title="0">return count &gt; 0</span>
+}
+
+func (u *userDetailUsecase) GetUserPassword(email string) (string, error) <span class="cov0" title="0">{
+        //TODO implement me
+
+        return u.udetailsRepo.GetUserPassword(email)
+}</span>
+
+func (u *userDetailUsecase) ChangePassword(email, newpass string) error <span class="cov0" title="0">{
+        //TODO implement me
+
+        //update password disini
+        u.udetailsRepo.ChangePassword(email, newpass)
+        return nil
+}</span>
+
+func (u *userDetailUsecase) ForgotPass(email string) error <span class="cov0" title="0">{
+        //TODO implement me
+        //validasi email
+        if email == "" </span><span class="cov0" title="0">{
+                return fmt.Errorf("email required")
+        }</span>
+        <span class="cov0" title="0">user, err := u.udetailsRepo.FindUserEmail(email)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("Email not found")
+        }</span>
+
+        //send otp to email
+        <span class="cov0" title="0">otp, _ := helper.GenerateOTP()
+        helper.SendOTPForgotPass(user.Email, strconv.Itoa(otp))
+        OTPMap[user.Email] = otp
+        slog.Infof("user %v has forgot password, Sending otp ....", user.Email)
+
+        return nil</span>
+}
+
+func (u *userDetailUsecase) ForgotPassRequest(email, newPassword, confirmPassword string) error <span class="cov0" title="0">{
+        //TODO implement me
+
+        //buat password baru dan compare dengan confirm password nya
+        if newPassword != confirmPassword </span><span class="cov0" title="0">{
+                return fmt.Errorf("Password and confirm password do not match")
+        }</span>
+
+        //hash new password ny
+        <span class="cov0" title="0">HashNewPassword, err := helper.HashPassword(newPassword)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("Failed to generate password %v", err.Error())
+        }</span>
+        //convert
+        <span class="cov0" title="0">newPassword = HashNewPassword
+
+        if err = u.udetailsRepo.ForgotPass(email, HashNewPassword, confirmPassword); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("Error %v", err.Error())
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
 
 func NewUserCredentialUsecase(udetailsRepo repository.UserCredentialsRepository) UserCredentialUsecase <span class="cov8" title="1">{
         return &amp;userDetailUsecase{
